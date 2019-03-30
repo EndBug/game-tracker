@@ -73,15 +73,19 @@ async function checkLocalAPI() {
       uri: string
     }
   }
-  const res: Error | RequestError = await request({
-    uri: 'https://127.0.0.1:4444/api/v3/u/EndBug-2119/blob',
-    headers: {
-      'User-Agent': 'request'
-    },
-    json: true
-  });
 
-  APIHost = (res instanceof Error || res.error.message.startsWith('Invalid URI')) ? 'owapi.net' : '127.0.0.1:4444';
+  try {
+    const res: Error | RequestError = await request({
+      uri: 'https://127.0.0.1:4444/api/v3/u/EndBug-2119/blob',
+      headers: {
+        'User-Agent': 'request'
+      },
+      json: true
+    });
+    APIHost = (res instanceof Error || res.error) ? 'owapi.net' : '127.0.0.1:4444';
+  } catch {
+    APIHost = 'owapi.net';
+  }
   return APIHost;
 }
 
