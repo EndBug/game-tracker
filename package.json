@@ -6,7 +6,6 @@
   "scripts": {
     "start": "ts-node src/core/start.ts",
     "dev": "nodemon --watch src/**/*.* --ignore src/commands/**/*.* --ignore src/utils/reloadme.json --exec ts-node src/core/start.ts",
-
     "build": "tsc",
     "deploy": "npm run build && npm run start",
     "dev:js": "concurrently \"npm run dev:compile\" \"npm run deploy\"",
