@@ -23,6 +23,7 @@
     "overwatch-stats-api": "^1.0.6",
     "request-promise": "^4.2.4",
     "sqlite": "^3.0.2",
+    "ts-node": "^8.0.3",
     "typescript-map": "0.0.7"
   },
   "devDependencies": {
