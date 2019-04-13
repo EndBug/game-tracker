@@ -47,5 +47,5 @@ function setPresence(obj: Presence) {
 }
 
 
-if (status.length > 1) setPresence(status[0]);
-else setInterval(setPresence, interval, status[index]);
+if (status.length > 0) setPresence(status[0]);
+if (status.length > 1) setInterval(setPresence, interval, status[index]);
