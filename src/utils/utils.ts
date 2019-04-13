@@ -1,5 +1,6 @@
 import { TSMap as Map } from 'typescript-map';
 import { User, GuildMember } from 'discord.js';
+import { homeguild, owner } from '../core/app';
 
 /**
  * Returns str with capital first letter
@@ -50,6 +51,21 @@ export function getShortName(user: User | GuildMember) {
   if (user instanceof GuildMember) user = user.user;
   return `${user.username}#${user.discriminator}`;
 }
+
+/**
+ * Gets an invite to the support guild
+ * @param codeOnly Whether to return only the code of the invite instead of the URL (default is `false`)
+ */
+export async function getSupportInvite(codeOnly = false) {
+  const readme = homeguild.channels.get('505805487166586901') || homeguild.channels.find(c => c.name == 'readme');
+  if (!readme) {
+    owner.send('Can\'t find \'readme\' channel, please check the ID.');
+    return;
+  }
+  const invite = await readme.createInvite({ maxAge: 0 });
+  return codeOnly ? invite.code : `https://discord.gg/${invite.code}`;
+}
+
 
 /**
  * Makes a string readable
