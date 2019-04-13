@@ -100,7 +100,7 @@ class APIStore {
 }
 
 /**
- * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs
+ * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs 
  */
 async function initClient() {
   client = new Commando.CommandoClient({
@@ -168,6 +168,14 @@ async function initClient() {
 }
 
 /**
+ * Logs a load statement
+ * @param name 
+ */
+export function loader(name: string) {
+  console.log(`[LOADER] Loaded '${name}'`);
+}
+
+/**
  * Loads every api in ../apis into APIS, builds APIUtil
  */
 function loadAPIs() {
@@ -177,6 +185,7 @@ function loadAPIs() {
     const ClassFromModule: Class = require(path.join(__dirname, '../apis', file)).ApiLoader;
     const api: API = new ClassFromModule();
     APIS[api.name] = api;
+    loader(`apis/${file}`);
   }
 
   /**
@@ -211,7 +220,23 @@ function loadAPIs() {
   APIUtil = { find, erase };
 }
 
+const custom_modules = ['automation'];
+/**
+ * Loads every module group from the `custom_modules` array 
+ */
+function loadModules() {
+  for (const groupName of custom_modules) {
+    const groupDirectory = path.join(__dirname, '..', groupName);
+    const files = fs.readdirSync(groupDirectory);
+    for (const file of files) {
+      require(path.join(groupDirectory, file));
+      loader(`${groupName}/${file}`);
+    }
+  }
+}
+
 (async () => {
   await backup.init().catch(console.error);
   await initClient();
+  loadModules();
 })().catch(console.error);
