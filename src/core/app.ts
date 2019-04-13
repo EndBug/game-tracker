@@ -125,6 +125,7 @@ async function initClient() {
   });
 
   client.registry.registerGroups([
+    ['bot', 'Bot'],
     ['data', 'Data management'],
     ['dev', 'Developers'],
     ['ow', 'Overwatch']
