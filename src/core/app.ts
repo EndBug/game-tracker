@@ -124,15 +124,6 @@ async function initClient() {
     };
   });
 
-  client.on('guildCreate', guild => {
-    const gown = guild.owner;
-    if (gown) gown.send(`Hi, thanks for using Game Tracker!
-    Please note that the bot is meant to work with some permissions (the ones in the invite link) and removing some of them can result in errors.
-    The default prefix is ${client.commandPrefix}, but you can also use @mentions. You can change the prefix with \`prefix\`.
-    To know more about commands, use \`help\`; some of the commands can be used directly in this DM, but using \`help\` in your guild will provide the available commands for your server.
-    If you need further help or you want to give some feedback, you can join the support guild by using \`support\`.`);
-  });
-
   client.registry.registerGroups([
     ['data', 'Data management'],
     ['dev', 'Developers'],
