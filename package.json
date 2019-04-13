@@ -6,11 +6,6 @@
   "scripts": {
     "start": "ts-node src/core/start.ts",
     "dev": "nodemon --watch src/**/*.* --ignore src/commands/**/*.* --ignore src/utils/reloadme.json --exec ts-node src/core/start.ts",
-    "build": "tsc",
-    "deploy": "npm run build && npm run start",
-    "dev:js": "concurrently \"npm run dev:compile\" \"npm run deploy\"",
-    "dev:compile": "tsc -w",
-    "manual": "nodemon --watch build/utils build/src/core/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Federico 'EndBug' Grandi <fgrandi30@gmail.com>",
