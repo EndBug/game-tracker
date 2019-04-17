@@ -473,7 +473,7 @@ function errorCheck(data: Region | Error | StatusCodeError, [mode, battletag, pl
       error = 'This profile is private.';
       embedMode = 'warn';
     } else if (obj.error == 500 && obj.exc == 'IndexError(\'list index out of range\',)') {
-      error = obj.msg ? `\`${obj.error}\` - \`${obj.msg}\`` : obj.error.toString();
+      error = obj.msg || 'api down'
       embedMode = 'down';
     } else {
       error = obj.msg ? `\`${obj.error}\` - \`${obj.msg}\`` : obj.error.toString();
