@@ -85,10 +85,11 @@ async function checkLocalAPI() {
       json: true
     });
     APIHost = (res instanceof Error || res.error) ? 'owapi.net' : local_api_link_URL;
+    return APIHost;
   } catch {
     APIHost = 'owapi.net';
+    return APIHost;
   }
-  return APIHost;
 }
 
 //#endregion
