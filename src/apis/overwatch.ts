@@ -14,6 +14,8 @@ async function request(...args: any[]) {
   else return res;
 }
 
+const local_api_link_URL = '127.0.0.1:4444';
+
 // Imgur album link: https://imgur.com/a/Ljsllvo
 const img_links = {
   'ana': 'https://imgur.com/vtXTLNX.png',
@@ -76,13 +78,13 @@ async function checkLocalAPI() {
 
   try {
     const res: Error | RequestError = await request({
-      uri: 'https://127.0.0.1:4444/api/v3/u/EndBug-2119/blob',
+      uri: `http://${local_api_link_URL}/api/v3/u/EndBug-2119/blob`,
       headers: {
         'User-Agent': 'request'
       },
       json: true
     });
-    APIHost = (res instanceof Error || res.error) ? 'owapi.net' : '127.0.0.1:4444';
+    APIHost = (res instanceof Error || res.error) ? 'owapi.net' : local_api_link_URL;
   } catch {
     APIHost = 'owapi.net';
   }
