@@ -1,5 +1,5 @@
 require('dotenv').load();
-var nodemon = require('nodemon')('--watch src/core/utils/realoadme.json --exec ts-node src/core/app.ts');
+var nodemon = require('nodemon')('--watch src/utils/realoadme.json --exec ts-node src/core/app.ts');
 
 import * as fs from 'fs';
 
