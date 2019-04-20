@@ -132,7 +132,7 @@ export default class OverwatchCMD extends Commando.Command {
         if (res) [player, platform] = res;
         else {
           err = 'Please enter a battletag.';
-          if (!linkmodes.includes(mode)) err += 'If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
+          if (!linkmodes.includes(mode)) err += ' If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
         }
       } else if (isBattletag(player)) {
         if (!platform) platform = 'pc';
@@ -146,7 +146,7 @@ export default class OverwatchCMD extends Commando.Command {
         if (res) [player, platform] = res;
         else {
           err = 'Please enter a battletag.';
-          if (!linkmodes.includes(mode)) err += 'If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
+          if (!linkmodes.includes(mode)) err += ' If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
         }
       }
       else if (!platform) err = 'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`';
