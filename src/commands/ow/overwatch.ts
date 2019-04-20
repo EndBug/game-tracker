@@ -222,13 +222,4 @@ export default class OverwatchCMD extends Commando.Command {
 
     msg.channel.stopTyping(true);
   }
-
-  hasPermission(msg: Commando.CommandoMessage) {
-    if ([owner, msg.guild.owner.user].includes(msg.author)) return true;
-    const member = msg.member;
-    if (member) return (member.roles.has(roles.dev.id) || msg.guild.settings.get('botperm', {
-      members: []
-    }).members.includes(member.id));
-    else return 'Can\'t define your permissions, please contact the owner of the server.';
-  }
 }
