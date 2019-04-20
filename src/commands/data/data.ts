@@ -34,7 +34,7 @@ export default class DataCMD extends Commando.Command {
         const str = hide ? '***' : JSON.stringify(res[key]);
         text += `\n${key}: ${str}`;
       }
-      text += '\n```If you want to unlink on of these accounts search for the unlink command for that game (you can use `help` to find it).\nTo delete all of your data, run `erase-data`';
+      text += '\n```If you want to unlink one of these accounts search for the \'unlink\' command for that game (you can use `help` to find it).\nTo delete all of your data, run `erase-data`';
     } else text = 'There\'s no data about you in the databse.';
     msg.reply(text);
   }
