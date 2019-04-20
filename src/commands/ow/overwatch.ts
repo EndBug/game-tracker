@@ -44,6 +44,7 @@ const platforms = ['pc', 'xbl', 'psn'],
   otherplatforms = ['xbl', 'psn'],
   modes = ['quick', 'comp', 'link', 'unlink', 'hero', 'herocomp'],
   heromodes = ['hero', 'herocomp'],
+  linkmodes = ['link', 'unlink'],
   lazymodes = ['unlink'];
 
 /**
@@ -129,7 +130,10 @@ export default class OverwatchCMD extends Commando.Command {
       if (!player) {
         const res = API.checkDatabase(msg.author);
         if (res) [player, platform] = res;
-        else err = 'Please enter a battletag. If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
+        else {
+          err = 'Please enter a battletag.';
+          if (!linkmodes.includes(mode)) err += 'If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
+        }
       } else if (isBattletag(player)) {
         if (!platform) platform = 'pc';
         else if (!platforms.includes(platform)) {
@@ -140,7 +144,10 @@ export default class OverwatchCMD extends Commando.Command {
         const res = API.checkDatabase(msg.author);
         hero = player;
         if (res) [player, platform] = res;
-        else err = 'Please enter a battletag. If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
+        else {
+          err = 'Please enter a battletag.';
+          if (!linkmodes.includes(mode)) err += 'If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.';
+        }
       }
       else if (!platform) err = 'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`';
       else if (!otherplatforms.includes(platform)) {
