@@ -23,8 +23,15 @@ export default class DevStatsCMD extends Commando.Command {
   //@ts-ignore
   run(msg: Commando.CommandoMessage, { mode }) {
     if (['servers', 'guilds'].includes(mode)) {
-      var text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().join(', ') + '\n```';
+      const text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().join(', ') + '\n```';
       msg.say(text);
+    } else if (['database', 'db'].includes(mode)) {
+      const { ow }: { ow: Object } = client.settings.get('global');
+      msg.say(`Here is the current database:
+      - Overwatch (${Object.keys(ow).length}):
+      \`\`\`json
+      ${JSON.stringify(ow)}
+      \`\`\``);
     }
   }
 }
