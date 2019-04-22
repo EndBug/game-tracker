@@ -142,6 +142,8 @@ async function initClient() {
     sqlite.open(path.join(__dirname, '../../data/settings.sqlite3')).then(db => new Commando.SQLiteProvider(db)) //tslint-disable-line
   ).catch(console.error);
 
+  // Starts the interval
+  (await import('../utils/dbl_stats')).post();
 
   loadAPIs();
   const commandDirs = path.join(__dirname, '../commands');
