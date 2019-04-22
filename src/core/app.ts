@@ -127,6 +127,7 @@ async function initClient() {
   client.registry.registerGroups([
     ['bot', 'Bot'],
     ['data', 'Data management'],
+    ['dbl', 'Discord Bots List'],
     ['dev', 'Developers'],
     ['ow', 'Overwatch']
   ]).registerDefaultGroups()
