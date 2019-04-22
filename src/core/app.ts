@@ -147,7 +147,9 @@ async function initClient() {
   (await import('../utils/dbl_stats')).post();
 
   loadAPIs();
-  const commandDirs = path.join(__dirname, '../commands');
+
+  // #region "Manual" command loading
+  /*const commandDirs = path.join(__dirname, '../commands');
   const dirs = fs.readdirSync(commandDirs);
   for (const groupDir of dirs) {
     if (groupDir != 'samples') {
@@ -157,7 +159,15 @@ async function initClient() {
         client.registry.registerCommand(c);
       }
     }
-  }
+  }*/
+  // #endregion
+
+  client.registry.registerCommandsIn({
+    dirname: path.join(__dirname, '../commands'),
+    filter: /(.+)\.ts$/,
+    excludeDirs: /^\.(git|svn)$/,
+    recursive: true
+  });
 
   return client;
 }
