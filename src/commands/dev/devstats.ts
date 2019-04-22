@@ -2,7 +2,7 @@ import * as Commando from 'discord.js-commando';
 
 import { client } from '../../core/app';
 
-export default class SampleCMD extends Commando.Command {
+export default class DevStatsCMD extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
     super(client, {
       name: 'devstats',
