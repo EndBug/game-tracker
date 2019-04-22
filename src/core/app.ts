@@ -165,7 +165,7 @@ async function initClient() {
   client.registry.registerCommandsIn({
     dirname: path.join(__dirname, '../commands'),
     filter: /(.+)\.ts$/,
-    excludeDirs: /^\.(git|svn)$/,
+    excludeDirs: /^\.(git|svn)|samples$/,
     recursive: true
   });
 
