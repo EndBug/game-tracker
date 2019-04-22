@@ -8,7 +8,7 @@ export default class InviteCMD extends Commando.Command {
       aliases: ['inviteme', 'add', 'addme', 'invitelink'],
       group: 'bot',
       memberName: 'invite',
-      description: 'Gives you the link to add the bot to your guild',
+      description: 'Gives you the link to add the bot to your guild.',
       guildOnly: false,
       ownerOnly: false
     });

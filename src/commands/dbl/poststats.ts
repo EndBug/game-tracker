@@ -9,7 +9,7 @@ export default class PostStatsCMD extends Commando.Command {
       aliases: ['postdblstats'],
       group: 'dbl',
       memberName: 'poststats',
-      description: 'Manually posts bot stats to Discord Bots List\'s API',
+      description: 'Manually posts bot stats to Discord Bots List\'s API.',
       guildOnly: false,
       ownerOnly: true
     });
