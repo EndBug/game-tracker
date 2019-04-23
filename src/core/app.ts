@@ -106,6 +106,8 @@ async function initClient() {
   client = new Commando.CommandoClient({
     commandPrefix: '-',
     owner: '218308478580555777',
+    //@ts-ignore
+    unknownCommandResponse: false
   });
 
   client.on('error', console.error);
