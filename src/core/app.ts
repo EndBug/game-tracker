@@ -133,7 +133,8 @@ async function initClient() {
   ]).registerDefaultGroups()
     .registerDefaultTypes()
     .registerDefaultCommands({
-      ping: false
+      ping: false,
+      unknownCommand: false
     });
 
   client.login(TOKEN);
