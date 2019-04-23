@@ -26,7 +26,8 @@ export default class DevStatsCMD extends Commando.Command {
       const text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().join(', ') + '\n```';
       msg.say(text);
     } else if (['database', 'db'].includes(mode)) {
-      const { ow }: { ow: Object } = client.settings.get('global');
+      //@ts-ignore
+      const { ow }: { ow: Object } = client.provider.settings.get('global');
       msg.say(`Here is the current database:
       - Overwatch (${Object.keys(ow).length}):
       \`\`\`json
