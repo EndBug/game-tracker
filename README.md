@@ -1,4 +1,6 @@
 # Game Tracker
+[![Support Guild](https://discordapp.com/api/guilds/475792603867119626/embed.png)](https://discord.gg/ZhnWkqc)
+
 ### What is Game Tracker?
 Game Tracker is an open source Discord bot that is able to fecth stats from your favorite games. It's also able to remember your account, so that you don't need to remember it every time.
 
