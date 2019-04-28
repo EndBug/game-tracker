@@ -2,3 +2,5 @@ node_modules
 project.bat
 *.ini
 reloadme.json
+.env
+settings.sqlite3

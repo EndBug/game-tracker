@@ -9,8 +9,8 @@ nodemon.on('readable', function () { // the `readable` event indicates that data
   this.stderr.pipe(fs.createWriteStream('err.txt'));
 });
 
-import { crash } from './backup';
-nodemon.on('crash', async () => {
+import { available, crash } from './backup';
+if (available) nodemon.on('crash', async () => {
   const backup = await crash().catch(console.error);
   if (backup instanceof Error) console.error('There has been an error: \n' + backup);
   else if (backup !== true) console.error('There has been an undefined error.');

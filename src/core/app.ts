@@ -147,7 +147,8 @@ async function initClient() {
   ).catch(console.error);
 
   // Starts the interval
-  (await import('../utils/dbl_stats')).post();
+  if (process.env.DBL_TOKEN) (await import('../utils/dbl_stats')).post().catch(console.error);
+  else console.log('No optional DBL token found.');
 
   loadAPIs();
 
@@ -244,7 +245,8 @@ function loadModules() {
 }
 
 (async () => {
-  await backup.init().catch(console.error);
+  if (backup.available) await backup.init().catch(console.error);
+  else console.log('No backup token found.');
   await initClient();
   loadModules();
 })().catch(console.error);
