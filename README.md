@@ -1,5 +1,11 @@
 # Game Tracker
 [![Support Guild](https://discordapp.com/api/guilds/475792603867119626/embed.png)](https://discord.gg/ZhnWkqc)
+[![Discord Bots](https://discordbots.org/api/widget/status/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Discord Bots](https://discordbots.org/api/widget/servers/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Discord Bots](https://discordbots.org/api/widget/upvotes/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Discord Bots](https://discordbots.org/api/widget/lib/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Discord Bots](https://discordbots.org/api/widget/owner/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+
 
 ### What is Game Tracker?
 Game Tracker is an open source Discord bot that is able to fecth stats from your favorite games. It's also able to remember your account, so that you don't need to remember it every time.
