@@ -1,11 +1,11 @@
 # Game Tracker
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 [![Support Guild](https://discordapp.com/api/guilds/475792603867119626/embed.png)](https://discord.gg/ZhnWkqc)
 [![Discord Bots](https://discordbots.org/api/widget/status/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Discord Bots](https://discordbots.org/api/widget/servers/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Discord Bots](https://discordbots.org/api/widget/upvotes/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Discord Bots](https://discordbots.org/api/widget/lib/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Discord Bots](https://discordbots.org/api/widget/owner/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
 
 ### What is Game Tracker?
