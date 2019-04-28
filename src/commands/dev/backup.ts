@@ -12,12 +12,15 @@ export default class BackupCMD extends Commando.Command {
       memberName: 'backup',
       description: 'Forces the bot to backup the settings database',
       details: 'One backup is issued after every crash.',
-      guildOnly: true
+      guildOnly: true,
+      hidden: backup.available
     });
   }
 
   //@ts-ignore
   async run(msg: Commando.CommandoMessage) {
+    if (!backup.available) return msg.reply('There is no backup token, please check your .env file.');
+
     let res = await msg.say('Uploading backup...');
     if (res instanceof Array) res = res[0];
     backup.upload('Manual')

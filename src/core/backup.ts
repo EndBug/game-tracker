@@ -2,8 +2,11 @@ require('dotenv').load();
 
 import * as Discord from 'discord.js';
 import * as fs from 'fs';
-const request = require('request-promise');
+import request from 'request-promise';
 import * as path from 'path';
+
+const token = process.env.BACKUP;
+export const available = !!token;
 
 const client = new Discord.Client();
 let guild: Discord.Guild, channel: Discord.TextChannel;
@@ -66,6 +69,8 @@ function loadChannels(check = true) {
  */
 export function init(doRestore = true) {
   return new Promise((resolve, reject) => {
+    if (!available) reject('There is no backup token, please check your .env file.');
+
     client.on('error', reject);
     client.login(process.env.BACKUP).catch(reject);
     client.on('ready', async () => {
