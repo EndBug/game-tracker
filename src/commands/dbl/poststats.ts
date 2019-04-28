@@ -1,6 +1,6 @@
 import * as Commando from 'discord.js-commando';
 
-import { post } from '../../utils/dbl_stats';
+import { post, available } from '../../utils/dbl_stats';
 
 export default class PostStatsCMD extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -11,7 +11,8 @@ export default class PostStatsCMD extends Commando.Command {
       memberName: 'poststats',
       description: 'Manually posts bot stats to Discord Bots List\'s API.',
       guildOnly: false,
-      ownerOnly: true
+      ownerOnly: true,
+      hidden: available
     });
   }
 

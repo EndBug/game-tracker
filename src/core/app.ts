@@ -147,7 +147,7 @@ async function initClient() {
   ).catch(console.error);
 
   // Starts the interval
-  (await import('../utils/dbl_stats')).post();
+  if (process.env.DBL_TOKEN) (await import('../utils/dbl_stats')).post().catch(console.error);
 
   loadAPIs();
 
