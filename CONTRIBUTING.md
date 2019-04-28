@@ -13,3 +13,8 @@ This is the stuff you'll need to know before submitting a PR:
  - Do **NOT** build TypeScript code: the bot works using the [`ts-node`](https://www.npmjs.com/package/ts-node) package, if you build the files and try to run them by yourself they could not work.  
 
 \**Please note that the version of Commando used is a slightly modified one, in order to make it compatible with TypeScript: the documentation usually refers to the 0.10.0 version, but you can find the code of the version in use at [EndBug/Commando#djs-v11.4.2](https://github.com/EndBug/Commando/tree/djs-v11.4.2)*
+
+### All-contributors
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!  
+To get added to the contributors list in [`README`](README.md) please ask it the pull request or issue you opened ;)
