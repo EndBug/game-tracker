@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "EndBug",
+      "name": "Federico Grandi",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/26386270?v=4",
+      "profile": "https://stackoverflow.com/users/7133466/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "game-tracker",
+  "projectOwner": "EndBug",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
