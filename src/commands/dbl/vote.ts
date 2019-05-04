@@ -22,8 +22,8 @@ export default class VoteCMD extends Commando.Command {
       .addField('Reminders', 'If you really care about the bot you can also set reminders by clicking the \'Yes, remind me\' button: that will send notifications to your browser evey time you\'re able to vote again (12 hours after one vote). If you prefer, you can also get daily notifications by checking the \'Remind me daily\' box.')
       .setTimestamp();
 
-    const votes = await getVotes();
-    if (votes instanceof Array) embed.addField('Current votes', votes.length);
+    // const votes = await getVotes();
+    // if (votes instanceof Array) embed.addField('Current votes', votes.length);
 
     msg.say({ embed });
   }
