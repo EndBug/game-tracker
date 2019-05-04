@@ -595,7 +595,7 @@ export class OverwatchAPI extends API {
 
     let error: Error;
     const r: OWAPIBlob | ErrorResponse = await request({
-      uri: `https://${APIHost || await checkLocalAPI()}/api/v3/u/${battletag}/blob${platform ? `?platform=${platform}` : ''}`,
+      uri: encodeURI(`https://${APIHost || await checkLocalAPI()}/api/v3/u/${battletag}/blob${platform ? `?platform=${platform}` : ''}`),
       headers: {
         'User-Agent': 'request'
       },
