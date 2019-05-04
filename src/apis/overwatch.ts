@@ -1,9 +1,9 @@
 import { TSMap as Map } from 'typescript-map';
-import { getHeroStats, HeroStats } from 'overwatch-stats-api';
+import { getHeroStats, HeroStats } from 'overwatch-stats-api'; // eslint-disable-line no-unused-vars
 
 import { API } from '../core/app';
-import { OWAPIBlob, Region, ErrorResponse } from '../types/owapi';
-import { CommandoMessage } from 'discord.js-commando';
+import { OWAPIBlob, Region, ErrorResponse } from '../types/owapi'; // eslint-disable-line no-unused-vars
+import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
 import { User, GuildMember, RichEmbed } from 'discord.js';
 import { getShortName, capitalize, readHours, readMinutes, readNumber, equals, humanize } from '../utils/utils';
 
@@ -476,7 +476,7 @@ function errorCheck(data: Region | Error | StatusCodeError, [mode, battletag, pl
       error = obj.msg || 'api down';
       embedMode = 'down';
     } else {
-      error = obj.msg ? `\`${obj.error}\` - \`${obj.msg}\`` : obj.error.toString();
+      error = obj.msg ? `\`${obj.error}\` - \`${obj.msg}\`` : obj.toString();
       embedMode = 'error';
     }
     error += `\nYou requested ${mode == 'link' ? 'to link' : `${mode} stats for`} ${player(battletag, platform)}`;
@@ -540,6 +540,7 @@ function heroName(str: string) {
  * Manually locks a 'data' variable into the Region state
  * @param v The variable to lock
  */
+// eslint-disable-next-line no-unused-vars
 function lockRegion(v: any): v is Region {
   return true;
 }
