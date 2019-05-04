@@ -14,6 +14,13 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "name": "Genji#9447 (from Discord)",
+      "avatar_url": "https://cdn.discordapp.com/avatars/297002583526998018/fdd24f0355ab6bca574f507d32b01b65.png",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
