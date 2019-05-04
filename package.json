@@ -6,6 +6,8 @@
   "scripts": {
     "start": "ts-node src/core/start.ts",
     "dev": "nodemon --watch src/**/*.* --ignore src/commands/**/*.* --ignore src/utils/reloadme.json --exec ts-node src/core/start.ts",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Federico 'EndBug' Grandi <fgrandi30@gmail.com>",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^11.10.4",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
+    "all-contributors-cli": "^6.3.1",
     "typescript": "^3.3.3333",
     "typescript-eslint-parser": "^22.0.0"
   }
