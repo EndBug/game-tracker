@@ -42,7 +42,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-<table><tr><td align="center"><a href="https://stackoverflow.com/users/7133466/"><img src="https://avatars1.githubusercontent.com/u/26386270?v=4" width="100px;" alt="Federico Grandi"/><br /><sub><b>Federico Grandi</b></sub></a><br /><a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Code">💻</a> <a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Documentation">📖</a></td><td align="center"><img src="https://i.imgur.com/q4HaxCr.png" width="100px;" alt="Genji#9447 (from Discord)"/><br /><sub><b>Genji#9447 (from Discord)</b></sub><br /><a href="https://github.com/EndBug/game-tracker/issues?q=author%3A" title="Bug reports">🐛</a></td></tr></table>
+<table><tr><td align="center"><a href="https://stackoverflow.com/users/7133466/"><img src="https://avatars1.githubusercontent.com/u/26386270?v=4" width="100px;" alt="Federico Grandi"/><br /><sub><b>Federico Grandi</b></sub></a><br /><a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Code">💻</a> <a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Documentation">📖</a></td><td align="center"><img src="https://i.imgur.com/jX5MSNj.png" width="100px;" alt="Genji#9447 (from Discord)"/><br /><sub><b>Genji#9447 (from Discord)</b></sub><br /><a href="https://github.com/EndBug/game-tracker/issues?q=author%3A" title="Bug reports">🐛</a></td></tr></table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
