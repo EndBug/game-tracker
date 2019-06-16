@@ -1,5 +1,5 @@
-import { TSMap as Map } from 'typescript-map';
-import { User, GuildMember } from 'discord.js';
+import { TSMap as Map } from 'typescript-map'; // eslint-disable-line no-unused-vars
+import { User, GuildMember } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { homeguild, owner } from '../core/app';
 
 /**
