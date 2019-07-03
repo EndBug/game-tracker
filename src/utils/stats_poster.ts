@@ -2,6 +2,7 @@ import { Poster } from 'dbots';
 import { client } from '../core/app';
 
 const { discordbotsorg } = process.env;
+const tokens = { discordbotsorg };
 
 export var available: boolean = !!(discordbotsorg);
 export var interval: number = 1800000; //ms
@@ -18,9 +19,7 @@ export function start() {
   poster = new Poster({
     client: client,
     clientLibrary: 'discord.js',
-    apiKeys: {
-      discordbotsorg
-    }
+    apiKeys: tokens
   });
 
   poster.startInterval(interval);
