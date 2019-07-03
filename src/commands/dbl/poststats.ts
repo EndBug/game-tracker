@@ -1,6 +1,6 @@
 import * as Commando from 'discord.js-commando';
 
-import { post, available } from '../../utils/dbl_stats';
+import { poster, available } from '../../utils/stats_poster';
 
 export default class PostStatsCMD extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -9,7 +9,7 @@ export default class PostStatsCMD extends Commando.Command {
       aliases: ['postdblstats'],
       group: 'dbl',
       memberName: 'poststats',
-      description: 'Manually posts bot stats to Discord Bots List\'s API.',
+      description: 'Manually posts bot stats to Registered services.',
       guildOnly: false,
       ownerOnly: true,
       hidden: available
@@ -22,7 +22,8 @@ export default class PostStatsCMD extends Commando.Command {
     if (rep instanceof Array) rep = rep[0];
 
     try {
-      await post();
+      const stats = await poster.post();
+      rep.edit('Stats successfully posted :white_check_mark:\n```\n' + stats + '\n```');
     } catch (e) {
       rep.edit('Couldn\'t post stats:\n```\n' + e + '\n```');
     }

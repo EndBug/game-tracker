@@ -10,6 +10,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { mapToObj } from '../utils/utils';
+import * as stats_poster from '../utils/stats_poster';
 
 const { TOKEN } = process.env;
 
@@ -146,8 +147,10 @@ async function initClient() {
     sqlite.open(path.join(__dirname, '../../data/settings.sqlite3')).then(db => new Commando.SQLiteProvider(db)) //tslint-disable-line
   ).catch(console.error);
 
-  // Starts the interval
-  if (process.env.DBL_TOKEN) (await import('../utils/dbl_stats')).post().catch(console.error);
+  // Starts the stat poster interval
+  if (stats_poster.available) try {
+    stats_poster.start();
+  } catch (e) { console.error(e); }
   else console.log('No optional DBL token found.');
 
   loadAPIs();
