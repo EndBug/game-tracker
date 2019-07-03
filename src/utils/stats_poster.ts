@@ -8,6 +8,10 @@ export var interval: number = 1800000; //ms
 
 export var poster: Poster;
 
+/**
+ * Starts the interval for the poster
+ * @throws An error when when no service is available
+ */
 export function start() {
   if (!available) throw new Error('Can\'t start poster without any API token!');
 
