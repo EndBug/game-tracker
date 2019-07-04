@@ -1,10 +1,10 @@
 import { Poster } from 'dbots';
 import { client } from '../core/app';
 
-const { discordbotsorg, botsondiscord } = process.env;
-const tokens = { discordbotsorg, botsondiscord };
+const { discordbotsorg, botsondiscord, botsfordiscord } = process.env;
+const tokens = { discordbotsorg, botsondiscord, botsfordiscord };
 
-export var available: boolean = !!(discordbotsorg || botsondiscord);
+export var available: boolean = !!Object.values(tokens).find(e => !!e);
 export var interval: number = 1800000; //ms
 
 export var poster: Poster;
