@@ -23,6 +23,7 @@ export function start() {
   });
 
   poster.startInterval(interval);
+  return poster.post();
 }
 
 /**
