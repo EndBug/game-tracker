@@ -13,7 +13,7 @@
   "author": "Federico 'EndBug' Grandi <fgrandi30@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "dblapi.js": "^2.3.0",
+    "dbots": "github:EndBug/dbots.js#ts-definitions",
     "discord.js": "11.4.2",
     "discord.js-commando": "github:EndBug/Commando#djs-v11.4.2",
     "dotenv": "^6.2.0",
