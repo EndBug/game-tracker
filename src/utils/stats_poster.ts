@@ -1,8 +1,8 @@
 import { Poster } from 'dbots';
 import { client } from '../core/app';
 
-const { discordbotsorg, botsondiscord, botsfordiscord } = process.env;
-const tokens = { discordbotsorg, botsondiscord, botsfordiscord };
+const { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg } = process.env;
+const tokens = { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg };
 
 export var available: boolean = !!Object.values(tokens).find(e => !!e);
 export var interval: number = 1800000; //ms
