@@ -23,7 +23,7 @@ export default class PostStatsCMD extends Commando.Command {
 
     try {
       const stats = await poster.post();
-      rep.edit('Stats successfully posted :white_check_mark:\n```\n' + stats + '\n```');
+      rep.edit(`Stats successfully posted to ${stats instanceof Array ? `\`${stats.length}\` service${stats.length == 1 ? '' : 's'}` : '`1` service'} :white_check_mark:`);
     } catch (e) {
       rep.edit('Couldn\'t post stats:\n```\n' + e + '\n```');
     }
