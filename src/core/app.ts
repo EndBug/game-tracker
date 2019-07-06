@@ -149,10 +149,6 @@ async function initClient() {
 
   // Starts the stat poster interval
   if (stats_poster.available) try {
-    stats_poster.on('autopost', result => {
-      const n = result instanceof Array ? result.length : 1;
-      console.log(`[DBOTS] Posted stats to ${n} services`);
-    });
     await stats_poster.start();
   } catch (e) { console.error(e); }
   else console.log('No optional DBL token found.');

@@ -22,6 +22,11 @@ export function start() {
     apiKeys: tokens
   });
 
+  poster.addHandler('autopost', result => {
+    const n = result instanceof Array ? result.length : 1;
+    console.log(`[DBOTS] Posted stats to ${n} services`);
+  });
+
   poster.startInterval(interval);
   return poster.post();
 }
