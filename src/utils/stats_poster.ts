@@ -39,3 +39,5 @@ export function changeInterval(newInterval: number) {
   poster.startInterval();
   return true;
 }
+
+export const on = poster.addHandler;
