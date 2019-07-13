@@ -1,8 +1,8 @@
-import { Poster } from 'dbots';
+import { Poster, PosterOptions } from 'dbots'; //eslint-disable-line no-unused-vars
 import { client } from '../core/app';
 
-const { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg } = process.env;
-const tokens = { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg };
+const { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist } = process.env;
+const tokens: PosterOptions['apiKeys'] = { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist };
 
 export var available: boolean = !!Object.values(tokens).find(e => !!e);
 export var interval: number = 1800000; //ms
