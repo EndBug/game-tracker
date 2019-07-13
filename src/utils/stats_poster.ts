@@ -28,7 +28,10 @@ export function start() {
   });
 
   poster.startInterval(interval);
-  return poster.post();
+  return poster.post().then(result => {
+    poster.runHandlers('autopost', result);
+    return result;
+  });
 }
 
 /**
