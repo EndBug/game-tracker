@@ -1,4 +1,4 @@
-import { ActivityType, PresenceStatus } from 'discord.js';
+import { ActivityType, PresenceStatus } from 'discord.js'; //eslint-disable-line no-unused-vars
 import { client } from '../core/app';
 
 const interval = 12500;
@@ -19,7 +19,7 @@ class Presence {
     this.status = status || 'online';
     this.afk = false;
     this.game = {
-      name,
+      name: name.replace(new RegExp('/guildCount/', 'g'), client.guilds.size.toString()),
       type: type || 'PLAYING',
       url: stream
     };
@@ -27,7 +27,8 @@ class Presence {
 }
 
 const status = [
-  new Presence('for your requests!', 'WATCHING')
+  new Presence('for your requests!', 'WATCHING'),
+  new Presence('/guildCount/ servers.', 'WATCHING')
 ];
 
 var index = 0;
