@@ -1,8 +1,8 @@
 import { Poster, PosterOptions } from 'dbots'; //eslint-disable-line no-unused-vars
 import { client } from '../core/app';
 
-const { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist } = process.env;
-const tokens: PosterOptions['apiKeys'] = { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist };
+const { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist, divinediscordbots } = process.env;
+const tokens: PosterOptions['apiKeys'] = { discordbotsorg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist, divinediscordbots };
 
 export var available: boolean = !!Object.values(tokens).find(e => !!e);
 export var interval: number = 1800000; //ms
@@ -13,7 +13,7 @@ export var poster: Poster;
  * Starts the interval for the poster
  * @throws An error when when no service is available
  */
-export function start() {
+export async function start() {
   if (!available) throw new Error('Can\'t start poster without any API token!');
 
   poster = new Poster({
@@ -28,10 +28,9 @@ export function start() {
   });
 
   poster.startInterval(interval);
-  return poster.post().then(result => {
-    poster.runHandlers('autopost', result);
-    return result;
-  });
+  const result = await poster.post();
+  poster.runHandlers('autopost', result);
+  return result;
 }
 
 /**
