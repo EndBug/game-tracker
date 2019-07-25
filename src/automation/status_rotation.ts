@@ -19,10 +19,15 @@ class Presence {
     this.status = status || 'online';
     this.afk = false;
     this.game = {
-      name: name.replace(new RegExp('/guildCount/', 'g'), client.guilds.size.toString()),
+      name,
       type: type || 'PLAYING',
       url: stream
     };
+  }
+
+  /** Replaces the dynamic variables inside the presence name */
+  getName() {
+    return this.game.name.replace(new RegExp('/guildCount/', 'g'), client.guilds.size.toString());
   }
 }
 
@@ -35,15 +40,15 @@ var index = 0;
 
 /**
  * Reads a custom `Presence` instance and sets it to the client user
- * @param obj The `Presence` to read
+ * @param pres The `Presence` to read
  */
-function setPresence(obj: Presence) {
+function setPresence(pres: Presence) {
   index++;
   index %= status.length;
 
-  client.user.setStatus(obj.status);
-  client.user.setActivity(obj.game.name, {
-    type: obj.game.type
+  client.user.setStatus(pres.status);
+  client.user.setActivity(pres.getName(), {
+    type: pres.game.type
   });
 }
 
