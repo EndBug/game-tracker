@@ -138,6 +138,11 @@ async function initClient() {
     .registerDefaultCommands({
       ping: false,
       unknownCommand: false
+    }).registerEvalObjects({
+      backup,
+      Commando,
+      Discord,
+      fs,
     });
 
   client.login(TOKEN);
