@@ -136,6 +136,7 @@ async function initClient() {
   ]).registerDefaultGroups()
     .registerDefaultTypes()
     .registerDefaultCommands({
+      eval: false,
       ping: false,
       unknownCommand: false
     });
