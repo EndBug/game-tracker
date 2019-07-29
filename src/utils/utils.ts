@@ -2,6 +2,39 @@ import { TSMap as Map } from 'typescript-map'; // eslint-disable-line no-unused-
 import { User, GuildMember } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { homeguild, owner } from '../core/app';
 
+//#region Classes
+/** Temporarily stores data that gets fecthed through OverwatchAPI.getRaw, in order to avoid too many requests */
+export class Cache {
+  name: string;
+  store: Map<string, any>
+
+  constructor(name: string) {
+    this.name = name;
+    this.store = new Map();
+  }
+
+  /**
+   * Adds an entry to the cache
+   * @param id The key of the entry
+   * @param value The value of the entry
+   */
+  add(id: string, value) {
+    this.store.set(id, value);
+    setTimeout(() => { this.store.delete(id); }, 60 * 1000);
+    return this.store;
+  }
+
+  /**
+   * Gets a value from the cache
+   * @param id The id of the entry
+   */
+  get(id: string) {
+    return this.store.get(id);
+  }
+}
+//#endregion
+
+//#region Functions
 /**
  * Returns str with capital first letter
  * @param str
@@ -194,3 +227,4 @@ export function readNumber(number: number, decimals = 2) {
 export function twoDigits(number: number) {
   return `0${number}`.slice(-2);
 }
+//#endregion

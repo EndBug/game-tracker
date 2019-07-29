@@ -1,11 +1,10 @@
-import { TSMap as Map } from 'typescript-map';
 import { getHeroStats, HeroStats } from 'overwatch-stats-api'; // eslint-disable-line no-unused-vars
 
 import { API } from '../core/app';
 import { OWAPIBlob, Region, ErrorResponse } from '../types/owapi'; // eslint-disable-line no-unused-vars
 import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
 import { User, GuildMember, RichEmbed } from 'discord.js';
-import { getShortName, capitalize, readHours, readMinutes, readNumber, equals, humanize } from '../utils/utils';
+import { getShortName, capitalize, readHours, readMinutes, readNumber, equals, humanize, Cache } from '../utils/utils';
 
 const requestNative = require('request-promise');
 async function request(...args: any[]) {
@@ -94,37 +93,6 @@ async function checkLocalAPI() {
 
 //#endregion
 
-/**
- * Temporarily stores data that gets fecthed through OverwatchAPI.getRaw, in order to avoid too many requests
- */
-class Cache {
-  name: string;
-  store: Map<string, any>
-
-  constructor(name: string) {
-    this.name = name;
-    this.store = new Map();
-  }
-
-  /**
-   * Adds an entry to the cache
-   * @param id The key of the entry
-   * @param value The value of the entry
-   */
-  add(id: string, value) {
-    this.store.set(id, value);
-    setTimeout(() => { this.store.delete(id); }, 60 * 1000);
-    return this.store;
-  }
-
-  /**
-   * Gets a value from the cache
-   * @param id The id of the entry
-   */
-  get(id: string) {
-    return this.store.get(id);
-  }
-}
 var cache = new Cache('Overwacth');
 
 /* #region Embeds */
