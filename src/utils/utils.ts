@@ -1,8 +1,82 @@
 import { TSMap as Map } from 'typescript-map'; // eslint-disable-line no-unused-vars
 import { User, GuildMember } from 'discord.js'; // eslint-disable-line no-unused-vars
-import { homeguild, owner } from '../core/app';
+import { homeguild, owner, client } from '../core/app';
 
 //#region Classes
+
+export class API {
+  name: string;
+  game: string;
+  store: APIStore;
+
+  constructor(key: string, game: string) {
+    this.name = key;
+    this.game = game;
+    this.store = new APIStore(key);
+  }
+}
+class APIStore {
+  api: string
+  store: Map<string, any>
+
+  constructor(api: string) {
+    this.api = api;
+
+    const existing = client.provider.get('global', api);
+    if (existing) this.store = new Map(Object.entries(existing));
+    else {
+      this.store = new Map();
+      this.save();
+    }
+  }
+
+  /**
+   * Gets the value with a given key
+   * @param key The key for the value
+   */
+  get(key: string) {
+    return this.store.get(key);
+  }
+
+  /**
+   * Deletes the entry with a given key, then runs .save()
+   * @param key The key for the entry
+   */
+  delete(key: string) {
+    this.store.delete(key);
+    this.save();
+    return this;
+  }
+
+  /**
+   * Creates a new entry with a given key and value, then runs .save()
+   * @param key The key for the entry
+   * @param value The value for the entry
+   */
+  set(key: string, value) {
+    this.store.set(key, value);
+    this.save();
+    return this;
+  }
+
+  /**
+   * Finds the key for a given value (returns only the first result)
+   * @param value The value for the key
+   */
+  getKey(value): string {
+    for (const key of this.store.keys()) {
+      if (this.store.get(key) == value) return key;
+    }
+  }
+
+  /**
+   * Saves the store into the database under the 'global' scope
+   */
+  save() {
+    return client.provider.set('global', this.api, mapToObj(this.store));
+  }
+}
+
 /** Temporarily stores data that gets fecthed through OverwatchAPI.getRaw, in order to avoid too many requests */
 export class Cache {
   name: string;

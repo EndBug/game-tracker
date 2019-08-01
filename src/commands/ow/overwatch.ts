@@ -1,6 +1,6 @@
 import * as Commando from 'discord.js-commando';
 
-import { APIS, owner, roles } from '../../core/app';
+import { APIS } from '../../core/app';
 import { isMention } from '../../utils/utils';
 import { OverwatchAPI } from '../../apis/overwatch'; //eslint-disable-line
 

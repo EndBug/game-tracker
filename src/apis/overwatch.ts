@@ -1,6 +1,6 @@
 import { getHeroStats, HeroStats } from 'overwatch-stats-api'; // eslint-disable-line no-unused-vars
 
-import { API } from '../core/app';
+import { API } from '../utils/utils';
 import { OWAPIBlob, Region, ErrorResponse } from '../types/owapi'; // eslint-disable-line no-unused-vars
 import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
 import { User, GuildMember, RichEmbed } from 'discord.js';

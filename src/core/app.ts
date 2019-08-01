@@ -1,15 +1,14 @@
 require('dotenv').load();
 
-import { TSMap as Map } from 'typescript-map';
 type Class = { new(...args: any[]): any; };
 
-import * as Discord from 'discord.js'; //eslint-disable-line
+import * as Discord from 'discord.js';
 import * as Commando from 'discord.js-commando';
 import * as sqlite from 'sqlite';
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { mapToObj } from '../utils/utils';
+import { API } from '../utils/utils'; // eslint-disable-line no-unused-vars
 import * as stats_poster from '../utils/stats_poster';
 
 const { TOKEN } = process.env;
@@ -17,88 +16,15 @@ const { TOKEN } = process.env;
 export let client: Commando.CommandoClient;
 export let homeguild: Discord.Guild;
 export let owner: Discord.User;
-export let roles: { [key: string]: Discord.Role } = {};
-export let links: { [key: string]: string } = {};
-export const APIS: { [key: string]: API } = {};
+export let roles: Record<string, Discord.Role> = {};
+export let links: Record<string, string> = {};
+export const APIS: Record<string, API> = {};
 export let APIUtil: {
   find(target: string | Discord.GuildMember | Discord.User, realName?: boolean): { [api: string]: any }
   erase(target: string | Discord.GuildMember | Discord.User): string[]
 };
 
 import * as backup from './backup';
-
-export class API {
-  name: string;
-  game: string;
-  store: APIStore;
-
-  constructor(key: string, game: string) {
-    this.name = key;
-    this.game = game;
-    this.store = new APIStore(key);
-  }
-}
-class APIStore {
-  api: string
-  store: Map<string, any>
-
-  constructor(api: string) {
-    this.api = api;
-
-    const existing = client.provider.get('global', api);
-    if (existing) this.store = new Map(Object.entries(existing));
-    else {
-      this.store = new Map();
-      this.save();
-    }
-  }
-
-  /**
-   * Gets the value with a given key
-   * @param key The key for the value
-   */
-  get(key: string) {
-    return this.store.get(key);
-  }
-
-  /**
-   * Deletes the entry with a given key, then runs .save()
-   * @param key The key for the entry
-   */
-  delete(key: string) {
-    this.store.delete(key);
-    this.save();
-    return this;
-  }
-
-  /**
-   * Creates a new entry with a given key and value, then runs .save()
-   * @param key The key for the entry
-   * @param value The value for the entry
-   */
-  set(key: string, value) {
-    this.store.set(key, value);
-    this.save();
-    return this;
-  }
-
-  /**
-   * Finds the key for a given value (returns only the first result)
-   * @param value The value for the key
-   */
-  getKey(value): string {
-    for (const key of this.store.keys()) {
-      if (this.store.get(key) == value) return key;
-    }
-  }
-
-  /**
-   * Saves the store into the database under the 'global' scope
-   */
-  save() {
-    return client.provider.set('global', this.api, mapToObj(this.store));
-  }
-}
 
 /**
  * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs 
