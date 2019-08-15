@@ -110,11 +110,37 @@ export class Cache {
 
 //#region Functions
 /**
- * Returns str with capital first letter
- * @param str
+ * Converts a camelCase string into a more readable format
+ * @example 'thisIsAnExample' => 'This is an example'
+ * @param joinWith The string to join the others (by default is a space)
  */
+export function camelToReadable(str: string, joinWith = ' ') {
+  const arr = str.split(/(?=[A-Z])/);
+  for (let i = 0; i < arr.length; i++) {
+    if (i == 0) arr[i] = capitalize(arr[i]);
+    else arr[i] = arr[i].toLowerCase();
+  }
+  return arr.join(joinWith);
+}
+
+/** Returns str with capital first letter */
 export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/** 
+ * Enforces a type by retuning always `true`; you need to use this with a type guard 
+ * @example if (!enforceType<YourType>(parameter)) return;
+ */
+/* eslint-disable-next-line no-unused-vars*/
+export function enforceType<T>(parameter: any): parameter is T {
+  return true;
+}
+
+/** Makes sure that there is only one value; when an array is passed as argument, return only the firts element */
+export function ensureOne<T>(value: T | T[]): T {
+  if (value instanceof Array) return value[0];
+  else return value;
 }
 
 /**
@@ -212,6 +238,34 @@ export function mentionToID(str: string) {
 }
 
 /**
+ * Takes some objects and creates a new object with all the properties of the original ones
+ * 
+ * If a property is present in more objects, the resulting will be the sum of the values of the others
+ * @param objects The objects you want to merge
+ */
+export function mergeAndSum<T>(...objects: T[]): T {
+  const actuallyDoIt = (obj1: T, obj2: T | T[]) => {
+    if (obj2 instanceof Array) return actuallyDoIt(obj1, internalCheck(...obj2));
+
+    const result = obj1;
+    for (const key in obj2) {
+      //@ts-ignore
+      if (result[key]) result[key] += obj2[key];
+      else result[key] = obj2[key];
+    }
+    return result;
+  };
+
+  const internalCheck = (...objects: T[]) => {
+    if (objects.length < 2) return objects[0];
+    if (objects.length > 2) return actuallyDoIt(objects[0], objects.slice(1));
+    if (objects.length == 2) return actuallyDoIt(objects[0], objects[1]);
+  };
+
+  return internalCheck(...objects);
+}
+
+/**
  * Formats a number
  * @param number 
  * @param decimals The number of decimals to show
@@ -268,6 +322,8 @@ export function numberFormat(number: number, decimals: number, dec_point?: strin
  * @param hours
  * @param readable Whether to make the minutes readable; if set to `false`, [hh, mm] will be returned
  */
+export function readHours(hours: number, readable?: true): string
+export function readHours(hours: number, readable: false): number[]
 export function readHours(hours: number, readable = true) {
   const hr = Math.floor(hours),
     mn = Math.round(hours * 60 % 60);
@@ -279,6 +335,8 @@ export function readHours(hours: number, readable = true) {
  * @param minutes 
  * @param readable Whether to make the minutes readable; if set to `false`, [mm, ss] will be returned
  */
+export function readMinutes(hours: number, readable?: true): string
+export function readMinutes(hours: number, readable: false): number[]
 export function readMinutes(minutes: number, readable = true) {
   const mn = Math.floor(minutes),
     ss = Math.round(minutes * 60 % 60);
