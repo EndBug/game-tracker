@@ -34,7 +34,7 @@ For a more developer-friendly report, please use the Issues section of this repo
 
 ### How can I contribute to the bot?
 The first thing you can do to contribute is reporting the bugs you find.  
-If you're a developer, you can also try fixing them/enhancing the bot by yourself: for that, please see the ["How to contribute"](CONTRIBUTING.md) section.
+If you're a developer, you can also try fixing them/enhancing the bot by yourself: for that, please see the ["How to contribute"](.github/CONTRIBUTING.md) section.
 
 ## Contributors
 
