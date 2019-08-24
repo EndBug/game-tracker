@@ -108,7 +108,7 @@ Examples:
 
 _Saves your battletag in the bot's database._
 
-**Format: `ow link <account> [platform]`**
+**Format: `ow link {account} [platform]`**
 
 Just enter your battletag/GamerTag/PSN ID. If you are on Xbox or PlayStation, specify the platform after it (default one is `pc`).  
 If you want to know more about how the bot manages and stores accounts, click [here](../STORED_DATA).
