@@ -24,7 +24,7 @@ When added, the bot will message the server owner to inform them about the bot.
 You can get a complete list of the commands by using the `help` command.
 The currently supported games are:
 
- - Overwatch
+ - [Overwatch](./doc/ow/OVERWATCH.md)
  
 More are yet to come ;)
 
