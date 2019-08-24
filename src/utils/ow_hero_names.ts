@@ -1,4 +1,6 @@
-import { capitalize } from './utils';
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 export const heroes = {
   'ana': [],
@@ -37,7 +39,7 @@ export const heroes = {
  * Coverts hero keys into readable names
  * @param str The hero key to convert
  */
-export function heroName(str: string) {
+export function heroName(str: string): string {
   const custom = {
     'dva': 'D.Va',
     'lucio': 'Lúcio',
