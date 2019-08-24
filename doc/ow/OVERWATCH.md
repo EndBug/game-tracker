@@ -123,3 +123,7 @@ Examples:
 _Unlinks your account._
 
 **Format: `ow unlink`**
+
+## Any questions?
+
+If you have further doubts or questions you can ask in the [Game Tracker Support Guild](https://discord.gg/ZhnWkqc).
