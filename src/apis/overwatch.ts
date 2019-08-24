@@ -1,11 +1,12 @@
 import { TSMap as Map } from 'typescript-map';
+import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
+import { User, GuildMember, RichEmbed } from 'discord.js';
 import { getHeroStats, HeroStats } from 'overwatch-stats-api'; // eslint-disable-line no-unused-vars
 
 import { API } from '../core/app';
 import { OWAPIBlob, Region, ErrorResponse } from '../types/owapi'; // eslint-disable-line no-unused-vars
-import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
-import { User, GuildMember, RichEmbed } from 'discord.js';
 import { getShortName, capitalize, readHours, readMinutes, readNumber, equals, humanize } from '../utils/utils';
+import { heroName } from '../utils/ow_hero_names';
 
 const requestNative = require('request-promise');
 async function request(...args: any[]) {
@@ -517,23 +518,6 @@ function getBestKeys(num: number, obj: Object, reverse = false) {
   });
   for (let i = 0; i < num && i < sortable.length; i++) res.push(sortable[i][0]);
   return res;
-}
-
-/**
- * Coverts hero keys into readable names
- * @param str The hero key to convert
- */
-function heroName(str: string) {
-  const custom = {
-    'dva': 'D.Va',
-    'lucio': 'Lúcio',
-    'mccree': 'McCree',
-    'soldier76': 'Soldier 76',
-  };
-  if (custom[str]) return custom[str];
-  const arr = str.split('_');
-  for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i]);
-  return arr.join(' ');
 }
 
 /**

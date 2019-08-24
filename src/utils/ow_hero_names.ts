@@ -1,3 +1,5 @@
+import { capitalize } from './utils';
+
 export const heroes = {
   'ana': [],
   'ashe': ['Ashe', 'BOB', 'B.O.B.'],
@@ -30,3 +32,20 @@ export const heroes = {
   'zarya': [],
   'zenyatta': ['zen', 'Zeniyatta']
 };
+
+/**
+ * Coverts hero keys into readable names
+ * @param str The hero key to convert
+ */
+export function heroName(str: string) {
+  const custom = {
+    'dva': 'D.Va',
+    'lucio': 'Lúcio',
+    'mccree': 'McCree',
+    'soldier76': 'Soldier 76',
+  };
+  if (custom[str]) return custom[str];
+  const arr = str.split('_');
+  for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i]);
+  return arr.join(' ');
+}
