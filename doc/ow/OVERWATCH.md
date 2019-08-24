@@ -15,9 +15,9 @@ These are the current commands:
 `<>` is for mandatory, `[]` is for optional, `{}` is for mandatory if not linked.
 
 ### Custom definitions
-* `{account}` → the account you want to look for; it could be either a BattleTag, a GamerTag or a PSN ID, depending on the platform. If the user you want to look up has [linked](#ow-link) their account you can replace this with a Discord `@mention`. If you [linked](#ow-link) your account and you want to see your stats leave this blank, the bot will automatically use your linked account.
-* `[platform]` → the platform the account belongs to; it could be either `pc`, `xbl` or `psn`. If you leave this blank, the bot will automatically use `pc` as the default. If you use a linked profile, whether for another user or yourself, you can leave this blank.
-* `[hero]` → the hero you want to see stats for; it usually corresponds to the English name of the hero in lowercase, but you can check the [hero table](./OW_HEROES.md) to be sure (names in other languages and nicknames are also supported).
+* `account` → the account you want to look for; it could be either a BattleTag, a GamerTag or a PSN ID, depending on the platform. If the user you want to look up has [linked](#ow-link) their account you can replace this with a Discord `@mention`. If you [linked](#ow-link) your account and you want to see your stats leave this blank, the bot will automatically use your linked account.
+* `platform` → the platform the account belongs to; it could be either `pc`, `xbl` or `psn`. If you leave this blank, the bot will automatically use `pc` as the default. If you use a linked profile, whether for another user or yourself, you can leave this blank.
+* `hero` → the hero you want to see stats for; it usually corresponds to the English name of the hero in lowercase, but you can check the [hero table](./OW_HEROES.md) to be sure (names in other languages and nicknames are also supported).
 
 # Commands
 
