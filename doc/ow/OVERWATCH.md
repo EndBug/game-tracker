@@ -117,3 +117,9 @@ Examples:
 * `ow link EeveeA#1716` → Links `EeveeA#1716` by searching in the PC category.
 * `ow link FANKDA psn` → Links `FANKDA` by searching in the PlayStation Network.
 * `ow link` → Displays your current linked account.
+
+### `ow unlink`
+
+_Unlinks your account._
+
+**Format: `ow unlink`**
