@@ -1,6 +1,6 @@
 import * as Commando from 'discord.js-commando';
 import { APIUtil } from '../../core/app';
-import { DMChannel, TextChannel, MessageReaction, User } from 'discord.js';
+import { DMChannel, TextChannel, MessageReaction, User } from 'discord.js'; // eslint-disable-line no-unused-vars
 
 export default class SampleCMD extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -24,7 +24,7 @@ export default class SampleCMD extends Commando.Command {
     const perm1 = channel instanceof DMChannel || channel.permissionsFor(this.client.user).has('ADD_REACTIONS');
     const perm2 = channel instanceof TextChannel && channel.permissionsFor(this.client.user).has('MANAGE_MESSAGES');
 
-    let main = await msg.reply('Are you sure you want to delete all of your stored data? All of your account will be unlinked from this bot.\nReact to confirm (✅) or cancel (❌) the command.\nThis command will expire in 30 seconds.');
+    let main = await msg.reply('Are you sure you want to delete all of your stored data? All of your accounts will be unlinked from this bot.\nReact to confirm (✅) or cancel (❌) the command.\nThis command will expire in 30 seconds.');
     if (main instanceof Array) main = main[0];
     if (perm1) {
       await main.react('✅');

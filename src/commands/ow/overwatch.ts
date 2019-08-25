@@ -1,44 +1,12 @@
 import * as Commando from 'discord.js-commando';
 
-import { APIS, owner, roles } from '../../core/app';
+import { APIS } from '../../core/app';
 import { isMention } from '../../utils/utils';
 import { OverwatchAPI } from '../../apis/overwatch'; //eslint-disable-line
+import { heroes } from '../../utils/ow_hero_names';
 
 //@ts-ignore
 const API: OverwatchAPI = APIS['ow'];
-
-const heroes = {
-  'ana': [],
-  'ashe': ['Ashe', 'BOB', 'B.O.B.'],
-  'baptiste': ['Jean-Baptiste'],
-  'bastion': [],
-  'brigitte': ['brig'],
-  'doomfist': ['doom'],
-  'dva': ['D.Va'],
-  'genji': ['gengu'],
-  'hanzo': ['handsoap'],
-  'junkrat': ['junk', 'Chacal', 'Hunkrat'],
-  'lucio': ['Lúcio'],
-  'mccree': ['mc'],
-  'mei': ['satan'],
-  'mercy': ['ange', 'angela'],
-  'moira': [],
-  'orisa': ['Oriisa'],
-  'pharah': ['phara', 'fara'],
-  'reaper': ['faucheur'],
-  'reinhardt': ['rein'],
-  'roadhog': ['road', 'Chopper'],
-  'soldier76': ['76', 'soldier_76', 'soldier', 'soldier-76'],
-  'sombra': [],
-  'symmetra': ['symm'],
-  'torbjorn': ['torb'],
-  'tracer': [],
-  'widowmaker': ['widow', 'Fatale'],
-  'winston': ['monkey', 'harambe', 'scientist'],
-  'wrecking_ball': ['hammond', 'wreckingball', 'wrecking ball'],
-  'zarya': [],
-  'zenyatta': ['zen', 'Zeniyatta']
-};
 
 const platforms = ['pc', 'xbl', 'psn'],
   otherplatforms = ['xbl', 'psn'],
