@@ -1,15 +1,16 @@
-import R6API, { Stats, Operator, OperatorStats, RankInfo, PvPMode, PvEMode } from 'r6api.js'; // eslint-disable-line no-unused-vars
+import R6API, { Stats, Operator, OperatorStats, RankInfo, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { Platform } from 'r6api.js'; // eslint-disable-line no-unused-vars
-import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable } from '../utils/utils';
+import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils';
+import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize } from '../utils/utils';
 import { RichEmbed, User } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
 
 const { UbisoftEmail, UbisoftPassword } = process.env;
 const r6api = new R6API(UbisoftEmail, UbisoftPassword);
 
-//#region Embeds
+// #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
-type embedType_Type = 'general' | 'modes'
+type embedType_Type = 'general' | 'modes' | 'wp-single' | 'wp-cat'
 
 /** Custom embed class that acts as base for other embeds */
 class CustomEmbed extends RichEmbed {
@@ -22,8 +23,7 @@ class CustomEmbed extends RichEmbed {
       .via(msg.author);
   }
 
-  /**
-   * Adds the image of the most played operator to the embed
+  /** Adds the image of the most played operator to the embed
    * @param rawStats The raw stats object
    * @param type The playType to search the operator in
    */
@@ -36,10 +36,12 @@ class CustomEmbed extends RichEmbed {
     return this.setThumbnail(mostUsedOp.badge);
   }
 
-  /**
-   * Adds the name of the user that requested the data as in the footer
-   * @param author
-   */
+  /** Adds a title to the embed */
+  setHeader(str: string, username: string, platform: Platform) {
+    return this.setTitle(str.trim() + ` stats for ${username} - ${platform.toUpperCase()}`);
+  }
+
+  /** Adds the name of the user that requested the data as in the footer */
   via(author: User) {
     return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL);
   }
@@ -52,7 +54,7 @@ class GeneralEmbed extends CustomEmbed {
   constructor(msg: CommandoMessage, username: string, platform: Platform, playType: playType, stats: StatsType<'general'>, raw: Stats, ...args) {
     super(msg, ...args);
     this.type = 'general';
-    return this.setTitle(`General ${playType == 'all' ? '' : readablePlayType(playType, true)}stats for ${username} - ${platform.toUpperCase()}`)
+    return this.setHeader(`General ${playType == 'all' ? '' : readablePlayType(playType, true)}stats`, username, platform)
       .addOpImage(raw, playType)
       .addAccount(stats)
       .addMatches(stats)
@@ -101,7 +103,7 @@ class ModesEmbed extends CustomEmbed {
   constructor(msg: CommandoMessage, username: string, platform: Platform, playType: strictPlayType, stats: StatsType<'modes'>, raw: Stats, ...args) {
     super(msg, ...args);
     this.type = 'modes';
-    return this.setTitle(`${readablePlayType(playType)} stats for ${username} - ${platform.toUpperCase()}`)
+    return this.setHeader(`${readablePlayType(playType)}`, username, platform)
       .addOpImage(raw, playType)
       .addModes(stats, playType);
   }
@@ -120,16 +122,84 @@ class ModesEmbed extends CustomEmbed {
     } else title = camelToReadable(key);
 
     for (const statKey in mode) {
-      //@ts-ignore
-      if (statKey != 'name') body += `${camelToReadable(statKey)}: **${readNumber(mode[statKey]) || mode[statKey]}**\n`;
+      // @ts-ignore
+      if (statKey != 'name') body += keyValue(statKey, mode[statKey]);
     }
 
     return this.addField(title, body.trim(), true);
   }
 }
-//#endregion
 
-//#region Utility
+/** General class for bot 'wp-single' and 'wp-cat' embeds */
+class WeaponEmbed extends CustomEmbed {
+  addCategory(category: WeaponEmbedStats, title?: string) {
+    const { CATname } = category;
+    if (!title) title = `${capitalize(CATname)} category overall`;
+    for (const playType in category) {
+      if (!playType.includes('name')) {
+        if (!enforceType<strictPlayType>(playType)) return;
+        let str = '';
+        for (const key in category[playType].general) str += keyValue(key, category[playType].general[key]);
+        this.addField(title + ` (${playType})`, str, true);
+      }
+    }
+    return this;
+  }
+
+  addWeapon(category: WeaponEmbedStats, wpName: WeaponName, title?: string, only?: strictPlayType) {
+    if (!title) title = 'Weapon';
+    for (const playType in category) {
+      if (!playType.includes('name')) {
+        if (only && playType != only) return;
+        if (!enforceType<strictPlayType>(playType)) return;
+        let str = '';
+        const wp = category[playType].list.find(wp => wp.name == wpName);
+        if (wp) for (const key in wp) {
+          if (key != 'name') str += keyValue(key, wp[key]);
+        }
+        if (str) this.addField(title + ` (${playType})`, str, true);
+      }
+    }
+    return this;
+  }
+
+  mostChosenWeapon(list: WeaponEmbedStats['pve']['list']) {
+    return list.sort((a, b) => a.timesChosen - b.timesChosen)[0];
+  }
+}
+
+/** Embed for the 'wp' command when triggered with a single weapon */
+class WeaponSingleEmbed extends WeaponEmbed {
+  type: 'wp-single'
+
+  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-single'>, ...args) {
+    super(msg, ...args);
+    this.type = 'wp-single';
+    const weapon = category.WPname;
+    return this.setHeader(weapon, username, platform)
+      .addWeapon(category, weapon)
+      .addCategory(category, `${capitalize(category.CATname)} category`);
+  }
+}
+
+/** Embed for the 'wp' command when triggered with a category */
+class WeaponCategoryEmbed extends WeaponEmbed {
+  type: 'wp-cat'
+
+  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-cat'>, ...args) {
+    super(msg, ...args);
+    this.type = 'wp-cat';
+    const wpPvP = this.mostChosenWeapon(category.pvp.list),
+      wpPvE = this.mostChosenWeapon(category.pve.list);
+    return this.setHeader(`${capitalize(category.CATname)} weapons`, username, platform)
+      .addCategory(category, 'Category overall')
+      .addWeapon(category, wpPvP.name, 'Most chosen weapon', 'pvp')
+      .addWeapon(category, wpPvE.name, 'Most chosen weapon', 'pve');
+  }
+}
+// #endregion
+
+// #region Utility
 type playType = 'all' | 'pvp' | 'pve'
 type strictPlayType = Exclude<playType, 'all'>
 
@@ -143,6 +213,7 @@ function readablePlayType(str: strictPlayType, trailingSpace = false) {
 type StatsType<T> =
   T extends 'general' ? GeneralStats :
   T extends 'modes' ? Stats['pvp']['mode'] | Stats['pve']['mode'] :
+  T extends 'wp-single' | 'wp-cat' ? WeaponEmbedStats :
   false;
 
 /** Parameters for the createEmbed method */
@@ -171,13 +242,22 @@ function getLastPlayedRegion(regions: RankInfo['regions']) {
   const key = Object.values(regions).sort((a, b) => {
     const ad = new Date(a.updateTime),
       bd = new Date(b.updateTime);
-    return -(ad.getTime() - bd.getTime()); //from the most recent to the oldest
+    return -(ad.getTime() - bd.getTime()); // from the most recent to the oldest
   })[0].region;
   return regions[key];
 }
-//#endregion
 
-//#region Processed stats formats
+function keyValue(key: string, value: number) {
+  return `${camelToReadable(key)}: ${statFormat(value)}`;
+}
+
+function statFormat(value: number) {
+  return `**${readNumber(value) || value}**`;
+}
+
+// #endregion
+
+// #region Processed stats formats
 interface GeneralStats {
   account: {
     level: number
@@ -207,7 +287,12 @@ interface GeneralStats {
     revives: number
   }
 }
-//#endregion
+
+interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
+  WPname?: WeaponName
+  CATname: WeaponType
+}
+// #endregion
 
 export class RainbowAPI extends API {
   constructor() {
@@ -227,12 +312,18 @@ export class RainbowAPI extends API {
       if (!enforceType<StatsType<'modes'>>(stats)) return;
       if (playType == 'all') playType = 'pvp';
       embed = new ModesEmbed(msg, username, platform, playType, stats, raw);
+    } else if (embedType == 'wp-single') {
+      if (!enforceType<StatsType<'wp-single'>>(stats)) return;
+      embed = new WeaponSingleEmbed(msg, username, platform, stats);
+    } else if (embedType == 'wp-cat') {
+      if (!enforceType<StatsType<'wp-cat'>>(stats)) return;
+      embed = new WeaponCategoryEmbed(msg, username, platform, stats);
     }
 
     return embed;
   }
 
-  //#region API wrappers
+  // #region API wrappers
   async getLevel(id: string, platform: Platform) {
     return ensureOne(await r6api.getLevel(platform, id));
   }
@@ -249,10 +340,10 @@ export class RainbowAPI extends API {
   async getStats(id: string, platform: Platform) {
     return ensureOne(await r6api.getStats(platform, id));
   }
-  //#endregion
+  // #endregion
 
 
-  //#region Command methods
+  // #region Command methods
   async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType) {
     let processedStats: GeneralStats;
     const rawStats = await this.getStats(id, platform);
@@ -318,5 +409,43 @@ export class RainbowAPI extends API {
       stats: processedStats
     });
   }
-  //#endregion
+
+  async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
+    const rawStats = await this.getStats(id, platform);
+    var processedStats: WeaponEmbedStats;
+    if (isWeaponName(wpOrCat)) {
+      var CATname: WeaponType;
+      for (const cat in rawStats.pvp.weapons) {
+        if (enforceType<WeaponType>(cat) && rawStats.pvp.weapons[cat].list.some(wp => wp.name == wpOrCat))
+          CATname = cat;
+      }
+      processedStats = {
+        WPname: wpOrCat,
+        CATname,
+        pve: rawStats.pve.weapons[CATname],
+        pvp: rawStats.pvp.weapons[CATname]
+      };
+      return this.createEmbed({
+        embedType: 'wp-single',
+        id,
+        msg,
+        platform,
+        stats: processedStats
+      });
+    } else if (isWeaponType(wpOrCat)) {
+      processedStats = {
+        CATname: wpOrCat,
+        pve: rawStats.pve.weapons[wpOrCat],
+        pvp: rawStats.pvp.weapons[wpOrCat]
+      };
+      return this.createEmbed({
+        embedType: 'wp-cat',
+        id,
+        msg,
+        platform,
+        stats: processedStats
+      });
+    }
+  }
+  // #endregion
 }
