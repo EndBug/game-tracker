@@ -57,6 +57,7 @@
     "semi": [
       "warn",
       "always"
-    ]
+    ],
+    "spaced-comment": "warn"
   }
 }
