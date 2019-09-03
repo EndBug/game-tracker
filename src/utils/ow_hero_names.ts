@@ -24,6 +24,7 @@ export const heroes = {
   'reaper': ['faucheur'],
   'reinhardt': ['rein'],
   'roadhog': ['road', 'Chopper'],
+  'sigma': ['sig'],
   'soldier': ['76', 'soldier_76', 'soldier76', 'soldier-76'],
   'sombra': [],
   'symmetra': ['symm'],

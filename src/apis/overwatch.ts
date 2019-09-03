@@ -14,7 +14,7 @@ function isPlatform(value): value is platform {
 type embedType = 'quick' | 'comp' | 'hero' | 'herocomp' | 'link' | 'unlink' | 'warn' | 'error'
 
 // Imgur album link: https://imgur.com/a/Ljsllvo
-const img_links = {
+const img_links: Record<SupportedHero, string> = {
   'ana': 'https://imgur.com/vtXTLNX.png',
   'ashe': 'https://imgur.com/6rChZQt.png',
   'baptiste': 'https://d1u1mce87gyfbn.cloudfront.net/hero/baptiste/hero-select-portrait.png',
@@ -31,11 +31,12 @@ const img_links = {
   'mercy': 'https://imgur.com/dJYHnUe.png',
   'moira': 'https://imgur.com/l66IbCJ.png',
   'orisa': 'https://imgur.com/YPD9WxL.png',
-  'pharah': 'https://imgur.com/ldLgKYw.png',
+  'phara': 'https://imgur.com/ldLgKYw.png',
   'reaper': 'https://imgur.com/XvxlxG2.png',
   'reinhardt': 'https://imgur.com/DkZrniz.png',
   'roadhog': 'https://imgur.com/OgCpcOe.png',
-  'soldier76': 'https://imgur.com/K5IpnT0.png',
+  'sigma': 'https://d1u1mce87gyfbn.cloudfront.net/hero/sigma/hero-select-portrait.png',
+  'soldier': 'https://imgur.com/K5IpnT0.png',
   'sombra': 'https://imgur.com/aKkKZUg.png',
   'symmetra': 'https://imgur.com/SS9LWPZ.png',
   'torbjorn': 'https://imgur.com/XHoVgy9.png',
