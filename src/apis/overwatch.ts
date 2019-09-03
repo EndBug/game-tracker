@@ -245,7 +245,7 @@ class StatsEmbed extends CustomEmbed {
       if (rank.tank) arr.push('🛡️' + rank.tank);
 
       // Rank: 1234⚔️ | 1237⛑️ | 1234🛡️
-      rankStr = `Rank: ${arr.map(i => `**${i[1] || '----'}**`).join(' | ')}`;
+      rankStr = `Rank: ${arr.map(i => `**${i || '----'}**`).join(' | ')}`;
     } else rankStr = 'Rank: **----**';
 
     this.addField('Account stats', `Level: **${account.level}**
