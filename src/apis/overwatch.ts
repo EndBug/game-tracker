@@ -522,10 +522,10 @@ export class OverwatchAPI extends API {
   /** Returns the account for comp/quick stats */
   private regularAccount(stats: owapi.AllStats) {
     const account: RegularStats['account'] = {
-      avatar: stats.profileURL,
-      endorsement: parseInt(stats.endorsementLevel),
-      level: stats.prestige * 100 + parseInt(stats.level),
-      rank: this.formatRank(stats.rank)
+      avatar: stats.iconURL,
+      endorsement: parseInt(stats.endorsementLevel) || 0,
+      level: stats.prestige * 100 + parseInt(stats.level) || 0,
+      rank: this.formatRank(stats.rank) || {}
     };
 
     return account;
@@ -543,23 +543,24 @@ export class OverwatchAPI extends API {
     for (const hero in mpStat) {
       const time = stringToSeconds(mpStat[hero].time) / 60 / 60;
       mostPlayed.push({
-        name: hero,
+        name: heroName(hero),
         hrsPlayed: time
       });
+      if (mostPlayed.length >= 3) break;
     }
 
     const res: RegularStats = {
       type: 'quickplay',
       account: this.regularAccount(stats),
       bestPerformance: {
-        damage: parseInt(best.all_damage_done_most_in_game),
-        healing: parseInt(best.hero_damage_done_most_in_game),
-        killStreak: parseInt(best.kill_streak_best)
+        damage: parseInt(best.all_damage_done_most_in_game) || 0,
+        healing: parseInt(best.hero_damage_done_most_in_game) || 0,
+        killStreak: parseInt(best.kill_streak_best) || 0
       },
       general: {
-        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths),
-        minOnFire: stringToSeconds(combat.time_spent_on_fire) / 60,
-        wins: parseInt(stats.heroStats.quickplay.overall.game.games_won)
+        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths) || 0.00,
+        minOnFire: stringToSeconds(combat.time_spent_on_fire) / 60 || 0,
+        wins: parseInt(stats.heroStats.quickplay.overall.game.games_won) || 0
       },
       mostPlayed
     };
@@ -585,23 +586,24 @@ export class OverwatchAPI extends API {
     for (const hero in mpStat) {
       const time = stringToSeconds(mpStat[hero].time) / 60 / 60;
       mostPlayed.push({
-        name: hero,
+        name: heroName(hero),
         hrsPlayed: time
       });
+      if (mostPlayed.length >= 3) break;
     }
 
     const res: RegularStats = {
       type: 'competitive',
       account: this.regularAccount(stats),
       bestPerformance: {
-        damage: parseInt(best.all_damage_done_most_in_game),
-        healing: parseInt(best.hero_damage_done_most_in_game),
-        killStreak: parseInt(best.kill_streak_best)
+        damage: parseInt(best.all_damage_done_most_in_game) || 0,
+        healing: parseInt(best.hero_damage_done_most_in_game) || 0,
+        killStreak: parseInt(best.kill_streak_best) || 0
       },
       general: {
-        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths),
-        minOnFire: stringToSeconds(combat.time_spent_on_fire) / 60,
-        wins: parseInt(stats.heroStats.competitive.overall.game.games_won)
+        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths) || 0.00,
+        minOnFire: stringToSeconds(combat.time_spent_on_fire) / 60 || 0,
+        wins: parseInt(stats.heroStats.competitive.overall.game.games_won) || 0
       },
       mostPlayed
     };
@@ -645,15 +647,15 @@ export class OverwatchAPI extends API {
 
     if (res.played) {
       res.generic = {
-        deaths: parseInt(heroNode.combat.deaths),
-        hrsPlayed: stringToSeconds(heroNode.game.time_played) / 60 / 60,
-        kills: parseInt(heroNode.combat.eliminations),
-        wins: parseInt(heroNode.game.games_won)
+        deaths: parseInt(heroNode.combat.deaths) || 0,
+        hrsPlayed: stringToSeconds(heroNode.game.time_played) / 60 / 60 || 0,
+        kills: parseInt(heroNode.combat.eliminations) || 0,
+        wins: parseInt(heroNode.game.games_won) || 0
       };
       res.medals = {
-        bronze: parseInt(heroNode.match_awards.medals_bronze),
-        silver: parseInt(heroNode.match_awards.medals_silver),
-        gold: parseInt(heroNode.match_awards.medals_gold)
+        bronze: parseInt(heroNode.match_awards.medals_bronze) || 0,
+        silver: parseInt(heroNode.match_awards.medals_silver) || 0,
+        gold: parseInt(heroNode.match_awards.medals_gold) || 0
       };
       res.specific = heroNode.hero_specific;
     }
@@ -697,15 +699,15 @@ export class OverwatchAPI extends API {
 
     if (res.played) {
       res.generic = {
-        deaths: parseInt(heroNode.combat.deaths),
-        hrsPlayed: stringToSeconds(heroNode.game.time_played) / 60 / 60,
-        kills: parseInt(heroNode.combat.eliminations),
-        wins: parseInt(heroNode.game.games_won)
+        deaths: parseInt(heroNode.combat.deaths) || 0,
+        hrsPlayed: stringToSeconds(heroNode.game.time_played) / 60 / 60 || 0,
+        kills: parseInt(heroNode.combat.eliminations) || 0,
+        wins: parseInt(heroNode.game.games_won) || 0
       };
       res.medals = {
-        bronze: parseInt(heroNode.match_awards.medals_bronze),
-        silver: parseInt(heroNode.match_awards.medals_silver),
-        gold: parseInt(heroNode.match_awards.medals_gold)
+        bronze: parseInt(heroNode.match_awards.medals_bronze) || 0,
+        silver: parseInt(heroNode.match_awards.medals_silver) || 0,
+        gold: parseInt(heroNode.match_awards.medals_gold) || 0
       };
       res.specific = heroNode.hero_specific;
     }
@@ -720,7 +722,7 @@ export class OverwatchAPI extends API {
   }
 
   async link(battletag: string, platform: platform, msg: CommandoMessage) {
-    const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'herocomp', battletag, platform));
+    const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'link', battletag, platform));
     if (stats instanceof CustomEmbed) return stats;
 
     const prev = this.checkDatabase(msg.author),
