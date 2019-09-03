@@ -21,6 +21,7 @@
 | Reaper            | `reaper`, `faucheur`                                        |
 | Reinhardt         | `reinhardt`, `rein`                                         |
 | Roadhog           | `roadhog`, `road`, `Chopper`                                |
+| Sigma             | `sigma`, `sig`                                              |
 | Soldier           | `soldier`, `76`, `soldier_76`, `soldier76`, `soldier-76`    |
 | Sombra            | `sombra`                                                    |
 | Symmetra          | `symmetra`, `symm`                                          |
