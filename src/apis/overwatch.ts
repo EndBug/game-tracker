@@ -238,13 +238,14 @@ class StatsEmbed extends CustomEmbed {
     let rankStr: string;
     if (checkRank(account.rank)) {
       const { rank } = account;
-      const arr: [string, number][] = [];
-      // 💣 Damage | ⛑️ Support | 🛡️ Tank
-      if (rank.damage) arr.push(['💣', rank.damage]);
-      if (rank.support) arr.push(['⛑️', rank.support]);
-      if (rank.tank) arr.push(['🛡️', rank.tank]);
+      const arr: string[] = [];
+      // ⚔️ Damage | ⛑️ Support | 🛡️ Tank
+      if (rank.damage) arr.push('⚔️' + rank.damage);
+      if (rank.support) arr.push('⛑️' + rank.support);
+      if (rank.tank) arr.push('🛡️' + rank.tank);
 
-      rankStr = `Rank (${arr.map(i => i[0]).join('|')}): ${arr.map(i => `**${i[1] || '----'}**`).join(' | ')}`;
+      // Rank: 1234⚔️ | 1237⛑️ | 1234🛡️
+      rankStr = `Rank: ${arr.map(i => `**${i[1] || '----'}**`).join(' | ')}`;
     } else rankStr = 'Rank: **----**';
 
     this.addField('Account stats', `Level: **${account.level}**
