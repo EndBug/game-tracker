@@ -17,17 +17,17 @@
 | Mercy             | `mercy`, `ange`, `angela`                                   |
 | Moira             | `moira`                                                     |
 | Orisa             | `orisa`, `Oriisa`                                           |
-| Pharah            | `pharah`, `phara`, `fara`                                   |
+| Phara             | `phara`, `pharah`, `fara`                                   |
 | Reaper            | `reaper`, `faucheur`                                        |
 | Reinhardt         | `reinhardt`, `rein`                                         |
 | Roadhog           | `roadhog`, `road`, `Chopper`                                |
-| Soldier 76        | `soldier76`, `76`, `soldier_76`, `soldier`, `soldier-76`    |
+| Soldier           | `soldier`, `76`, `soldier_76`, `soldier76`, `soldier-76`    |
 | Sombra            | `sombra`                                                    |
 | Symmetra          | `symmetra`, `symm`                                          |
 | Torbjorn          | `torbjorn`, `torb`                                          |
 | Tracer            | `tracer`                                                    |
 | Widowmaker        | `widowmaker`, `widow`, `Fatale`                             |
 | Winston           | `winston`, `monkey`, `harambe`, `scientist`                 |
-| Wrecking Ball     | `wrecking_ball`, `hammond`, `wreckingball`, `wrecking ball` |
+| Hammond           | `hammond`, `wrecking_ball`, `wreckingball`, `wrecking ball` |
 | Zarya             | `zarya`                                                     |
 | Zenyatta          | `zenyatta`, `zen`, `Zeniyatta`                              |

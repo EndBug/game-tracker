@@ -1,3 +1,4 @@
+// Don't import this from utils because it will trigger the whole bot when just calling the function
 function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -19,24 +20,25 @@ export const heroes = {
   'mercy': ['ange', 'angela'],
   'moira': [],
   'orisa': ['Oriisa'],
-  'pharah': ['phara', 'fara'],
+  'phara': ['pharah', 'fara'],
   'reaper': ['faucheur'],
   'reinhardt': ['rein'],
   'roadhog': ['road', 'Chopper'],
-  'soldier76': ['76', 'soldier_76', 'soldier', 'soldier-76'],
+  'soldier': ['76', 'soldier_76', 'soldier76', 'soldier-76'],
   'sombra': [],
   'symmetra': ['symm'],
   'torbjorn': ['torb'],
   'tracer': [],
   'widowmaker': ['widow', 'Fatale'],
   'winston': ['monkey', 'harambe', 'scientist'],
-  'wrecking_ball': ['hammond', 'wreckingball', 'wrecking ball'],
+  'hammond': ['wrecking_ball', 'wreckingball', 'wrecking ball'],
   'zarya': [],
   'zenyatta': ['zen', 'Zeniyatta']
 };
 
-/**
- * Coverts hero keys into readable names
+export type SupportedHero = keyof typeof heroes;
+
+/** Converts hero keys into readable names
  * @param str The hero key to convert
  */
 export function heroName(str: string): string {
@@ -50,4 +52,9 @@ export function heroName(str: string): string {
   const arr = str.split('_');
   for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i]);
   return arr.join(' ');
+}
+
+/** Returns whether the supplied string is a SupportedHero */
+export function isSupported(hero: string): hero is SupportedHero {
+  return Object.keys(heroes).includes(hero);
 }
