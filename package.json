@@ -12,6 +12,7 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "doc": "ts-node src/scripts/doc.ts",
+    "doc:add": "npm run doc && git add doc/ow/OW_HEROES.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Federico 'EndBug' Grandi <fgrandi30@gmail.com>",
@@ -40,7 +41,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run doc"
+      "pre-commit": "npm run doc:add"
     }
   }
 }
