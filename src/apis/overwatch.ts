@@ -152,7 +152,7 @@ interface ErrorOptions<T> {
 
 /** Returns whether the supplied rank object has a valid score */
 function checkRank(rank: RegularStats['account']['rank']) {
-  return typeof rank == 'object' && Object.values(rank).reduce((prev = 0, curr) => curr ? prev + 1 : prev) > 0;
+  return typeof rank == 'object' && Object.values(rank).reduce((prev = 0, curr) => curr ? prev + 1 : prev, 0) > 0;
 }
 
 /** Gets you a link to the PLayOverwatch website */
