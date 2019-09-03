@@ -10,7 +10,7 @@ const r6api = new R6API(UbisoftEmail, UbisoftPassword);
 
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
-type embedType_Type = 'general' | 'modes' | 'wp-single' | 'wp-cat'
+type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat'
 
 /** Custom embed class that acts as base for other embeds */
 class CustomEmbed extends RichEmbed {
@@ -46,6 +46,17 @@ class CustomEmbed extends RichEmbed {
     return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL);
   }
 }
+
+class ErrorEmbed extends CustomEmbed {
+  constructor(error: string, msg: CommandoMessage, ...args: any[]) {
+    super(msg, ...args);
+    this.type = 'error';
+    return this.setColor('RED')
+      .setTitle('I got an error from the server')
+      .setDescription(error);
+  }
+}
+
 
 /** Embed class for the 'general' command */
 class GeneralEmbed extends CustomEmbed {
@@ -211,6 +222,7 @@ function readablePlayType(str: strictPlayType, trailingSpace = false) {
 
 /** You can store here all teh different expected kinds of processed stats to put in EmbedParameters */
 type StatsType<T> =
+  T extends 'error' ? Error | string :
   T extends 'general' ? GeneralStats :
   T extends 'modes' ? Stats['pvp']['mode'] | Stats['pve']['mode'] :
   T extends 'wp-single' | 'wp-cat' ? WeaponEmbedStats :
@@ -299,8 +311,29 @@ export class RainbowAPI extends API {
     super('r6', 'Rainbow 6 Siege');
   }
 
+  check(stats: Error | Stats, id: string, platform: Platform, msg: CommandoMessage) {
+    if (stats instanceof Array) throw new Error('Multiple results');
+    if (stats === undefined || stats instanceof Error) {
+      let err: Error;
+      if (stats instanceof Error) err = stats;
+      else err = new Error('Can\'t get stats.');
+      return this.createEmbed({
+        embedType: 'error',
+        id,
+        msg,
+        platform,
+        stats: err
+      });
+    }
+  }
+
   /** Function that chooses which type of embed to build and returns the chosen one */
   async createEmbed<T extends embedType_Type>({ id, embedType, msg, platform, playType, raw, stats }: EmbedParameters<T>) {
+    if (embedType == 'error') {
+      if (!enforceType<StatsType<'error'>>(stats)) return;
+      return new ErrorEmbed(stats instanceof Error ? stats.message : stats, msg);
+    }
+
     const username = await this.getUsername(id, platform);
     let embed: CustomEmbed;
 
@@ -338,16 +371,41 @@ export class RainbowAPI extends API {
 
   /** Returns all the stats for a user */
   async getStats(id: string, platform: Platform) {
-    return ensureOne(await r6api.getStats(platform, id));
+    let res: Stats,
+      error: Error;
+    try {
+      res = ensureOne(await r6api.getStats(platform, id));
+    } catch (e) {
+      if (typeof e == 'string') error = new Error(e);
+      else if (e instanceof Error) error = e;
+
+      if (error.message == 'Stripped in prod' && this.isInvalidId(id, platform))
+        error = new Error('Invalid id.');
+    }
+    error.message += `\nParameters:\n- Id: \`${id}\`\n- Platform: \`${platform}\``;
+    return error || res;
+  }
+
+  async isInvalidId(id: string, platform: Platform) {
+    let username: string;
+    try {
+      username = await this.getUsername(id, platform);
+    } catch {
+      return true;
+    }
+    return !!username;
   }
   // #endregion
 
 
   // #region Command methods
   async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType) {
-    let processedStats: GeneralStats;
     const rawStats = await this.getStats(id, platform);
+    const check = this.check(rawStats, id, platform, msg);
+    if (check) return check;
+    if (!enforceType<Stats>(rawStats)) return;
 
+    let processedStats: GeneralStats;
     let finalStats: Stats['pvp']['general'] | Stats['pve']['general'];
     if (playType == 'all') finalStats = mergeAndSum(rawStats.pvp.general, rawStats.pve.general);
     else finalStats = rawStats[playType].general;
@@ -397,6 +455,10 @@ export class RainbowAPI extends API {
 
   async modes(msg: CommandoMessage, id: string, platform: Platform, playType: strictPlayType) {
     const rawStats = await this.getStats(id, platform);
+    const check = this.check(rawStats, id, platform, msg);
+    if (check) return check;
+    if (!enforceType<Stats>(rawStats)) return;
+
     const processedStats = rawStats[playType].mode;
 
     return this.createEmbed({
@@ -412,6 +474,10 @@ export class RainbowAPI extends API {
 
   async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
     const rawStats = await this.getStats(id, platform);
+    const check = this.check(rawStats, id, platform, msg);
+    if (check) return check;
+    if (!enforceType<Stats>(rawStats)) return;
+
     var processedStats: WeaponEmbedStats;
     if (isWeaponName(wpOrCat)) {
       var CATname: WeaponType;
