@@ -5,7 +5,7 @@
   "main": "src/core/start.ts",
   "scripts": {
     "start": "ts-node src/core/start.ts",
-    "update": "git pull origin master && npm i && npm run update:custom",
+    "update": "git pull && npm i",
     "update:custom": "npm i EndBug/Commando#djs-v11.4.2",
     "update:force": "git checkout -- package-lock.json && npm run update",
     "dev": "nodemon --watch src/**/*.* --ignore src/commands/**/*.* --ignore src/utils/reloadme.json --exec ts-node src/core/start.ts",
