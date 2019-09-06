@@ -20,7 +20,7 @@ jobs:
       run: npm run doc
 
     - name: Auto-commit changed files
-      uses: stefanzweifel/git-auto-commit-action@v2.0.0
+      uses: ./actions/commit-docs
       with:
         commit_author_name: EndBug
         commit_author_email: fgrandi30@gmail.com
