@@ -1,9 +1,9 @@
-name: Update docs
+name: Update repo
 on: push
 
 jobs: 
   run:
-    name: Run npm script
+    name: Update deps & docs
     runs-on: ubuntu-latest
     steps: 
     - uses: actions/checkout@master
@@ -14,16 +14,26 @@ jobs:
         node-version: 10.x
     
     - name: Install dependencies
-      run: npm install --only=dev && npm i ts-node
+      run: npm install --save-dev
 
-    - name: Run script
-      run: npm run doc
-
-    - name: Auto-commit changed files
-      uses: ./actions/commit-docs
+    - name: Commit dependencies changes
+      run: stefanzweifel/git-auto-commit-action@v2.0.0
       with:
         commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
-        commit_message: Doc auto-update
+        commit_message: "[auto] Update dependencies"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+    - name: Update documentation
+      run: npm run doc
+
+    - name: Commit documentation changes
+      uses: stefanzweifel/git-auto-commit-action@v2.0.0
+      with:
+        commit_author_name: Federico Grandi
+        commit_author_email: fgrandi30@gmail.com
+        commit_message: "[auto] Update documentation"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
