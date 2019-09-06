@@ -16,5 +16,5 @@ jobs:
     - name: Install dependencies
       run: npm install --only=dev
 
-    - name Run script
+    - name: Run script
       run: npm run doc
