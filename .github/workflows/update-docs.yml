@@ -27,10 +27,10 @@ jobs:
 
 
     - name: Update documentation
-      run: npm run doc
+      run: npm run doc:add
 
     - name: Commit documentation changes
-      uses: stefanzweifel/git-auto-commit-action@v2.0.0
+      uses: EndBug/git-auto-commit-action@master
       with:
         commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
