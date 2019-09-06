@@ -25,7 +25,7 @@ if ! git diff --cached --exit-code
 then
     git_setup
 
-    echo git branch
+    git branch
 
     # Switch to branch from current Workflow run
     #─git checkout "${GITHUB_REF:11}"
