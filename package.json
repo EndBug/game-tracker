@@ -12,22 +12,29 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "doc": "ts-node src/scripts/doc.ts",
-    "doc:add": "npm run doc && git add doc/ow/OW_HEROES.md",
+    "doc:add": "npm run doc && git add ./doc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Federico 'EndBug' Grandi <fgrandi30@gmail.com>",
+  "author": "Federico Grandi <fgrandi30@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EndBug/game-tracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EndBug/game-tracker/issues"
+  },
+  "homepage": "https://github.com/EndBug/game-tracker#readme",
   "dependencies": {
     "dbots": "^1.2.3",
     "discord.js": "11.4.2",
     "discord.js-commando": "github:EndBug/Commando#djs-v11.4.2",
     "dotenv": "^6.2.0",
-    "markdown-table": "^1.1.3",
     "nodemon": "^1.18.10",
     "overwatch-stats-api": "^2.0.6",
     "request-promise": "^4.2.4",
     "sqlite": "^3.0.2",
-    "ts-node": "^8.0.3",
+    "ts-node": "^8.3.0",
     "typescript-map": "0.0.7"
   },
   "devDependencies": {
@@ -36,12 +43,7 @@
     "@typescript-eslint/parser": "^1.6.0",
     "all-contributors-cli": "^6.3.1",
     "eslint": "^6.2.2",
-    "husky": "^3.0.4",
+    "markdown-table": "^1.1.3",
     "typescript": "^3.3.3333"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run doc:add"
-    }
   }
 }
