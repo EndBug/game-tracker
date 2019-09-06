@@ -20,7 +20,7 @@ jobs:
       run: npm run doc:add
 
     - name: Commit documentation changes
-      uses: ./actions/commit-docs
+      uses: EndBug/git-auto-commit-action@master
       with:
         commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
