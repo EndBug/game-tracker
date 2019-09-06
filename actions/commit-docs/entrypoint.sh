@@ -15,25 +15,30 @@ EOF
     chmod 600 $HOME/.netrc
 
     git config --global user.email "actions@github.com"
-    git config --global user.name "GitHub Actions"
+    git config --global user.name "Game Tracker Actions"
 }
 
 
 # This section only runs if there have been file changes
-echo "Checking for uncommitted changes in the git working tree."
+echo "Checking for uncommitted changes in the git working tree..."
 if ! git diff --cached --exit-code
 then
     git_setup
 
     git fetch 
+
     # Switch to branch from current Workflow run
+    echo "Creating and switching branch..."
     git branch "${GITHUB_REF:11}"
     git checkout "${GITHUB_REF:11}"
 
+    echo "Adding files..."
     git add doc
 
+    echo "Creating commit..."
     git commit -m "$INPUT_COMMIT_MESSAGE" --author="$INPUT_COMMIT_AUTHOR_NAME <$INPUT_COMMIT_AUTHOR_EMAIL>"
 
+    echo "Pushing to repo..."
     git push --set-upstream origin "${GITHUB_REF:11}"
 else
     echo "Working tree clean. Nothing to commit."
