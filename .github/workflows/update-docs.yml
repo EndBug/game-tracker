@@ -22,7 +22,7 @@ jobs:
     - name: Auto-commit changed files
       uses: ./actions/commit-docs
       with:
-        commit_author_name: EndBug
+        commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
         commit_message: Doc auto-update
       env:

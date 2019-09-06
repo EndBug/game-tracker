@@ -1,0 +1,24 @@
+name: Commit docs
+description: 'Automatically commits docs which have been changed.'
+
+# Original author: Stefan Zweifel <hello@stefanzweifel.io>
+author: Federico Grandi <fgrandi30@gmail.com>
+
+inputs:
+  commit_message:
+    description: 'Commit message'
+    required: true
+  commit_author_name:
+    description: 'Name of the commit author'
+    required: true
+  commit_author_email:
+    description: 'Email address of the commit author'
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+branding:
+  icon: 'git-commit'
+  color: black
