@@ -27,12 +27,15 @@ then
 
     # Switch to branch from current Workflow run
     git checkout "${GITHUB_REF:11}"
+    echo "checkout pass"
 
     # Adds only files in ./doc, so that it doesn't update package files
     git add ./doc
 
+    echo "add pass"
     git commit -m "$INPUT_COMMIT_MESSAGE" --author="$INPUT_COMMIT_AUTHOR_NAME <$INPUT_COMMIT_AUTHOR_EMAIL>"
 
+    echo "commit pass"
     git push --set-upstream origin "${GITHUB_REF:11}"
 else
     echo "Working tree clean. Nothing to commit."
