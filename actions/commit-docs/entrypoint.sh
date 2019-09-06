@@ -18,10 +18,13 @@ EOF
     git config --global user.name "Game Tracker Actions"
 }
 
+    # Adds only files in ./doc, so that it doesn't update package files
+    git add ./doc
+    echo "add pass"
 
 # This section only runs if there have been file changes
 echo "Checking for uncommitted changes in the git working tree."
-if git diff --quiet ./doc
+if ! git diff --staged
 then
     git_setup
 
@@ -29,10 +32,7 @@ then
     git checkout "${GITHUB_REF:11}"
     echo "checkout pass"
 
-    # Adds only files in ./doc, so that it doesn't update package files
-    git add ./doc
 
-    echo "add pass"
     git commit -m "$INPUT_COMMIT_MESSAGE" --author="$INPUT_COMMIT_AUTHOR_NAME <$INPUT_COMMIT_AUTHOR_EMAIL>"
 
     echo "commit pass"
