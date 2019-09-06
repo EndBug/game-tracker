@@ -20,10 +20,7 @@ jobs:
       run: npm run doc
 
     - name: Auto-commit changed files
-      uses: ./actions/commit-docs
-      with:
-        commit_author_name: Federico Grandi
-        commit_author_email: fgrandi30@gmail.com
-        commit_message: Doc auto-update
+      uses: elstudio/actions-js-build/commit@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WD_PATH: ./doc
