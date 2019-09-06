@@ -20,7 +20,7 @@ jobs:
       run: npm run doc
 
     - name: Auto-commit changed files
-      uses: ./actions/commit-docs
+      uses: EndBug/game-tracker-commit-docs@master
       with:
         commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
