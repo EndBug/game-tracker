@@ -18,3 +18,12 @@ jobs:
 
     - name: Run script
       run: npm run doc
+
+    - name: Auto-commit changed files
+      uses: stefanzweifel/git-auto-commit-action@v2.0.0
+        with:
+          commit_author_name: EndBug
+          commit_author_email: fgrandi30@gmail.com
+          commit_message: Doc auto-update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
