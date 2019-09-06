@@ -29,14 +29,14 @@ then
     git_setup
 
     # Switch to branch from current Workflow run
-    #git checkout "${GITHUB_REF:11}"
+    git checkout "${GITHUB_REF:11}"
     echo "checkout pass"
 
 
     git commit -m "$INPUT_COMMIT_MESSAGE" --author="$INPUT_COMMIT_AUTHOR_NAME <$INPUT_COMMIT_AUTHOR_EMAIL>"
 
     echo "commit pass"
-    git push
+    git push origin "${GITHUB_REF:11}"
 else
     echo "Working tree clean. Nothing to commit."
 fi
