@@ -18,13 +18,13 @@ EOF
     git config --global user.name "Game Tracker Actions"
 }
 
-    # Adds only files in ./doc, so that it doesn't update package files
-    git add ./doc
-    echo "add pass"
+# Adds only files in ./doc, so that it doesn't update package files
+git add ./doc
+echo "add pass"
 
 # This section only runs if there have been file changes
 echo "Checking for uncommitted changes in the git working tree."
-if ! git diff --staged
+if git diff --staged
 then
     git_setup
 
