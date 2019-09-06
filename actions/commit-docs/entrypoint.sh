@@ -28,6 +28,7 @@ then
     git fetch 
     # Switch to branch from current Workflow run
     git branch "${GITHUB_REF:11}"
+    git checkout "${GITHUB_REF:11}"
 
     git add doc
 
