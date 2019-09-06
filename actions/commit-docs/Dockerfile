@@ -1,4 +1,4 @@
-FROM debian:9.5-slim
+FROM alpine/git:1.0.7
 
 LABEL "com.github.actions.name"="Commit docs"
 LABEL "com.github.actions.description"="Commit modified docs file to the repo"
