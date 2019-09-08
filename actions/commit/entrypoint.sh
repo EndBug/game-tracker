@@ -18,6 +18,8 @@ EOF
     git config --global user.name "Game Tracker Actions"
 }
 
+echo "Removing changes to package.json and package-lock.json"
+git checkout -- package.json
 
 # This section only runs if there have been file changes
 echo "Checking for uncommitted changes in the git working tree..."
@@ -33,7 +35,7 @@ then
     git checkout "${GITHUB_REF:11}"
 
     echo "Adding files..."
-    git add doc
+    git add "${INPUT_COMMIT_PATH}"
 
     echo "Creating commit..."
     git commit -m "$INPUT_COMMIT_MESSAGE" --author="$INPUT_COMMIT_AUTHOR_NAME <$INPUT_COMMIT_AUTHOR_EMAIL>"
