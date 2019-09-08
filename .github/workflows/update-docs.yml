@@ -16,14 +16,17 @@ jobs:
     - name: Install dependencies
       run: npm install --save-dev && npm i ts-node
 
+    - name: Remove package changes
+
     - name: Update documentation
       run: npm run doc:add
 
     - name: Commit documentation changes
-      uses: ./actions/commit-docs
+      uses: ./actions/commit
       with:
         commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
         commit_message: "[auto] Update documentation"
+        commit_path: doc
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
