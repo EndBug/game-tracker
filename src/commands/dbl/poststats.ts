@@ -16,7 +16,7 @@ export default class PostStatsCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   async run(msg: Commando.CommandoMessage) {
     var rep = await msg.say('Posting stats...');
     if (rep instanceof Array) rep = rep[0];

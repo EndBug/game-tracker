@@ -92,7 +92,7 @@ export function init(doRestore = true) {
  */
 export function restore(force = false) {
   if (exists() && !force) console.log('Trying to load database...');
-  //@ts-ignore
+  // @ts-ignore
   else return getLast().then(fs.createWriteStream(settingsPath))
     .catch(err => console.log(`Unable to restore SQL database, creating a new one. Error: \`\`\`\n${err}\n\`\`\``));
 }

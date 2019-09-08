@@ -14,7 +14,7 @@ export default class InviteCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   run(msg: Commando.CommandoMessage) {
     msg.say(`Thank you for choosing Game Tracker!\nPlease note that the permissions required in the invite are important, and that without them the bot could not work properly.\nClick here to invite the bot: ${links.invite}`);
   }

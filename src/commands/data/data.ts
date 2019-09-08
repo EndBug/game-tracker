@@ -24,7 +24,7 @@ export default class DataCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   run(msg: Commando.CommandoMessage, { hide }: { hide: boolean }) {
     const res = APIUtil.find(msg.author, true);
     let text: string;

@@ -1,9 +1,9 @@
-name: Update docs
+name: Lint source code
 on: push
 
 jobs: 
   run:
-    name: Update documentation
+    name: Lint with ESLint
     runs-on: ubuntu-latest
     steps: 
     - uses: actions/checkout@master
@@ -14,17 +14,17 @@ jobs:
         node-version: 8.9.4
     
     - name: Install dependencies
-      run: npm install --only=dev && npm install ts-node --no-save
+      run: npm install --only=dev && npm install mkdirp --no-save
 
-    - name: Update documentation
-      run: npm run doc
+    - name: Update source code
+      run: npm run lint
 
-    - name: Commit documentation changes
+    - name: Commit linting changes
       uses: ./actions/commit
       with:
         commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
-        commit_message: "[auto] Update documentation"
-        commit_path: doc
+        commit_message: "[auto] Lint source code"
+        commit_path: src
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

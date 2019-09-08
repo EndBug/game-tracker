@@ -16,7 +16,7 @@ export default class SampleCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   async run(msg: Commando.CommandoMessage) {
     if (Object.keys(APIUtil.find(msg.author)).length == 0) return msg.reply('There\'s no stored data about you.');
 

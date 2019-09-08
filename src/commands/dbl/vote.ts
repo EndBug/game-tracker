@@ -13,7 +13,7 @@ export default class VoteCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   async run(msg: Commando.CommandoMessage) {
     const embed = new RichEmbed()
       .addField('Voting', 'This bot is listed in on a handful of websites that show nearly every public bot for Discord servers. In order to get more views and reach more people the bot needs to get votes (they get reset monthly).')

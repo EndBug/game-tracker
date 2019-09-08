@@ -107,7 +107,7 @@ async function initClient() {
   client = new Commando.CommandoClient({
     commandPrefix: '-',
     owner: '218308478580555777',
-    //@ts-ignore
+    // @ts-ignore
     unknownCommandResponse: false
   });
 
@@ -149,7 +149,7 @@ async function initClient() {
 
   await client.setProvider(
     // @ts-ignore
-    sqlite.open(path.join(__dirname, '../../data/settings.sqlite3')).then(db => new Commando.SQLiteProvider(db)) //tslint-disable-line
+    sqlite.open(path.join(__dirname, '../../data/settings.sqlite3')).then(db => new Commando.SQLiteProvider(db)) // tslint-disable-line
   ).catch(console.error);
 
   // Starts the stat poster interval
@@ -161,7 +161,7 @@ async function initClient() {
   loadAPIs();
 
   // #region "Manual" command loading
-  /*const commandDirs = path.join(__dirname, '../commands');
+  /* const commandDirs = path.join(__dirname, '../commands');
   const dirs = fs.readdirSync(commandDirs);
   for (const groupDir of dirs) {
     if (groupDir != 'samples') {
@@ -210,7 +210,7 @@ function loadAPIs() {
    * @param target The GuildMember, User or user ID of the target
    * @param realName Whether to use the real or key name for APIs
    */
-  const find = (target: string | Discord.GuildMember | Discord.User, realName = false) => { //find data in every API
+  const find = (target: string | Discord.GuildMember | Discord.User, realName = false) => { // find data in every API
     if (target instanceof Discord.GuildMember || target instanceof Discord.User) target = target.id;
     const res: { [api: string]: any } = {};
     for (const key in APIS) {
