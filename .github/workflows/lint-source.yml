@@ -16,10 +16,10 @@ jobs:
     - name: Install dependencies
       run: npm install --only=dev && npm install mkdirp --no-save
 
-    - name: Update documentation
+    - name: Update source code
       run: npm run lint
 
-    - name: Commit documentation changes
+    - name: Commit linting changes
       uses: ./actions/commit
       with:
         commit_author_name: Federico Grandi
