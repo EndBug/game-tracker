@@ -2,6 +2,8 @@
   "name": "game-tracker",
   "version": "0.0.0",
   "description": "A Discord bot that helps you to track your stats in many games.",
+  "author": "Federico Grandi <fgrandi30@gmail.com>",
+  "license": "MIT",
   "main": "src/core/start.ts",
   "scripts": {
     "start": "ts-node src/core/start.ts",
@@ -13,18 +15,13 @@
     "contributors:generate": "all-contributors generate",
     "doc": "ts-node src/scripts/doc.ts",
     "doc:add": "npm run doc && git add ./doc",
+    "lint": "eslint ./src/**/*.* --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Federico Grandi <fgrandi30@gmail.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/EndBug/game-tracker.git"
-  },
-  "bugs": {
-    "url": "https://github.com/EndBug/game-tracker/issues"
-  },
-  "homepage": "https://github.com/EndBug/game-tracker#readme",
+  "eslintIgnore": [
+    "src/utils/reloadme.json",
+    "src/commands/samples/*.*"
+  ],
   "dependencies": {
     "dbots": "^1.2.3",
     "discord.js": "11.4.2",
@@ -45,5 +42,13 @@
     "eslint": "^6.2.2",
     "markdown-table": "^1.1.3",
     "typescript": "^3.3.3333"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EndBug/game-tracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EndBug/game-tracker/issues"
+  },
+  "homepage": "https://github.com/EndBug/game-tracker#readme"
 }
