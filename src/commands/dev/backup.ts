@@ -17,7 +17,7 @@ export default class BackupCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   async run(msg: Commando.CommandoMessage) {
     if (!backup.available) return msg.reply('There is no backup token, please check your .env file.');
 

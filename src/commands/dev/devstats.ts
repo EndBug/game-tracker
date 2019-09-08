@@ -20,13 +20,13 @@ export default class DevStatsCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   run(msg: Commando.CommandoMessage, { mode }) {
     if (['servers', 'guilds'].includes(mode)) {
       const text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().join(', ') + '\n```';
       msg.say(text);
     } else if (['database', 'db'].includes(mode)) {
-      //@ts-ignore
+      // @ts-ignore
       const { ow }: { ow: Object } = client.provider.settings.get('global');
       msg.say('Here is the current database:\n' +
         `- Overwatch (${Object.keys(ow).length}):\n` +

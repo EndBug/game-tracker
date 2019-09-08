@@ -21,7 +21,7 @@ export default class OffCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   async run(msg: Commando.CommandoMessage, { force }: { force: boolean }) {
     if (backup.available) {
       let res = await msg.say('Saving a backup...');

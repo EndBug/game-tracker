@@ -15,7 +15,7 @@ export default class SupportCMD extends Commando.Command {
     });
   }
 
-  //@ts-ignore
+  // @ts-ignore
   async run(msg: Commando.CommandoMessage) {
     const invite = await getSupportInvite();
     if (!invite) {
