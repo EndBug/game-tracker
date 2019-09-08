@@ -16,6 +16,7 @@
     "doc": "ts-node src/scripts/doc.ts",
     "doc:add": "npm run doc && git add ./doc",
     "lint": "eslint ./src/**/*.* --fix",
+    "lint:add": "npm run lint && git add ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintIgnore": [
