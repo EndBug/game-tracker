@@ -16,11 +16,14 @@ jobs:
     - name: Install dependencies
       run: npm install --save-dev && npm i ts-node
 
+    - name: Remove unintended package changes
+      run: npm pkg:reset
+
     - name: Update documentation
-      run: npm run doc:add
+      run: npm run doc
 
     - name: Commit documentation changes
-      uses: ./actions/commit-docs
+      uses: stefanzweifel/git-auto-commit-action@v2.0.0
       with:
         commit_author_name: Federico Grandi
         commit_author_email: fgrandi30@gmail.com
