@@ -18,11 +18,15 @@ EOF
     git config --global user.name "Game Tracker Actions"
 }
 
-echo "Removing changes to package.json and package-lock.json"
+echo "Removing changes to package.json and package-lock.json..."
 git checkout -- package.json
+git checkout -- package-lock.json
 
-# This section only runs if there have been file changes
+echo "Staging files in commit path..."
+git add "${INPUT_COMMIT_PATH}"
+
 echo "Checking for uncommitted changes in the git working tree..."
+# This section only runs if there have been file changes
 if ! git diff --cached --exit-code
 then
     git_setup

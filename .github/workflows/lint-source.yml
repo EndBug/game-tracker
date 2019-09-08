@@ -16,9 +16,6 @@ jobs:
     - name: Install dependencies
       run: npm install --only=dev && npm install mkdirp --no-save
 
-    - name: Remove unintended package changes
-      run: npm run pkg:reset
-
     - name: Update documentation
       run: npm run lint
 
