@@ -21,7 +21,7 @@
     "discord.js-commando": "github:EndBug/Commando#djs-v11.4.2",
     "dotenv": "^6.2.0",
     "nodemon": "^1.18.10",
-    "overwatch-stats-api": "^2.0.6",
+    "overwatch-stats-api": "^1.0.6",
     "r6api.js": "github:EndBug/r6api.js#auto-types",
     "request-promise": "^4.2.4",
     "sqlite": "^3.0.2",
@@ -31,18 +31,9 @@
   "devDependencies": {
     "@types/node": "^11.10.4",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
-    "@typescript-eslint/parser": "^1.6.0",
+    "@typescript-eslint/parser": "^2.0.0",
     "all-contributors-cli": "^6.3.1",
     "eslint": "^6.3.0",
-    "markdown-table": "^1.1.3",
     "typescript": "^3.3.3333"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/EndBug/game-tracker.git"
-  },
-  "bugs": {
-    "url": "https://github.com/EndBug/game-tracker/issues"
-  },
-  "homepage": "https://github.com/EndBug/game-tracker#readme"
+  }
 }
