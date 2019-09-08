@@ -15,7 +15,7 @@
     "contributors:generate": "all-contributors generate",
     "doc": "ts-node src/scripts/doc.ts",
     "doc:add": "npm run doc && git add ./doc",
-    "lint": "eslint ./src/**/*.* --fix",
+    "lint": "eslint \"src/**\" --fix",
     "lint:add": "npm run lint && git add ./src",
     "pkg:reset": "git checkout -- package.json && git checkout -- package-lock.json",
     "test": "echo \"Error: no test specified\" && exit 1"
