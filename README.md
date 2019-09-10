@@ -26,7 +26,8 @@ The currently supported games are:
 
  - [Overwatch](./doc/ow/OVERWATCH.md)
  
-More are yet to come ;)
+You can see the preview of each game's commands by looking either at the docs (click the name of the game in the above list) or at the dedicated channel in the "examples" category of the [support server](#what-if-i-have-a-problem).  
+More games are yet to come ;)
 
 ### What if I have a problem?
 You can get an invite for the support server though the `support` command.   
