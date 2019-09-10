@@ -9,7 +9,7 @@
 
 
 ### What is Game Tracker?
-Game Tracker is an open source Discord bot that is able to fecth stats from your favorite games. It's also able to remember your account, so that you don't need to remember it every time.
+Game Tracker is an open-source Discord bot that is able to fetch stats from your favorite games. It's also able to remember your account, so that you don't need to remember it every time.
 
 ### How can I add Game Tracker to my server?
 It's very simple:  
@@ -30,7 +30,7 @@ You can see the preview of each game's commands by looking either at the docs (c
 More games are yet to come ;)
 
 ### What if I have a problem?
-You can get an invite for the support server though the `support` command.   
+You can get an invite for the support server through the `support` command.   
 For a more developer-friendly report, please use the Issues section of this repository.
 
 ### How can I contribute to the bot?
