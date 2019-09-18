@@ -25,7 +25,7 @@ jobs:
       run: npm run lint
 
     - name: Commit changes
-      uses: EndBug/add-and-commit@latest
+      uses: EndBug/add-and-commit@better-paths
       with:
         author_name: Federico Grandi
         author_email: fgrandi30@gmail.com
