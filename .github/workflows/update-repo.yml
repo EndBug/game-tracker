@@ -1,0 +1,56 @@
+name: Update docs
+on: push
+
+jobs: 
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@master
+
+    - name: Set up Node.js
+      uses: actions/setup-node@master
+      with:
+        node-version: 8.9.4
+    
+    - name: Install dependencies
+      run: npm install --only=dev && npm install ts-node mkdirp --no-save
+
+  update-docs:
+    name: Update documentation
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps: 
+    - name: Update documentation
+      run: npm run doc
+
+    - name: Commit documentation changes
+      uses: EndBug/add-and-commit@latest
+      with:
+        author_name: Federico Grandi
+        author_email: fgrandi30@gmail.com
+        message: "[auto] Update documentation"
+        path: doc
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  lint-src:
+    name: Lint with ESLint
+    needs: [setup, update-docs]
+    runs-on: ubuntu-latest
+
+    steps: 
+    - name: Update source code
+      run: npm run lint
+
+    - name: Commit linting changes
+      uses: EndBug/add-and-commit@latest
+      with:
+        author_name: Federico Grandi
+        author_email: fgrandi30@gmail.com
+        message: "[auto] Lint source code"
+        path: src
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
