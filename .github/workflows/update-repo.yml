@@ -1,4 +1,4 @@
-name: Update docs
+name: Update repo
 on: push
 
 jobs: 
@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps: 
+    - name: Checkout repository
+      uses: actions/checkout@master
+
     - name: Update documentation
       run: npm run doc
 
@@ -42,6 +45,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps: 
+    - name: Checkout repository
+      uses: actions/checkout@master
+
     - name: Update source code
       run: npm run lint
 
