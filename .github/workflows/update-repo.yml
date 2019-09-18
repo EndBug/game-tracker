@@ -25,11 +25,12 @@ jobs:
       run: npm run lint
 
     - name: Commit changes
-      uses: EndBug/add-and-commit@better-paths
+      uses: EndBug/add-and-commit@master
       with:
         author_name: Federico Grandi
         author_email: fgrandi30@gmail.com
         message: "[auto] Update repository"
         path: doc src
+        pattern: "*.*"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
