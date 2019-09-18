@@ -30,6 +30,6 @@ jobs:
         author_name: Federico Grandi
         author_email: fgrandi30@gmail.com
         message: "[auto] Update repository"
-        path: "doc src"
+        path: doc src
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
