@@ -20,11 +20,11 @@ jobs:
       run: npm run doc
 
     - name: Commit documentation changes
-      uses: ./actions/commit
+      uses: EndBug/add-and-commit@latest
       with:
-        commit_author_name: Federico Grandi
-        commit_author_email: fgrandi30@gmail.com
-        commit_message: "[auto] Update documentation"
-        commit_path: doc
+        author_name: Federico Grandi
+        author_email: fgrandi30@gmail.com
+        message: "[auto] Update documentation"
+        path: doc
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -20,11 +20,11 @@ jobs:
       run: npm run lint
 
     - name: Commit linting changes
-      uses: ./actions/commit
+      uses: EndBug/add-and-commit@latest
       with:
-        commit_author_name: Federico Grandi
-        commit_author_email: fgrandi30@gmail.com
-        commit_message: "[auto] Lint source code"
-        commit_path: src
+        author_name: Federico Grandi
+        author_email: fgrandi30@gmail.com
+        message: "[auto] Lint source code"
+        path: src
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
