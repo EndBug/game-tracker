@@ -12,7 +12,7 @@ import * as fs from 'fs';
 import { mapToObj } from '../utils/utils';
 import * as stats_poster from '../utils/stats_poster';
 
-const { TOKEN } = process.env;
+const { TOKEN } = process.env
 
 export let client: Commando.CommandoClient;
 export let homeguild: Discord.Guild;
