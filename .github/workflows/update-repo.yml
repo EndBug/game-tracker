@@ -40,6 +40,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@master
 
+    - name: Pull eventual changes
+      run: git pull
+
     - name: Set up Node.js
       uses: actions/setup-node@master
       with:
