@@ -31,4 +31,4 @@
 | Winston           | `winston`, `monkey`, `harambe`, `scientist`                 |
 | Hammond           | `hammond`, `wrecking_ball`, `wreckingball`, `wrecking ball` |
 | Zarya             | `zarya`                                                     |
-| Zenyatta          | `zenyatta`, `zen`, `Zeniyatta`                              |f
+| Zenyatta          | `zenyatta`, `zen`, `Zeniyatta`                              |
