@@ -25,7 +25,7 @@ export let APIUtil: {
   erase(target: string | Discord.GuildMember | Discord.User): string[]
 };
 
-import * as backup from './backup';
+import * as backup from './backup'
 
 export class API {
   name: string;
