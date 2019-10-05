@@ -37,7 +37,7 @@
     "typescript-map": "0.0.7"
   },
   "devDependencies": {
-    "@types/node": "^11.10.4",
+    "@types/node": "^12.7.11",
     "@typescript-eslint/eslint-plugin": "^1.4.2",
     "@typescript-eslint/parser": "^1.6.0",
     "all-contributors-cli": "^6.9.1",
