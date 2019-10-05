@@ -116,7 +116,7 @@ export default class OverwatchCMD extends Commando.Command {
         if (isMention(player)) {
           const res = API.checkDatabase(msg.author);
           if (res) {
-            if (platform) hero = platform;
+            if (platform) hero = platform; // lgtm [js/trivial-conditional]
             [player, platform] = res;
           } else err = 'This user is not registered, please enter its battletag and platform manually.';
         } else err = 'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`';

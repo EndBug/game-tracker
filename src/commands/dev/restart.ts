@@ -42,6 +42,6 @@ export default class RestartCMD extends Commando.Command {
 
   hasPermission(msg: Commando.CommandoMessage) {
     if (msg.author.id == owner.id) return true;
-    else 'This command can only be executed by the bot owner.';
+    else return 'This command can only be executed by the bot owner.';
   }
 }
