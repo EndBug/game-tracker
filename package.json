@@ -25,7 +25,7 @@
     "src/commands/samples/*.*"
   ],
   "dependencies": {
-    "dbots": "github:Snazzah/dbots.js#master",
+    "dbots": "^1.2.4",
     "discord.js": "11.4.2",
     "discord.js-commando": "github:EndBug/Commando#djs-v11.4.2",
     "dotenv": "^6.2.0",
