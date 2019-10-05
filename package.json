@@ -32,7 +32,7 @@
     "nodemon": "^1.18.10",
     "overwatch-stats-api": "^2.0.6",
     "request-promise": "^4.2.4",
-    "sqlite": "^3.0.2",
+    "sqlite": "^3.0.3",
     "ts-node": "^8.3.0",
     "typescript-map": "0.0.7"
   },
