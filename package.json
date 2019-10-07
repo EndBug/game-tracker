@@ -28,7 +28,7 @@
     "dbots": "^1.2.4",
     "discord.js": "11.4.2",
     "discord.js-commando": "github:EndBug/Commando#djs-v11.4.2",
-    "dotenv": "^6.2.0",
+    "dotenv": "^8.1.0",
     "nodemon": "^1.18.10",
     "overwatch-stats-api": "^2.0.6",
     "request-promise": "^4.2.4",
