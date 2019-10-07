@@ -29,7 +29,7 @@
     "discord.js": "11.4.2",
     "discord.js-commando": "github:EndBug/Commando#djs-v11.4.2",
     "dotenv": "^8.1.0",
-    "nodemon": "^1.18.10",
+    "nodemon": "^1.19.3",
     "overwatch-stats-api": "^2.0.6",
     "request-promise": "^4.2.4",
     "sqlite": "^3.0.3",
