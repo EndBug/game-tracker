@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/node": "^12.7.11",
     "@typescript-eslint/eslint-plugin": "^2.3.3",
-    "@typescript-eslint/parser": "^2.3.2",
+    "@typescript-eslint/parser": "^2.3.3",
     "all-contributors-cli": "^6.9.1",
     "eslint": "^6.5.1",
     "markdown-table": "^1.1.3",
