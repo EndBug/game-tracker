@@ -42,10 +42,10 @@ var index = 0;
 /** Reads a custom `Presence` instance and sets it to the client user
  * @param pres The `Presence` to read
  */
-function setPresence(pres: Presence) {
+function setPresence(indexOverride?: number) {
+  const pres = indexOverride ? status[indexOverride] : status[index];
   index++;
   index %= status.length;
-
   client.user.setStatus(pres.status);
   client.user.setActivity(pres.getName(), {
     type: pres.game.type
@@ -53,5 +53,5 @@ function setPresence(pres: Presence) {
 }
 
 
-if (status.length > 0) setPresence(status[0]);
-if (status.length > 1) setInterval(setPresence, interval, () => status[index]);
+if (status.length > 0) setPresence();
+if (status.length > 1) setInterval(setPresence, interval);
