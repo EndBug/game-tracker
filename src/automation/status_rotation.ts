@@ -54,4 +54,4 @@ function setPresence(pres: Presence) {
 
 
 if (status.length > 0) setPresence(status[0]);
-if (status.length > 1) setInterval(setPresence, interval, status[index]);
+if (status.length > 1) setInterval(setPresence, interval, () => status[index]);
