@@ -23,7 +23,7 @@ export default class DevStatsCMD extends Commando.Command {
   // @ts-ignore
   run(msg: Commando.CommandoMessage, { mode }) {
     if (['servers', 'guilds'].includes(mode)) {
-      let text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().sort((a, b) => a.joinedAt.getTime() - b.joinedAt.getTime()).join(', ') + '\n```';
+      let text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().sort((a, b) => b.joinedAt.getTime() - a.joinedAt.getTime()).join(', ') + '\n```';
       if (text.length > 2000) text = text.substr(0, 2000 - 7) + '...\n```';
       msg.say(text);
     } else if (['database', 'db'].includes(mode)) {
