@@ -27,7 +27,7 @@ class Presence {
   getName() {
     return this.game.name
       .replace(new RegExp('/guildCount/', 'g'), client.guilds.size.toString())
-      .replace(new RegExp('/userCount/', 'g'), client.guilds.size.toString());
+      .replace(new RegExp('/userCount/', 'g'), client.users.size.toString());
   }
 }
 
