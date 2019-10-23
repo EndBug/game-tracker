@@ -3,9 +3,7 @@ import { client } from '../core/app';
 
 const interval = 12500;
 
-/**
- * Class that makes it easier to add custom statuses (add them into the `status` array)
- */
+/** Class that makes it easier to add custom statuses (add them into the `status` array) */
 class Presence {
   status: PresenceStatus
   afk: boolean
@@ -27,19 +25,28 @@ class Presence {
 
   /** Replaces the dynamic variables inside the presence name */
   getName() {
-    return this.game.name.replace(new RegExp('/guildCount/', 'g'), client.guilds.size.toString());
+    let result = this.game.name;
+    const dictionary: Record<string, () => string> = {
+      guildCount: client.guilds.size.toString,
+      userCount: client.users.size.toString
+    };
+
+    for (const key in dictionary)
+      result = result.replace(new RegExp(`/${key}/`, 'g'), dictionary[key]());
+
+    return result;
   }
 }
 
 const status = [
   new Presence('for your requests!', 'WATCHING'),
-  new Presence('/guildCount/ servers.', 'WATCHING')
+  new Presence('/guildCount/ servers.', 'WATCHING'),
+  new Presence('/userCount/ users.', 'LISTENING')
 ];
 
 var index = 0;
 
-/**
- * Reads a custom `Presence` instance and sets it to the client user
+/** Reads a custom `Presence` instance and sets it to the client user
  * @param pres The `Presence` to read
  */
 function setPresence(pres: Presence) {
