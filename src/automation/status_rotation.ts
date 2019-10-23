@@ -25,16 +25,9 @@ class Presence {
 
   /** Replaces the dynamic variables inside the presence name */
   getName() {
-    let result = this.game.name;
-    const dictionary: Record<string, () => string> = {
-      guildCount: client.guilds.size.toString,
-      userCount: client.users.size.toString
-    };
-
-    for (const key in dictionary)
-      result = result.replace(new RegExp(`/${key}/`, 'g'), dictionary[key]());
-
-    return result;
+    return this.game.name
+      .replace(new RegExp('/guildCount/', 'g'), client.guilds.size.toString())
+      .replace(new RegExp('/userCount/', 'g'), client.guilds.size.toString());
   }
 }
 
