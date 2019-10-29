@@ -22,9 +22,9 @@
     "dotenv": "^6.2.0",
     "nodemon": "^1.18.10",
     "overwatch-stats-api": "^1.0.6",
-    "r6api.js": "github:EndBug/r6api.js#auto-types",
+    "r6api.js": "^1.0.2",
     "request-promise": "^4.2.4",
-    "sqlite": "^3.0.2",
+    "sqlite": "3.0.3",
     "ts-node": "^8.0.3",
     "typescript-map": "0.0.7"
   },
