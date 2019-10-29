@@ -2,7 +2,7 @@ import { TSMap as Map } from 'typescript-map'; // eslint-disable-line no-unused-
 import { User, GuildMember } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { homeguild, owner, client } from '../core/app';
 
-//#region Classes
+// #region Classes
 
 export class API {
   name: string;
@@ -106,9 +106,9 @@ export class Cache {
     return this.store.get(id);
   }
 }
-//#endregion
+// #endregion
 
-//#region Functions
+// #region Functions
 /**
  * Converts a camelCase string into a more readable format
  * @example 'thisIsAnExample' => 'This is an example'
@@ -249,7 +249,7 @@ export function mergeAndSum<T>(...objects: T[]): T {
 
     const result = obj1;
     for (const key in obj2) {
-      //@ts-ignore
+      // @ts-ignore
       if (result[key]) result[key] += obj2[key];
       else result[key] = obj2[key];
     }
@@ -359,4 +359,4 @@ export function readNumber(number: number, decimals = 2) {
 export function twoDigits(number: number) {
   return `0${number}`.slice(-2);
 }
-//#endregion
+// #endregion

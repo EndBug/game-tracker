@@ -1,4 +1,4 @@
-import R6API, { Stats, Operator, OperatorStats, RankInfo, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName } from 'r6api.js'; // eslint-disable-line no-unused-vars
+import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { Platform } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils';
 import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize } from '../utils/utils';
@@ -224,7 +224,7 @@ function readablePlayType(str: strictPlayType, trailingSpace = false) {
 type StatsType<T> =
   T extends 'error' ? Error | string :
   T extends 'general' ? GeneralStats :
-  T extends 'modes' ? Stats['pvp']['mode'] | Stats['pve']['mode'] :
+  T extends 'modes' ? Stats['pvp']['modes'] | Stats['pve']['modes'] :
   T extends 'wp-single' | 'wp-cat' ? WeaponEmbedStats :
   false;
 
@@ -250,7 +250,7 @@ export function isPlatform(str: string): str is Platform {
  * Compares play regions to determine which is the most recent
  * @param regions The regions to compare
  */
-function getLastPlayedRegion(regions: RankInfo['regions']) {
+function getLastPlayedRegion(regions: RankSeason['regions']) {
   const key = Object.values(regions).sort((a, b) => {
     const ad = new Date(a.updateTime),
       bd = new Date(b.updateTime);
@@ -362,7 +362,7 @@ export class RainbowAPI extends API {
   }
 
   async getRank(id: string, platform: Platform) {
-    return ensureOne(await r6api.getRank(platform, id));
+    return ensureOne(await r6api.getRank(platform, id, { seasons: [-1] }));
   }
 
   async getUsername(id: string, platform: Platform) {
@@ -412,7 +412,7 @@ export class RainbowAPI extends API {
 
     const levelInfo = await this.getLevel(id, platform);
     const rankInfo = await this.getRank(id, platform);
-    const region = getLastPlayedRegion(rankInfo.regions);
+    const region = getLastPlayedRegion(rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))]);
 
     processedStats.account = {
       currentRank: {
@@ -459,7 +459,7 @@ export class RainbowAPI extends API {
     if (check) return check;
     if (!enforceType<Stats>(rawStats)) return;
 
-    const processedStats = rawStats[playType].mode;
+    const processedStats = rawStats[playType].modes;
 
     return this.createEmbed({
       id,
