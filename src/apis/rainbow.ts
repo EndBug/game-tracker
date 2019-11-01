@@ -1,8 +1,8 @@
 import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { Platform } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils';
-import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord, Cache } from '../utils/utils'; // eslint-disable-line no-unused-vars
-import { RichEmbed, User } from 'discord.js'; // eslint-disable-line no-unused-vars
+import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord, Cache, resolver } from '../utils/utils'; // eslint-disable-line no-unused-vars
+import { RichEmbed, User, UserResolvable } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
 
 const { UbisoftEmail, UbisoftPassword } = process.env;
@@ -19,7 +19,7 @@ var cache = new Cache('Rainbow 6 Siege');
 
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
-type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types' | 'queue'
+type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types' | 'queue' | 'link' | 'unlink'
 
 /** Custom embed class that acts as base for other embeds */
 class CustomEmbed extends RichEmbed {
@@ -304,6 +304,58 @@ class QueueEmbed extends CustomEmbed {
     return this.addField(queue.name, str, true);
   }
 }
+
+/** Embed for the 'link' and 'unlink' commands */
+class LinkEmbed extends CustomEmbed {
+  type: 'link' | 'unlink'
+
+  constructor(msg: CommandoMessage, stats: StatsType<'link' | 'unlink'>, ...args) {
+    super(msg, ...args);
+    const { mode, previous, current } = stats;
+    this.type = mode == 'same' ? 'link' : mode;
+    this[mode](current, previous);
+  }
+
+  /**
+   * Changes the color, adds title and description to the embed
+   * @param curr The current [username, platform]
+   * @param prev The previous [username, platform]
+   */
+  link(curr: string, prev: string) {
+    return this.setColor([0, 154, 228])
+      .setTitle(`R6S profile ${prev ? 'updated' : 'linked'}`)
+      .setD(`Your profile is now linked: ${curr}`, prev);
+  }
+
+  /**
+   * Adds title and descirption to the embed
+   * @param curr Unnecessary parameter, keep it `undefined`
+   * @param prev The previous [username, platform]
+   */
+  unlink(curr: string, prev: string) {
+    return this.setTitle('R6S profile unlinked')
+      .setD(undefined, prev);
+  }
+
+  /**
+   * Changes the color, adds title and description to the embed
+   * @param curr The current [username, platform]
+   */
+  same(curr: string) {
+    return this.setColor([0, 154, 228])
+      .setTitle('R6S profile unchanged')
+      .setDescription(`Your linked profile is ${curr}`);
+  }
+
+  /**
+   * Adds a custom description
+   * @param desc The first part of the description
+   * @param prev The previous [username, platform]
+   */
+  private setD(desc = '', prev: string) {
+    return this.setDescription(desc + (prev ? `\nYour previous linked profile was ${prev}.` : '\nYou had no previous linked profile.'));
+  }
+}
 // #endregion
 
 // #region Utility
@@ -325,6 +377,7 @@ type StatsType<T> =
   T extends 'op' ? OperatorEmbedStats :
   T extends 'types' ? Stats['pve']['types'] :
   T extends 'queue' ? StatsQueue[] :
+  T extends 'link' | 'unlink' ? LinkData :
   false;
 
 /** Parameters for the createEmbed method */
@@ -379,6 +432,10 @@ function cacheID(id: string, platform: Platform) {
   return id + '|' + platform;
 }
 
+function player(username: string, platform: string, bold = true) {
+  const b = bold ? '**' : '';
+  return b + username + b + ' - ' + b + platform.toUpperCase() + b;
+}
 // #endregion
 
 // #region Processed stats formats
@@ -418,6 +475,12 @@ interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
 }
 
 interface OperatorEmbedStats extends PartialRecord<strictPlayType, OperatorStats> { }
+
+interface LinkData {
+  previous?: string
+  current?: string
+  mode: 'link' | 'unlink' | 'same'
+}
 // #endregion
 
 export class RainbowAPI extends API {
@@ -439,6 +502,11 @@ export class RainbowAPI extends API {
         stats: err
       });
     }
+  }
+
+  checkDatabase(discordUser: UserResolvable): [string, Platform] {
+    const id = resolver.resolveUserID(discordUser);
+    return this.store.get(id);
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
@@ -474,12 +542,19 @@ export class RainbowAPI extends API {
     } else if (embedType == 'queue') {
       if (!enforceType<StatsType<'queue'>>(stats)) return;
       embed = new QueueEmbed(msg, username, platform, stats, raw);
+    } else if (['link', 'unlink'].includes(embedType)) {
+      if (!enforceType<StatsType<'link' | 'unlink'>>(stats)) return;
+      embed = new LinkEmbed(msg, stats);
     }
 
     return embed;
   }
 
   // #region API wrappers
+  async getID(username: string, platform: Platform) {
+    return ensureOne(await r6api.getId(platform, username));
+  }
+
   async getLevel(id: string, platform: Platform) {
     return ensureOne(await r6api.getLevel(platform, id));
   }
@@ -709,6 +784,56 @@ export class RainbowAPI extends API {
       platform,
       raw: rawStats,
       stats: processedStats
+    });
+  }
+
+  /** Use the udpated `username` and `platform` */
+  async link(msg: CommandoMessage, username: string, platform: Platform) {
+    const userInfo = await this.getID(username, platform);
+    if (!userInfo || !userInfo.id) return this.createEmbed({
+      embedType: 'error',
+      id: username,
+      msg,
+      platform,
+      stats: `${player(username, platform)} is not a valid player.`
+    });
+
+    const prev = this.checkDatabase(msg.message),
+      prevStr = prev instanceof Array ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined,
+      currStr = player(username, platform);
+
+    const mode: 'same' | 'link' = prevStr == currStr ? 'same' : 'link';
+
+    if (mode == 'link') this.store.set(msg.author.id, [userInfo.id, platform]);
+
+    return this.createEmbed({
+      embedType: 'link',
+      id: username,
+      msg,
+      platform,
+      stats: {
+        previous: prevStr,
+        current: currStr,
+        mode
+      }
+    });
+  }
+
+  async unlink(msg: CommandoMessage) {
+    const prev = this.checkDatabase(msg.message),
+      prevStr = prev instanceof Array ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined;
+
+    if (prevStr) this.store.delete(msg.author.id);
+
+    return this.createEmbed({
+      embedType: 'unlink',
+      id: undefined,
+      msg,
+      platform: undefined,
+      stats: {
+        previous: prevStr,
+        mode: 'unlink'
+      }
     });
   }
   // #endregion
