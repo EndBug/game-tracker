@@ -838,3 +838,5 @@ export class RainbowAPI extends API {
   }
   // #endregion
 }
+
+export const ApiLoader = RainbowAPI;
