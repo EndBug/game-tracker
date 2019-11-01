@@ -230,8 +230,9 @@ class OperatorEmbed extends CustomEmbed {
 
     const title = mode == 'pve' ? 'PvE' : 'PvP';
     const str = `
-    Kills/Deaths: **${readNumber((kills / deaths) * 100)}%** (**${[deaths, kills].map(readNumber).join('** / **')}**)
-    Wins/Losses: **${readNumber((wins / losses) * 100)}%** (**${[wins, losses].map(readNumber).join('** / **')}**)
+    Kills/Deaths: **${readNumber((kills / deaths))}** (**${[deaths, kills].map(readNumber).join('** / **')}**)
+    Win rate: **${readNumber((wins / (wins + losses)) * 100)}%**
+    Wins/Losses: **${[wins, losses].map(readNumber).join('** / **')}**
     Headshots: **${readNumber(stats.headshots)}**
     Melee kills: **${readNumber(stats.meleeKills)}**
     DBNOs: **${readNumber(stats.dbno)}**
@@ -277,7 +278,7 @@ function readablePlayType(str: strictPlayType, trailingSpace = false) {
   return res;
 }
 
-/** You can store here all teh different expected kinds of processed stats to put in EmbedParameters */
+/** You can store here all the different expected kinds of processed stats to put in EmbedParameters */
 type StatsType<T> =
   T extends 'error' ? Error | string :
   T extends 'general' ? GeneralStats :
@@ -407,7 +408,7 @@ export class RainbowAPI extends API {
     const username = await this.getUsername(id, platform);
     let embed: CustomEmbed;
 
-    // Type guards are necessary, jsut copy & paste them block-by-block
+    // Type guards are necessary, just copy & paste them block-by-block
     if (embedType == 'general') {
       if (!enforceType<StatsType<'general'>>(stats)) return;
       embed = new GeneralEmbed(msg, username, platform, playType, stats, raw);
