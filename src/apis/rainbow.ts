@@ -28,11 +28,7 @@ class CustomEmbed extends RichEmbed {
    * @param type The playType to search the operator in
    */
   addOpImage(rawStats: Stats, type: playType) {
-    let operators: Record<Operator, OperatorStats>;
-    if (type == 'all') operators = mergeAndSum(rawStats.pve.operators, rawStats.pvp.operators);
-    else operators = rawStats[type].operators;
-
-    const mostUsedOp = Object.values(operators).sort((a, b) => -(a.playtime - b.playtime))[0];
+    const mostUsedOp = getMostPlayedOperator(rawStats, type);
     return this.setThumbnail(mostUsedOp.badge);
   }
 
@@ -257,6 +253,15 @@ function getLastPlayedRegion(regions: RankSeason['regions']) {
     return -(ad.getTime() - bd.getTime()); // from the most recent to the oldest
   })[0].region;
   return regions[key];
+}
+
+function getMostPlayedOperator(rawStats: Stats, type?: playType) {
+  let operators: Record<Operator, OperatorStats>;
+  if (!type || type == 'all') operators = mergeAndSum(rawStats.pve.operators, rawStats.pvp.operators);
+  else operators = rawStats[type].operators;
+
+  const mostUsedOp = Object.values(operators).sort((a, b) => -(a.playtime - b.playtime))[0];
+  return mostUsedOp;
 }
 
 function keyValue(key: string, value: number) {
