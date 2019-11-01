@@ -82,10 +82,12 @@ class GeneralEmbed extends CustomEmbed {
   addMatches({ matches }: GeneralStats) {
     const { wins, losses, total } = matches;
 
-    const str = `Total matches: **${readNumber(total)}**
+    const str = `
+    Total matches: **${readNumber(total)}**
     Total playtime: **${matches.playtime}**
-    Wins/Losses: **${[wins, losses].map(n => readNumber(n)).join('** / **')}**
-    Win rate: **${readNumber((wins / total) * 100)}%**`;
+    Wins/Losses: **${[wins, losses].map(readNumber).join('** / **')}**
+    Win rate: **${readNumber((wins / total) * 100)}%**
+    `.trim();
 
     return this.addField('Matches', str, true);
   }
@@ -183,7 +185,7 @@ class WeaponSingleEmbed extends WeaponEmbed {
     super(msg, ...args);
     this.type = 'wp-single';
     const weapon = category.WPname;
-    return this.setHeader(weapon, username, platform)
+    return this.setHeader(`${weapon} weapon`, username, platform)
       .addWeapon(category, weapon)
       .addCategory(category, `${capitalize(category.CATname)} category`);
   }
