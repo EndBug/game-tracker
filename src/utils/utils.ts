@@ -2,6 +2,12 @@ import { TSMap as Map } from 'typescript-map'; // eslint-disable-line no-unused-
 import { User, GuildMember } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { homeguild, owner, client } from '../core/app';
 
+// #region Types
+export type PartialRecord<K extends keyof any, T> = {
+  [P in K]?: T;
+};
+// #endregion
+
 // #region Classes
 
 export class API {
