@@ -367,6 +367,10 @@ function statFormat(value: number) {
   return `**${readNumber(value) || value}**`;
 }
 
+function cacheID(id: string, platform: Platform) {
+  return id + '|' + platform;
+}
+
 // #endregion
 
 // #region Processed stats formats
@@ -486,7 +490,7 @@ export class RainbowAPI extends API {
       error: Error;
 
     try {
-      if (useCache) res = cache.get(id) || ensureOne(await r6api.getStats(platform, id));
+      if (useCache) res = cache.get(cacheID(id, platform)) || ensureOne(await r6api.getStats(platform, id));
       else res = ensureOne(await r6api.getStats(platform, id));
     } catch (e) {
       if (typeof e == 'string') error = new Error(e);
@@ -498,7 +502,7 @@ export class RainbowAPI extends API {
     error.message += `\nParameters:\n- Id: \`${id}\`\n- Platform: \`${platform}\``;
     if (error) return error;
     else {
-      if (useCache) cache.add(id, res);
+      if (useCache) cache.add(cacheID(id, platform), res);
       return res;
     }
   }
