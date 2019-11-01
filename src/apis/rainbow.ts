@@ -1,12 +1,14 @@
 import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { Platform } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils';
-import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord } from '../utils/utils'; // eslint-disable-line no-unused-vars
+import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord, Cache } from '../utils/utils'; // eslint-disable-line no-unused-vars
 import { RichEmbed, User } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
 
 const { UbisoftEmail, UbisoftPassword } = process.env;
 const r6api = new R6API(UbisoftEmail, UbisoftPassword);
+
+var cache = new Cache('Rainbow 6 Siege');
 
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
@@ -479,11 +481,13 @@ export class RainbowAPI extends API {
   }
 
   /** Returns all the stats for a user */
-  async getStats(id: string, platform: Platform) {
+  async getStats(id: string, platform: Platform, useCache = true) {
     let res: Stats,
       error: Error;
+
     try {
-      res = ensureOne(await r6api.getStats(platform, id));
+      if (useCache) res = cache.get(id) || ensureOne(await r6api.getStats(platform, id));
+      else res = ensureOne(await r6api.getStats(platform, id));
     } catch (e) {
       if (typeof e == 'string') error = new Error(e);
       else if (e instanceof Error) error = e;
@@ -492,7 +496,11 @@ export class RainbowAPI extends API {
         error = new Error('Invalid id.');
     }
     error.message += `\nParameters:\n- Id: \`${id}\`\n- Platform: \`${platform}\``;
-    return error || res;
+    if (error) return error;
+    else {
+      if (useCache) cache.add(id, res);
+      return res;
+    }
   }
 
   async isInvalidId(id: string, platform: Platform) {
