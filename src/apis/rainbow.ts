@@ -10,6 +10,13 @@ const r6api = new R6API(UbisoftEmail, UbisoftPassword);
 
 var cache = new Cache('Rainbow 6 Siege');
 
+/* API data store structure:
+  "Discord ID": [
+    "1234-1234-1234-1234" -> id
+    "xbl" -> platform
+  ]
+*/
+
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
 type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types' | 'queue'
@@ -22,6 +29,7 @@ class CustomEmbed extends RichEmbed {
     super(...args);
     return this.setTimestamp()
       .setAuthor('Rainbow 6 Siege Stats', 'https://i.imgur.com/RgoDkpy.png')
+      .setColor('WHITE')
       .via(msg.author);
   }
 
@@ -417,7 +425,7 @@ export class RainbowAPI extends API {
     super('r6', 'Rainbow 6 Siege');
   }
 
-  check(stats: Error | Stats, id: string, platform: Platform, msg: CommandoMessage) {
+  errorCheck(stats: Error | Stats, id: string, platform: Platform, msg: CommandoMessage) {
     if (stats instanceof Array) throw new Error('Multiple results');
     if (stats === undefined || stats instanceof Error) {
       let err: Error;
@@ -522,7 +530,7 @@ export class RainbowAPI extends API {
   // #region Command methods
   async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType) {
     const rawStats = await this.getStats(id, platform);
-    const check = this.check(rawStats, id, platform, msg);
+    const check = this.errorCheck(rawStats, id, platform, msg);
     if (check) return check;
     if (!enforceType<Stats>(rawStats)) return;
 
@@ -576,7 +584,7 @@ export class RainbowAPI extends API {
 
   async modes(msg: CommandoMessage, id: string, platform: Platform, playType: strictPlayType) {
     const rawStats = await this.getStats(id, platform);
-    const check = this.check(rawStats, id, platform, msg);
+    const check = this.errorCheck(rawStats, id, platform, msg);
     if (check) return check;
     if (!enforceType<Stats>(rawStats)) return;
 
@@ -595,7 +603,7 @@ export class RainbowAPI extends API {
 
   async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
     const rawStats = await this.getStats(id, platform);
-    const check = this.check(rawStats, id, platform, msg);
+    const check = this.errorCheck(rawStats, id, platform, msg);
     if (check) return check;
     if (!enforceType<Stats>(rawStats)) return;
 
@@ -637,7 +645,7 @@ export class RainbowAPI extends API {
 
   async op(msg: CommandoMessage, id: string, platform: Platform, operator: Operator | 'auto') {
     const rawStats = await this.getStats(id, platform);
-    const check = this.check(rawStats, id, platform, msg);
+    const check = this.errorCheck(rawStats, id, platform, msg);
     if (check) return check;
     if (!enforceType<Stats>(rawStats)) return;
 
@@ -670,7 +678,7 @@ export class RainbowAPI extends API {
 
   async types(msg: CommandoMessage, id: string, platform: Platform) {
     const rawStats = await this.getStats(id, platform);
-    const check = this.check(rawStats, id, platform, msg);
+    const check = this.errorCheck(rawStats, id, platform, msg);
     if (check) return check;
     if (!enforceType<Stats>(rawStats)) return;
 
@@ -688,7 +696,7 @@ export class RainbowAPI extends API {
 
   async queue(msg: CommandoMessage, id: string, platform: Platform) {
     const rawStats = await this.getStats(id, platform);
-    const check = this.check(rawStats, id, platform, msg);
+    const check = this.errorCheck(rawStats, id, platform, msg);
     if (check) return check;
     if (!enforceType<Stats>(rawStats)) return;
 
