@@ -1,7 +1,7 @@
 import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { Platform } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils';
-import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize } from '../utils/utils';
+import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord } from '../utils/utils'; // eslint-disable-line no-unused-vars
 import { RichEmbed, User } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
 
@@ -10,7 +10,7 @@ const r6api = new R6API(UbisoftEmail, UbisoftPassword);
 
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
-type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat'
+type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op'
 
 /** Custom embed class that acts as base for other embeds */
 class CustomEmbed extends RichEmbed {
@@ -206,6 +206,43 @@ class WeaponCategoryEmbed extends WeaponEmbed {
       .addWeapon(category, wpPvE.name, 'Most chosen weapon', 'pve');
   }
 }
+
+/** Embed for the 'op' command */
+class OperatorEmbed extends CustomEmbed {
+  type: 'op'
+
+  constructor(msg: CommandoMessage, username: string, platform: Platform, stats: StatsType<'op'>, ...args) {
+    super(msg, ...args);
+    this.type = 'op';
+
+    // @ts-ignore
+    const modes: strictPlayType[] = Object.keys(stats).filter(m => !!stats[m]);
+    if (modes.length == 0) return;
+
+    this.setHeader(`${capitalize(stats[modes[0]].name)} operator`, username, platform)
+      .setThumbnail(stats[modes[0]].badge);
+    for (const mode of modes) this.addMode(mode, stats[mode]);
+    return this;
+  }
+
+  addMode(mode: strictPlayType, stats: OperatorStats) {
+    const { kills, deaths, wins, losses } = stats;
+
+    const title = mode == 'pve' ? 'PvE' : 'PvP';
+    const str = `
+    Kills/Deaths: **${readNumber((kills / deaths) * 100)}%** (**${[deaths, kills].map(readNumber).join('** / **')}**)
+    Wins/Losses: **${readNumber((wins / losses) * 100)}%** (**${[wins, losses].map(readNumber).join('** / **')}**)
+    Headshots: **${readNumber(stats.headshots)}**
+    Melee kills: **${readNumber(stats.meleeKills)}**
+    DBNOs: **${readNumber(stats.dbno)}**
+    XP: **${readNumber(stats.xp)}**
+    Playtime: **${readHours(stats.playtime / 60 / 60)}**
+    ${stats.gadget.map(g => `${g.name}: **${readNumber(g.value)}**`).join('\n')}
+    `.trim();
+
+    return this.addField(title, str, true);
+  }
+}
 // #endregion
 
 // #region Utility
@@ -224,6 +261,7 @@ type StatsType<T> =
   T extends 'general' ? GeneralStats :
   T extends 'modes' ? Stats['pvp']['modes'] | Stats['pve']['modes'] :
   T extends 'wp-single' | 'wp-cat' ? WeaponEmbedStats :
+  T extends 'op' ? OperatorEmbedStats :
   false;
 
 /** Parameters for the createEmbed method */
@@ -311,6 +349,8 @@ interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
   WPname?: WeaponName
   CATname: WeaponType
 }
+
+interface OperatorEmbedStats extends PartialRecord<strictPlayType, OperatorStats> { }
 // #endregion
 
 export class RainbowAPI extends API {
@@ -358,6 +398,9 @@ export class RainbowAPI extends API {
     } else if (embedType == 'wp-cat') {
       if (!enforceType<StatsType<'wp-cat'>>(stats)) return;
       embed = new WeaponCategoryEmbed(msg, username, platform, stats);
+    } else if (embedType == 'op') {
+      if (!enforceType<StatsType<'op'>>(stats)) return;
+      embed = new OperatorEmbed(msg, username, platform, stats);
     }
 
     return embed;
@@ -519,6 +562,39 @@ export class RainbowAPI extends API {
         stats: processedStats
       });
     }
+  }
+
+  async op(msg: CommandoMessage, id: string, platform: Platform, operator: Operator | 'auto') {
+    const rawStats = await this.getStats(id, platform);
+    const check = this.check(rawStats, id, platform, msg);
+    if (check) return check;
+    if (!enforceType<Stats>(rawStats)) return;
+
+    if (operator == 'auto') {
+      const str = getMostPlayedOperator(rawStats, 'all').name;
+      if (!enforceType<Operator>(str)) return;
+      operator = str;
+    }
+
+    const processedStats: OperatorEmbedStats = {};
+    processedStats.pvp = rawStats.pvp.operators[operator] || undefined;
+    processedStats.pve = rawStats.pve.operators[operator] || undefined;
+
+    if (!processedStats.pvp && !processedStats.pve) return this.createEmbed({
+      embedType: 'error',
+      id,
+      msg,
+      platform,
+      stats: 'No weapon stats have been found'
+    });
+
+    return this.createEmbed({
+      embedType: 'op',
+      id,
+      msg,
+      platform,
+      stats: processedStats
+    });
   }
   // #endregion
 }
