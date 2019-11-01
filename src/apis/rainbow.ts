@@ -1,4 +1,4 @@
-import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject } from 'r6api.js'; // eslint-disable-line no-unused-vars
+import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { Platform } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils';
 import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord } from '../utils/utils'; // eslint-disable-line no-unused-vars
@@ -10,7 +10,7 @@ const r6api = new R6API(UbisoftEmail, UbisoftPassword);
 
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
-type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types'
+type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types' | 'queue'
 
 /** Custom embed class that acts as base for other embeds */
 class CustomEmbed extends RichEmbed {
@@ -266,6 +266,34 @@ class TypesEmbed extends CustomEmbed {
     return this.addField(name, str.trim(), true);
   }
 }
+
+/** Embed for the 'queue' command */
+class QueueEmbed extends CustomEmbed {
+  type: 'queue'
+
+  constructor(msg: CommandoMessage, username: string, platform: Platform, stats: StatsType<'queue'>, raw: Stats, ...args) {
+    super(msg, ...args);
+    this.type = 'queue';
+
+    this.setHeader('PvP queue', username, platform)
+      .addOpImage(raw, 'pvp');
+    for (const q of stats) this.addQueue(q);
+    return this;
+  }
+
+  addQueue(queue: StatsQueue) {
+    const { wins, losses, matches, kills, deaths } = queue;
+    const str = `
+    Total matches: **${readNumber(matches)}**
+    Win rate: **${readNumber(wins / matches * 100)}%**
+    Wins/Losses: **${[wins, losses].map(readNumber).join('** / **')}**
+    Kills/Deaths: **${readNumber((kills / deaths))}** (**${[deaths, kills].map(readNumber).join('** / **')}**)
+    Playtime: **${readHours(queue.playtime / 60 / 60)}**
+    `.trim();
+
+    return this.addField(queue.name, str, true);
+  }
+}
 // #endregion
 
 // #region Utility
@@ -286,6 +314,7 @@ type StatsType<T> =
   T extends 'wp-single' | 'wp-cat' ? WeaponEmbedStats :
   T extends 'op' ? OperatorEmbedStats :
   T extends 'types' ? Stats['pve']['types'] :
+  T extends 'queue' ? StatsQueue[] :
   false;
 
 /** Parameters for the createEmbed method */
@@ -428,6 +457,9 @@ export class RainbowAPI extends API {
     } else if (embedType == 'types') {
       if (!enforceType<StatsType<'types'>>(stats)) return;
       embed = new TypesEmbed(msg, username, platform, stats, raw);
+    } else if (embedType == 'queue') {
+      if (!enforceType<StatsType<'queue'>>(stats)) return;
+      embed = new QueueEmbed(msg, username, platform, stats, raw);
     }
 
     return embed;
@@ -634,6 +666,24 @@ export class RainbowAPI extends API {
 
     return this.createEmbed({
       embedType: 'types',
+      id,
+      msg,
+      platform,
+      raw: rawStats,
+      stats: processedStats
+    });
+  }
+
+  async queue(msg: CommandoMessage, id: string, platform: Platform) {
+    const rawStats = await this.getStats(id, platform);
+    const check = this.check(rawStats, id, platform, msg);
+    if (check) return check;
+    if (!enforceType<Stats>(rawStats)) return;
+
+    const processedStats = Object.values(rawStats.pvp.queue).sort((a, b) => b.matches - a.matches);
+
+    return this.createEmbed({
+      embedType: 'queue',
       id,
       msg,
       platform,
