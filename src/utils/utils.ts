@@ -1,5 +1,5 @@
 import { TSMap as Map } from 'typescript-map'; // eslint-disable-line no-unused-vars
-import { User, GuildMember } from 'discord.js'; // eslint-disable-line no-unused-vars
+import { User, GuildMember, ClientDataResolver } from 'discord.js'; // eslint-disable-line no-unused-vars
 import { homeguild, owner, client } from '../core/app';
 
 // #region Types
@@ -357,6 +357,9 @@ export function readMinutes(minutes: number, readable = true) {
 export function readNumber(number: number, decimals = 2) {
   return numberFormat(number, decimals, '.', '\'');
 }
+
+/** It can be used to resolve users, colors and so on */
+export const resolver = new ClientDataResolver(client);
 
 /**
  * Takes a number and takes the last two digits (adds a 0 if needed)
