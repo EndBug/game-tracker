@@ -1,4 +1,4 @@
-import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason } from 'r6api.js'; // eslint-disable-line no-unused-vars
+import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { Platform } from 'r6api.js'; // eslint-disable-line no-unused-vars
 import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils';
 import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord } from '../utils/utils'; // eslint-disable-line no-unused-vars
@@ -10,7 +10,7 @@ const r6api = new R6API(UbisoftEmail, UbisoftPassword);
 
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
-type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op'
+type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types'
 
 /** Custom embed class that acts as base for other embeds */
 class CustomEmbed extends RichEmbed {
@@ -243,6 +243,28 @@ class OperatorEmbed extends CustomEmbed {
     return this.addField(title, str, true);
   }
 }
+
+/** Embed for the 'types' command */
+class TypesEmbed extends CustomEmbed {
+  type: 'types'
+
+  constructor(msg: CommandoMessage, username: string, platform: Platform, stats: StatsType<'types'>, raw: Stats, ...args) {
+    super(msg, ...args);
+    this.type = 'types';
+
+    this.setHeader('PvE types', username, platform)
+      .addOpImage(raw, 'pve');
+    for (const key in stats) this.addType(key, stats[key]);
+    return this;
+  }
+
+  addType(name: string, value: TypesObject) {
+    let str = '';
+    for (const key in value)
+      str += `${capitalize(key)}: **${readNumber(value[key])}**\n`;
+    return this.addField(name, str.trim(), true);
+  }
+}
 // #endregion
 
 // #region Utility
@@ -262,6 +284,7 @@ type StatsType<T> =
   T extends 'modes' ? Stats['pvp']['modes'] | Stats['pve']['modes'] :
   T extends 'wp-single' | 'wp-cat' ? WeaponEmbedStats :
   T extends 'op' ? OperatorEmbedStats :
+  T extends 'types' ? Stats['pve']['types'] :
   false;
 
 /** Parameters for the createEmbed method */
@@ -401,6 +424,9 @@ export class RainbowAPI extends API {
     } else if (embedType == 'op') {
       if (!enforceType<StatsType<'op'>>(stats)) return;
       embed = new OperatorEmbed(msg, username, platform, stats);
+    } else if (embedType == 'types') {
+      if (!enforceType<StatsType<'types'>>(stats)) return;
+      embed = new TypesEmbed(msg, username, platform, stats, raw);
     }
 
     return embed;
@@ -593,6 +619,24 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
+      stats: processedStats
+    });
+  }
+
+  async types(msg: CommandoMessage, id: string, platform: Platform) {
+    const rawStats = await this.getStats(id, platform);
+    const check = this.check(rawStats, id, platform, msg);
+    if (check) return check;
+    if (!enforceType<Stats>(rawStats)) return;
+
+    const processedStats = rawStats.pve.types;
+
+    return this.createEmbed({
+      embedType: 'types',
+      id,
+      msg,
+      platform,
+      raw: rawStats,
       stats: processedStats
     });
   }
