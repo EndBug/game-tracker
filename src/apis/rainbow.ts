@@ -42,7 +42,9 @@ class CustomEmbed extends RichEmbed {
     return this.setThumbnail(mostUsedOp.badge);
   }
 
-  /** Adds a title to the embed */
+  /** Adds a title to the embed with the following format:
+   * 
+   * _`str` stats for `username` - `PLATFORM`_ */
   setHeader(str: string, username: string, platform: Platform) {
     return this.setTitle(str.trim() + ` stats for ${username} - ${platform.toUpperCase()}`);
   }
@@ -53,6 +55,7 @@ class CustomEmbed extends RichEmbed {
   }
 }
 
+/** Embed class for handling errors */
 class ErrorEmbed extends CustomEmbed {
   constructor(error: string, msg: CommandoMessage, ...args: any[]) {
     super(msg, ...args);
@@ -80,8 +83,8 @@ class GeneralEmbed extends CustomEmbed {
 
   /** Adds account stats to the embed */
   addAccount({ account }: GeneralStats) {
-    const str = `Level: **${account.level}**
-    XP: **${account.xp}**
+    const str = `Level: ${statFormat(account.level)}
+    XP: ${statFormat(account.xp)}
     Current Rank: **${account.currentRank.tier == 'Unranked' ? '----' : account.currentRank.mmr} (${account.currentRank.tier})**
     Max Rank: **${account.maxRank.tier == 'Unranked' ? '----' : account.maxRank.mmr} (${account.maxRank.tier})**`;
 
@@ -93,10 +96,10 @@ class GeneralEmbed extends CustomEmbed {
     const { wins, losses, total } = matches;
 
     const str = `
-    Total matches: **${readNumber(total)}**
+    Total matches: ${statFormat(total)}
     Total playtime: **${matches.playtime}**
-    Wins/Losses: **${[wins, losses].map(readNumber).join('** / **')}**
-    Win rate: **${readNumber((wins / total) * 100)}%**
+    Wins/Losses: ${[wins, losses].map(e => statFormat(e)).join('/')}
+    Win rate: ${statFormat((wins / total) * 100, '%')}
     `.trim();
 
     return this.addField('Matches', str, true);
@@ -106,10 +109,10 @@ class GeneralEmbed extends CustomEmbed {
   addPerformance({ performance }: GeneralStats) {
     const { kills, deaths, assists } = performance;
 
-    const str = `K/D/A: **${[kills, deaths, assists].map(n => readNumber(n)).join('** / **')}**
-    K/D ratio: **${readNumber(kills / deaths)}**
-    DBNOs: **${readNumber(performance.dbnos)}**
-    Revives: **${readNumber(performance.revives)}**`;
+    const str = `K/D/A: ${[kills, deaths, assists].map(n => statFormat(n)).join('/')}
+    K/D ratio: ${statFormat(kills / deaths)}
+    DBNOs: ${statFormat(performance.dbnos)}
+    Revives: ${statFormat(performance.revives)}`;
 
     return this.addField('Performance', str, true);
   }
@@ -127,11 +130,13 @@ class ModesEmbed extends CustomEmbed {
       .addModes(stats, playType);
   }
 
+  /** Exectutes the `addMode` method for every available mode */
   addModes(stats: StatsType<'modes'>, playType: strictPlayType) {
     for (const modeKey in stats) this.addMode(stats[modeKey], modeKey, playType);
     return this;
   }
 
+  /** Adds a mode to the embed */
   addMode<T extends PvEMode | PvPMode>(mode: T, key: string, playType: strictPlayType) {
     let title: string,
       body = '';
@@ -151,6 +156,7 @@ class ModesEmbed extends CustomEmbed {
 
 /** General class for bot 'wp-single' and 'wp-cat' embeds */
 class WeaponEmbed extends CustomEmbed {
+  /** Adds a category to the embed */
   addCategory(category: WeaponEmbedStats, title?: string) {
     const { CATname } = category;
     if (!title) title = `${capitalize(CATname)} category overall`;
@@ -165,6 +171,7 @@ class WeaponEmbed extends CustomEmbed {
     return this;
   }
 
+  /** Adds a weapon to the embed */
   addWeapon(category: WeaponEmbedStats, wpName: WeaponName, title?: string, only?: strictPlayType) {
     if (!title) title = 'Weapon';
     for (const playType in category) {
@@ -182,6 +189,7 @@ class WeaponEmbed extends CustomEmbed {
     return this;
   }
 
+  /** Gets the most chosen weapon from the provided array */
   mostChosenWeapon(list: WeaponEmbedStats['pve']['list']) {
     return list.sort((a, b) => a.timesChosen - b.timesChosen)[0];
   }
@@ -226,29 +234,31 @@ class OperatorEmbed extends CustomEmbed {
     this.type = 'op';
 
     // @ts-ignore
-    const modes: strictPlayType[] = Object.keys(stats).filter(m => !!stats[m]);
-    if (modes.length == 0) return;
+    const types: strictPlayType[] = Object.keys(stats).filter(m => !!stats[m]);
+    if (types.length == 0) return;
 
-    this.setHeader(`${capitalize(stats[modes[0]].name)} operator`, username, platform)
-      .setThumbnail(stats[modes[0]].badge);
-    for (const mode of modes) this.addMode(mode, stats[mode]);
+    this.setHeader(`${capitalize(stats[types[0]].name)} operator`, username, platform)
+      .setThumbnail(stats[types[0]].badge);
+    for (const playType of types) this.addPlayType(playType, stats[playType]);
     return this;
   }
 
-  addMode(mode: strictPlayType, stats: OperatorStats) {
+  /** Adds opeartor stats for the given playType */
+  addPlayType(playType: strictPlayType, stats: OperatorStats) {
     const { kills, deaths, wins, losses } = stats;
 
-    const title = mode == 'pve' ? 'PvE' : 'PvP';
+    const title = readablePlayType(playType);
     const str = `
-    Kills/Deaths: **${readNumber((kills / deaths))}** (**${[deaths, kills].map(readNumber).join('** / **')}**)
-    Win rate: **${readNumber((wins / (wins + losses)) * 100)}%**
-    Wins/Losses: **${[wins, losses].map(readNumber).join('** / **')}**
-    Headshots: **${readNumber(stats.headshots)}**
-    Melee kills: **${readNumber(stats.meleeKills)}**
-    DBNOs: **${readNumber(stats.dbno)}**
-    XP: **${readNumber(stats.xp)}**
+    Kills/Deaths: ${statFormat((kills / deaths))} (${[deaths, kills].map(e => statFormat(e)).join(' / ')})
+    Win rate: ${statFormat((wins / (wins + losses)) * 100, '%')}
+    Wins/Losses: ${[wins, losses].map(e => statFormat(e)).join(' / ')}
+    Headshots: ${statFormat(stats.headshots)}
+    Melee kills: ${statFormat(stats.meleeKills)}
+    DBNOs: ${statFormat(stats.dbno)}
+    XP: ${statFormat(stats.xp)}
     Playtime: **${readHours(stats.playtime / 60 / 60)}**
-    ${stats.gadget.map(g => `${g.name}: **${readNumber(g.value)}**`).join('\n')}
+    Other:
+      ${stats.gadget.map(g => keyValue(g.name, g.value)).join('\n  ')}
     `.trim();
 
     return this.addField(title, str, true);
@@ -269,10 +279,11 @@ class TypesEmbed extends CustomEmbed {
     return this;
   }
 
+  /** Adds a type to the embed */
   addType(name: string, value: TypesObject) {
     let str = '';
     for (const key in value)
-      str += `${capitalize(key)}: **${readNumber(value[key])}**\n`;
+      str += keyValue(key, value[key]) + '\n';
     return this.addField(name, str.trim(), true);
   }
 }
@@ -291,13 +302,14 @@ class QueueEmbed extends CustomEmbed {
     return this;
   }
 
+  /** Adds a queue type to the embed */
   addQueue(queue: StatsQueue) {
     const { wins, losses, matches, kills, deaths } = queue;
     const str = `
-    Total matches: **${readNumber(matches)}**
-    Win rate: **${readNumber(wins / matches * 100)}%**
-    Wins/Losses: **${[wins, losses].map(readNumber).join('** / **')}**
-    Kills/Deaths: **${readNumber((kills / deaths))}** (**${[deaths, kills].map(readNumber).join('** / **')}**)
+    Total matches: ${statFormat(matches)}
+    Win rate: ${statFormat(wins / matches * 100, '%')}
+    Wins/Losses: ${[wins, losses].map(e => statFormat(e)).join(' / ')}
+    Kills/Deaths: ${statFormat((kills / deaths))} (${[deaths, kills].map(e => statFormat(e)).join(' / ')})
     Playtime: **${readHours(queue.playtime / 60 / 60)}**
     `.trim();
 
@@ -316,42 +328,29 @@ class LinkEmbed extends CustomEmbed {
     this[mode](current, previous);
   }
 
-  /**
-   * Changes the color, adds title and description to the embed
-   * @param curr The current [username, platform]
-   * @param prev The previous [username, platform]
-   */
+  /** Changes the color, adds title and description to the embed */
   link(curr: string, prev: string) {
     return this.setColor([0, 154, 228])
       .setTitle(`R6S profile ${prev ? 'updated' : 'linked'}`)
       .setD(`Your profile is now linked: ${curr}`, prev);
   }
 
-  /**
-   * Adds title and descirption to the embed
-   * @param curr Unnecessary parameter, keep it `undefined`
-   * @param prev The previous [username, platform]
+  /** Adds title and descirption to the embed
+   * @param curr Unnecessary parameter, keep it `undefined` 
    */
   unlink(curr: string, prev: string) {
     return this.setTitle('R6S profile unlinked')
       .setD(undefined, prev);
   }
 
-  /**
-   * Changes the color, adds title and description to the embed
-   * @param curr The current [username, platform]
-   */
+  /** Changes the color, adds title and description to the embed */
   same(curr: string) {
     return this.setColor([0, 154, 228])
       .setTitle('R6S profile unchanged')
       .setDescription(`Your linked profile is ${curr}`);
   }
 
-  /**
-   * Adds a custom description
-   * @param desc The first part of the description
-   * @param prev The previous [username, platform]
-   */
+  /** Adds a custom description */
   private setD(desc = '', prev: string) {
     return this.setDescription(desc + (prev ? `\nYour previous linked profile was ${prev}.` : '\nYou had no previous linked profile.'));
   }
@@ -362,13 +361,14 @@ class LinkEmbed extends CustomEmbed {
 type playType = 'all' | 'pvp' | 'pve'
 type strictPlayType = Exclude<playType, 'all'>
 
+/** Returns the formatted version of a play type */
 function readablePlayType(str: strictPlayType, trailingSpace = false) {
   let res = str == 'pvp' ? 'PvP' : 'PvE';
   if (trailingSpace) res += ' ';
   return res;
 }
 
-/** You can store here all the different expected kinds of processed stats to put in EmbedParameters */
+/** Switch for all the different expected kinds of processed stats to put in EmbedParameters */
 type StatsType<T> =
   T extends 'error' ? Error | string :
   T extends 'general' ? GeneralStats :
@@ -398,8 +398,7 @@ export function isPlatform(str: string): str is Platform {
   return ['uplay', 'xbl', 'psn'].includes(str);
 }
 
-/**
- * Compares play regions to determine which is the most recent
+/** Compares play regions to determine which is the most recent
  * @param regions The regions to compare
  */
 function getLastPlayedRegion(regions: RankSeason['regions']) {
@@ -411,6 +410,8 @@ function getLastPlayedRegion(regions: RankSeason['regions']) {
   return regions[key];
 }
 
+/** Returns the stats of the most played operator. 
+ * Stats may not be reliable if `'all'` is used as `type`, it might be better to only get the name and re-parse the stats */
 function getMostPlayedOperator(rawStats: Stats, type?: playType) {
   let operators: Record<Operator, OperatorStats>;
   if (!type || type == 'all') operators = mergeAndSum(rawStats.pve.operators, rawStats.pvp.operators);
@@ -420,18 +421,22 @@ function getMostPlayedOperator(rawStats: Stats, type?: playType) {
   return mostUsedOp;
 }
 
+/** Returns a formatted version of key/value stat objects */
 function keyValue(key: string, value: number) {
   return `${camelToReadable(key)}: ${statFormat(value)}`;
 }
 
-function statFormat(value: number) {
-  return `**${readNumber(value) || value}**`;
+/** Returns a readable version of numbers */
+function statFormat(value: number, append?: string) {
+  return `**${readNumber(value) || value}**` + (append || '');
 }
 
+/** Returns an ID to use for caching */
 function cacheID(id: string, platform: Platform) {
   return id + '|' + platform;
 }
 
+/** Returns the formatted username of a player */
 function player(username: string, platform: string, bold = true) {
   const b = bold ? '**' : '';
   return b + username + b + ' - ' + b + platform.toUpperCase() + b;
@@ -488,6 +493,7 @@ export class RainbowAPI extends API {
     super('r6', 'Rainbow 6 Siege');
   }
 
+  /** Checks request results to determine whether there was an error and if so, returns an `ErrorEmbed` */
   errorCheck(stats: Error | Stats, id: string, platform: Platform, msg: CommandoMessage) {
     if (stats instanceof Array) throw new Error('Multiple results');
     if (stats === undefined || stats instanceof Error) {
@@ -504,6 +510,7 @@ export class RainbowAPI extends API {
     }
   }
 
+  /** Gets the saved credentials of a user from the database */
   checkDatabase(discordUser: UserResolvable): [string, Platform] {
     const id = resolver.resolveUserID(discordUser);
     return this.store.get(id);
@@ -551,23 +558,27 @@ export class RainbowAPI extends API {
   }
 
   // #region API wrappers
+  /** Returns an ID from the API */
   async getID(username: string, platform: Platform) {
-    return ensureOne(await r6api.getId(platform, username));
+    return (ensureOne(await r6api.getId(platform, username)) || {}).id;
   }
 
-  async getLevel(id: string, platform: Platform) {
+  /** Returns the level info for a player from the API */
+  async getLevelInfo(id: string, platform: Platform) {
     return ensureOne(await r6api.getLevel(platform, id));
   }
 
+  /** Returns the rank info for a player from the API */
   async getRank(id: string, platform: Platform) {
     return ensureOne(await r6api.getRank(platform, id, { seasons: [-1] }));
   }
 
+  /** Returns a username from the API */
   async getUsername(id: string, platform: Platform) {
-    return ensureOne(await r6api.getUsername(platform, id)).username;
+    return (ensureOne(await r6api.getUsername(platform, id)) || {}).username;
   }
 
-  /** Returns all the stats for a user */
+  /** Returns all the stats for a player from the API*/
   async getStats(id: string, platform: Platform, useCache = true) {
     let res: Stats,
       error: Error;
@@ -590,6 +601,7 @@ export class RainbowAPI extends API {
     }
   }
 
+  /** Returns whether an ID is not valid */
   async isInvalidId(id: string, platform: Platform) {
     let username: string;
     try {
@@ -597,7 +609,7 @@ export class RainbowAPI extends API {
     } catch {
       return true;
     }
-    return !!username;
+    return !username;
   }
   // #endregion
 
@@ -614,7 +626,7 @@ export class RainbowAPI extends API {
     if (playType == 'all') finalStats = mergeAndSum(rawStats.pvp.general, rawStats.pve.general);
     else finalStats = rawStats[playType].general;
 
-    const levelInfo = await this.getLevel(id, platform);
+    const levelInfo = await this.getLevelInfo(id, platform);
     const rankInfo = await this.getRank(id, platform);
     const region = getLastPlayedRegion(rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))]);
 
@@ -789,8 +801,8 @@ export class RainbowAPI extends API {
 
   /** Use the udpated `username` and `platform` */
   async link(msg: CommandoMessage, username: string, platform: Platform) {
-    const userInfo = await this.getID(username, platform);
-    if (!userInfo || !userInfo.id) return this.createEmbed({
+    const id = await this.getID(username, platform);
+    if (!id) return this.createEmbed({
       embedType: 'error',
       id: username,
       msg,
@@ -804,7 +816,7 @@ export class RainbowAPI extends API {
 
     const mode: 'same' | 'link' = prevStr == currStr ? 'same' : 'link';
 
-    if (mode == 'link') this.store.set(msg.author.id, [userInfo.id, platform]);
+    if (mode == 'link') this.store.set(msg.author.id, [id, platform]);
 
     return this.createEmbed({
       embedType: 'link',
