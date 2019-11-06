@@ -2,6 +2,7 @@ import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando'; 
 import { isWeaponName, isWeaponType, isOperator } from 'r6api.js/ts-utils';
 import { RainbowAPI, isPlatform } from '../../apis/rainbow'; // eslint-disable-line no-unused-vars
 import { APIS } from '../../core/app';
+import { isMention, mentionToID } from '../../utils/utils';
 
 // @ts-ignore
 const API: RainbowAPI = APIS['r6'];
@@ -38,13 +39,13 @@ export class RainbowCMD extends Command {
     super(client, {
       name: 'r6',
       memberName: 'r6',
-      aliases: ['rainbow', 'r6s'],
+      aliases: ['r6s', 'rainbow', 'rainbow6siege'],
       group: 'r6',
-      description: 'TODO',
-      details: 'TODO',
+      description: 'Rainbow 6 Siege API interface',
+      details: 'The main command to access the Rainbow 6 Siege API.',
       args: [{
         key: 'method',
-        prompt: 'TODO',
+        prompt: 'The action you want to perform.',
         type: 'string',
         parse: (str: string) => str.toLowerCase()
       }, {
@@ -54,12 +55,12 @@ export class RainbowCMD extends Command {
         default: ''
       }, {
         key: 'player',
-        prompt: 'TODO',
+        prompt: 'The player you want the stats for. If you have already linked your account you can leave this blank, otherwise you\'ll need to write your username. You can also mention another user: if they linked their account, it will display their stats.',
         type: 'string',
         default: ''
       }, {
         key: 'platform',
-        prompt: 'TODO',
+        prompt: `The platform the user plays on. If none is entered, it will use \`uplay\` as default. Currently supported platforms: ${validPlatforms.map(str => `\`${str}\``).join(', ')}.`,
         type: 'string',
         default: ''
       }],
@@ -100,7 +101,15 @@ export class RainbowCMD extends Command {
 
     // PLAYER check
     if (!exit && !err) {
-      if (player) {
+      if (isMention(player)) {
+        const stored = API.checkDatabase(mentionToID(player));
+        if (stored) {
+          id = stored[0];
+          platform = stored[1];
+        } else {
+          err = 'This user hasn\'t linked their R6S account yet, please enter their username and platform manually. For more info, please refer to the command\'s `help` page.';
+        }
+      } else if (player) {
         if (!platform) platform = 'uplay';
         platform = platform.toLowerCase();
         if (isPlatform(platform)) {
