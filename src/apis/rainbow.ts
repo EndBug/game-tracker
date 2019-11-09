@@ -560,7 +560,7 @@ export class RainbowAPI extends API {
   // #region API wrappers
   /** Returns an ID from the API */
   async getID(username: string, platform: Platform) {
-    return (ensureOne(await r6api.getId(platform, username)) || {}).id;
+    return (ensureOne(await r6api.getId(platform, username)) || {})['id'];
   }
 
   /** Returns the level info for a player from the API */
@@ -575,7 +575,7 @@ export class RainbowAPI extends API {
 
   /** Returns a username from the API */
   async getUsername(id: string, platform: Platform) {
-    return (ensureOne(await r6api.getUsername(platform, id)) || {}).username;
+    return (ensureOne(await r6api.getUsername(platform, id)) || {})['username'];
   }
 
   /** Returns all the stats for a player from the API*/
