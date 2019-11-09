@@ -8,6 +8,8 @@ import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no
 const { UbisoftEmail, UbisoftPassword } = process.env;
 const r6api = new R6API(UbisoftEmail, UbisoftPassword);
 
+export const constants = r6api.constants;
+
 var cache = new Cache('Rainbow 6 Siege');
 
 /* API data store structure:
