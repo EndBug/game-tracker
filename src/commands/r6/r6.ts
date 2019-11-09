@@ -11,6 +11,61 @@ const API: RainbowAPI = APIS['r6'];
 const validMethods = ['general', 'modes', 'wp', 'op', 'types', 'queue', 'link', 'unlink'],
   validPlatforms = ['uplay', 'xbl', 'psn'];
 
+// #region Command
+const commandAliases = ['r6s', 'rainbow', 'rainbow6siege'];
+
+/** Generates an alias array for the sub-commands */
+function getAliases(name: string) {
+  name = name.replace(new RegExp('/r6/', 'g'), '').trim();
+  return commandAliases.map(al => al + ' ' + name);
+}
+
+/** Generates an example array for a Rainbow 6 Siege sub-command
+ * @param examples A record of arguments-description
+ * @example getExamples('general', {'all user plat' : 'This is the description'});
+ */
+function getExamples(method: string, examples: Record<string, string>) {
+  const res: string[] = [];
+  for (const args in examples) {
+    const desc = examples[args];
+    res.push(`\`r6 ${method.trim()} ${args.trim()}\` - ${desc.trim()}`);
+  }
+  return res;
+}
+
+interface configParams {
+  /** The description of the command */
+  description: string
+  /** Some technical info on how to use it, to put before the "player" info */
+  details: string
+  /** The identifier for the extra, if any */
+  extra?: string
+  /** A record of arguments-description
+   * @example {'all user plat' : 'This is the description'}
+   */
+  examples: Record<string, string>
+}
+
+/** Generates a config for a Rainbow 6 Siege sub-command
+ * @param options The parameters to build the config
+ */
+export function getConfig(method: string, { description, details, examples, extra }: configParams) {
+  const format = `${extra || ''}{username | @mention} [platform: (${validPlatforms.join(' | ')})]`;
+
+  return {
+    name: `r6 ${method}`,
+    memberName: `r6-${method}`,
+    group: 'r6',
+    aliases: getAliases(method),
+    description,
+    details: details.trim() + '\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
+    format,
+    examples: getExamples(method, examples),
+    guildOnly: true
+  };
+}
+// #endregion
+
 /** Returns whether the string is a valid r6s method */
 function isValidMethod(str: string) {
   return validMethods.includes(str);
@@ -34,12 +89,12 @@ function isValidExtra(method: string, extra: string) {
 }
 // #endregion
 
-export class RainbowCMD extends Command {
+export default class RainbowCMD extends Command {
   constructor(client: CommandoClient) {
     super(client, {
       name: 'r6',
       memberName: 'r6',
-      aliases: ['r6s', 'rainbow', 'rainbow6siege'],
+      aliases: commandAliases,
       group: 'r6',
       description: 'Rainbow 6 Siege API interface',
       details: 'The main command to access the Rainbow 6 Siege API.',
@@ -50,7 +105,7 @@ export class RainbowCMD extends Command {
         parse: (str: string) => str.toLowerCase()
       }, {
         key: 'extra',
-        prompt: 'TODO',
+        prompt: 'The extra argument needed for some sub-commands.',
         type: 'string',
         default: ''
       }, {
