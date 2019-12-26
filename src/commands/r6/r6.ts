@@ -2,6 +2,7 @@ import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando' /
 import { RainbowAPI, isPlatform, constants } from '../../apis/rainbow' // eslint-disable-line no-unused-vars
 import { APIS } from '../../core/app'
 import { isMention, mentionToID } from '../../utils/utils'
+import { WeaponType, WeaponName, Operator } from 'r6api.js' // eslint-disable-line no-unused-vars
 
 // @ts-ignore
 const API: RainbowAPI = APIS['r6']
@@ -94,7 +95,8 @@ function isWeaponName(str: string) {
       .includes(str.toLowerCase().split(' ').join('-'))
 }
 
-function getWeaponName(str: string) {
+function getWeaponName(str: string): WeaponName {
+  // @ts-ignore
   return constants.WEAPONS.map(wp => wp.name.toLowerCase().split(' ').join('-'))
     .find(name => name == str.toLowerCase().split(' ').join('-'))
 }
@@ -105,7 +107,8 @@ function isWeaponType(str: string) {
       .includes(str.toLowerCase().split(' ').join('-'))
 }
 
-function getWeaponType(str: string) {
+function getWeaponType(str: string): WeaponType {
+  // @ts-ignore
   return Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
     .find(name => name == str.toLowerCase().split(' ').join('-'))
 }
@@ -114,6 +117,13 @@ function isOperator(str: string) {
   return typeof str == 'string'
     && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join('-'))
       .includes(str.toLowerCase().split(' ').join('-'))
+}
+
+function getOperator(str: string): Operator {
+  // @ts-ignore
+  return typeof str == 'string'
+    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join('-'))
+      .find(name => name == str.toLowerCase().split(' ').join('-'))
 }
 
 // #endregion
@@ -219,6 +229,10 @@ export default class RainbowCMD extends Command {
     if (err) msg.reply(err)
     else {
       if (method == 'link') id = player
+      else if (method == 'wp') {
+        if (isWeaponName(extra)) extra = getWeaponName(extra)
+        else if (isWeaponType(extra)) extra = getWeaponType(extra)
+      } else if (method == 'op') extra = getOperator(extra)
       msg.say(await API[method](msg, id, platform, extra))
     }
 
