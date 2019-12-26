@@ -11,6 +11,7 @@
     "dev": "nodemon --watch src/**/*.* --ignore src/commands/**/*.* --ignore src/utils/reloadme.json --exec ts-node src/core/start.ts",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
+    "lint": "eslint \"./src/**/*.ts\" --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Federico 'EndBug' Grandi <fgrandi30@gmail.com>",

@@ -1,0 +1,20 @@
+name: "Lint source"
+on: push
+
+jobs:
+  lint:
+    name: Lint source code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - run: npm run lint
+      - uses: EndBug/add-and-commit@v2
+        with:
+          message: "[auto] Lint source code"
+          path: src
+          pattern: "*.ts"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
