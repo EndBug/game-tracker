@@ -1,4 +1,4 @@
-import * as Commando from 'discord.js-commando';
+import * as Commando from 'discord.js-commando'
 
 export default class OWUnlinkWiki extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -12,6 +12,6 @@ export default class OWUnlinkWiki extends Commando.Command {
         '`ow unlink` - Unlinks your account.'
       ],
       guildOnly: true
-    });
+    })
   }
 }

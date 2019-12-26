@@ -1,4 +1,4 @@
-import * as Commando from 'discord.js-commando';
+import * as Commando from 'discord.js-commando'
 
 export default class OWLinkWiki extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -16,6 +16,6 @@ export default class OWLinkWiki extends Commando.Command {
         '`ow link` - Displays your current linked account.'
       ],
       guildOnly: true
-    });
+    })
   }
 }

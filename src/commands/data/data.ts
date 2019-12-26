@@ -1,5 +1,5 @@
-import * as Commando from 'discord.js-commando';
-import { APIUtil } from '../../core/app';
+import * as Commando from 'discord.js-commando'
+import { APIUtil } from '../../core/app'
 
 export default class DataCMD extends Commando.Command {
   constructor(client) {
@@ -15,27 +15,27 @@ export default class DataCMD extends Commando.Command {
         prompt: 'Whether you want to hide your accounts in the message this command shows.',
         type: 'string',
         parse: (str) => {
-          return !['0', 'false', 'no'].includes(str);
+          return !['0', 'false', 'no'].includes(str)
         },
         default: false
       }],
       guildOnly: false,
       ownerOnly: false
-    });
+    })
   }
 
   // @ts-ignore
   run(msg: Commando.CommandoMessage, { hide }: { hide: boolean }) {
-    const res = APIUtil.find(msg.author, true);
-    let text: string;
+    const res = APIUtil.find(msg.author, true)
+    let text: string
     if (Object.keys(res).length > 0) {
-      text = 'This is your data:\n```';
+      text = 'This is your data:\n```'
       for (const key in res) {
-        const str = hide ? '***' : JSON.stringify(res[key]);
-        text += `\n${key}: ${str}`;
+        const str = hide ? '***' : JSON.stringify(res[key])
+        text += `\n${key}: ${str}`
       }
-      text += '\n```If you want to unlink one of these accounts search for the \'unlink\' command for that game (you can use `help` to find it).\nTo delete all of your data, run `erase-data`';
-    } else text = 'There\'s no data about you in the databse.';
-    msg.reply(text);
+      text += '\n```If you want to unlink one of these accounts search for the \'unlink\' command for that game (you can use `help` to find it).\nTo delete all of your data, run `erase-data`'
+    } else text = 'There\'s no data about you in the databse.'
+    msg.reply(text)
   }
 }

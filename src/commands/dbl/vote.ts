@@ -1,5 +1,5 @@
-import * as Commando from 'discord.js-commando';
-import { RichEmbed } from 'discord.js';
+import * as Commando from 'discord.js-commando'
+import { RichEmbed } from 'discord.js'
 
 export default class VoteCMD extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -10,7 +10,7 @@ export default class VoteCMD extends Commando.Command {
       description: 'Gives you instructions on how to vote for the bot.',
       guildOnly: false,
       ownerOnly: false
-    });
+    })
   }
 
   // @ts-ignore
@@ -23,8 +23,8 @@ export default class VoteCMD extends Commando.Command {
       [Bots.OnDiscord.xyz](https://bots.ondiscord.xyz/bots/475421235950518292)
       [DiscordBotList.com](https://discordbotlist.com/bots/475421235950518292/upvote)
       [DivineDiscordBots.com](https://divinediscordbots.com/bot/475421235950518292/vote)
-      `).setTimestamp();
+      `).setTimestamp()
 
-    msg.say({ embed });
+    msg.say({ embed })
   }
 }

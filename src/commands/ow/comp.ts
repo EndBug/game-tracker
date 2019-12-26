@@ -1,4 +1,4 @@
-import * as Commando from 'discord.js-commando';
+import * as Commando from 'discord.js-commando'
 
 export default class OWCompWiki extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -17,6 +17,6 @@ export default class OWCompWiki extends Commando.Command {
         '`ow comp` - If your account is linked, displays your overwatch stats.'
       ],
       guildOnly: true
-    });
+    })
   }
 }

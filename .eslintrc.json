@@ -56,7 +56,7 @@
     ],
     "semi": [
       "warn",
-      "always"
+      "never"
     ],
     "spaced-comment": "warn"
   }
