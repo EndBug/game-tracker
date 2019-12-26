@@ -37,7 +37,7 @@ interface configParams {
   /** The description of the command */
   description: string
   /** Some technical info on how to use it, to put before the "player" info */
-  details: string
+  details?: string
   /** A record of arguments-description
    * @example {'all user plat' : 'This is the description'}
    */
