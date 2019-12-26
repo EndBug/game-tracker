@@ -1,0 +1,36 @@
+name: Update repo
+on: push
+
+jobs: 
+  update-repo:
+    name: Update repository
+    runs-on: ubuntu-latest
+
+    steps: 
+    - name: Checkout repository
+      uses: actions/checkout@master
+
+    - name: Set up Node.js
+      uses: actions/setup-node@master
+      with:
+        node-version: 8.9.4
+    
+    - name: Install dependencies
+      run: npm install --only=dev && npm install ts-node mkdirp --no-save
+
+    - name: Update documentation
+      run: npm run doc
+
+    - name: Update source code
+      run: npm run lint
+
+    - name: Commit changes
+      uses: EndBug/add-and-commit@v2.0.0
+      with:
+        author_name: Federico Grandi
+        author_email: fgrandi30@gmail.com
+        message: "[auto] Update repository"
+        path: doc src
+        pattern: "*.*"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

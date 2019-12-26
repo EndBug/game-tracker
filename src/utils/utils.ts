@@ -135,7 +135,7 @@ export function capitalize(str: string) {
 }
 
 /** 
- * Enforces a type by retuning always `true`; you need to use this with a type guard 
+ * Enforces a type by returning always `true`; you need to use this with a type guard 
  * @example if (!enforceType<YourType>(parameter)) return;
  */
 /* eslint-disable-next-line no-unused-vars*/
@@ -149,10 +149,7 @@ export function ensureOne<T>(value: T | T[]): T {
   else return value
 }
 
-/**
- * Wheter two items are "equal" (properties and keys are checked for objects and arrays)
- * @param ...items The items to check
- */
+/** Wheter two items are "equal" (properties and keys are checked for objects and arrays) */
 export function equals(...items: any[]) {
   for (let i = 0; i < items.length - 1; i++) {
     const a = items[i],
@@ -173,26 +170,19 @@ export function equals(...items: any[]) {
   return true
 }
 
-/**
- * Returns a plain full name for a given user
- * @param user 
- */
+/** Returns a plain full name for a given user */
 export function getFullName(user: User | GuildMember) {
   if (user instanceof GuildMember) user = user.user
   return `${user.username}#${user.discriminator} (${user.id})`
 }
 
-/**
- * Retunes a plain short name for a given user or member
- * @param user 
- */
+/** Retunes a plain short name for a given user or member */
 export function getShortName(user: User | GuildMember) {
   if (user instanceof GuildMember) user = user.user
   return `${user.username}#${user.discriminator}`
 }
 
-/**
- * Gets an invite to the support guild
+/** Gets an invite to the support guild
  * @param codeOnly Whether to return only the code of the invite instead of the URL (default is `false`)
  */
 export async function getSupportInvite(codeOnly = false) {
@@ -206,10 +196,7 @@ export async function getSupportInvite(codeOnly = false) {
 }
 
 
-/**
- * Makes a string readable
- * @param str 
- */
+/** Makes a string readable */
 export function humanize(str: string) {
   return str
     .replace(/_/g, ' ')
@@ -219,26 +206,17 @@ export function humanize(str: string) {
 }
 
 
-/**
- * Checks whether a string is a Discord mention.
- * @param str The string to check
- */
+/** Checks whether a string is a Discord mention */
 export function isMention(str: string) {
   return (str.startsWith('<@') && str.endsWith('>') && str.length == 18 + 3)
 }
 
-/**
- * Converts a map into an object.
- * @param map The map to convert
- */
+/** Converts a map into an object */
 export function mapToObj(map: Map<any, any>) {
   return [...map.entries()].reduce((obj, [key, value]) => (obj[key] = value, obj), {})
 }
 
-/**
- * Converts a Discord mention into a string.
- * @param str The mention to convert
- */
+/** Converts a Discord mention into a string */
 export function mentionToID(str: string) {
   return str.replace(/[\\<>@#&!]/g, '')
 }
@@ -271,9 +249,7 @@ export function mergeAndSum<T>(...objects: T[]): T {
   return internalCheck(...objects)
 }
 
-/**
- * Formats a number
- * @param number 
+/** Formats a number
  * @param decimals The number of decimals to show
  * @param dec_point The character to use to separate decimals (deafult is `.`)
  * @param thousands_sep The character to use to separate thousands (default is `,`)
@@ -323,9 +299,7 @@ export function numberFormat(number: number, decimals: number, dec_point?: strin
   return s.join(dec)
 }
 
-/**
- * Converts decimal hours into a readable hh:mm
- * @param hours
+/** Converts decimal hours into a readable hh:mm
  * @param readable Whether to make the minutes readable; if set to `false`, [hh, mm] will be returned
  */
 export function readHours(hours: number, readable?: true): string
@@ -336,9 +310,7 @@ export function readHours(hours: number, readable = true) {
   return readable ? `${hr}h ${mn}'` : [hr, mn]
 }
 
-/**
- * Converts decimal minutes into a readable mm:ss
- * @param minutes 
+/** Converts decimal minutes into a readable mm:ss
  * @param readable Whether to make the minutes readable; if set to `false`, [mm, ss] will be returned
  */
 export function readMinutes(hours: number, readable?: true): string
@@ -349,9 +321,7 @@ export function readMinutes(minutes: number, readable = true) {
   return readable ? `${twoDigits(mn)}:${twoDigits(ss)}` : [mn, ss]
 }
 
-/**
- * Default use of numberFormat 
- * @param number 
+/** Default use of numberFormat 
  * @param decimals The number of decimals to show
  */
 export function readNumber(number: number, decimals = 2) {
@@ -367,5 +337,16 @@ export const resolver = new ClientDataResolver(client)
  */
 export function twoDigits(number: number) {
   return `0${number}`.slice(-2)
+}
+
+/** Converts a HH:MM:SS string into the number of seconds (MM:SS strings are also supported) */
+export function stringToSeconds(str: string) {
+  if (!str) return
+  const arr = str.split(':')
+
+  if (arr.length == 2) arr.unshift('0')
+  if (arr.length != 3) return
+
+  return ((+arr[0]) * 60 * 60 + (+arr[1]) * 60 + (+arr[2]))
 }
 // #endregion

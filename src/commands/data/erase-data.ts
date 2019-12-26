@@ -1,6 +1,6 @@
 import * as Commando from 'discord.js-commando'
 import { APIUtil } from '../../core/app'
-import { DMChannel, TextChannel, MessageReaction, User } from 'discord.js'
+import { DMChannel, TextChannel, MessageReaction, User } from 'discord.js' // eslint-disable-line no-unused-vars
 
 export default class SampleCMD extends Commando.Command {
   constructor(client: Commando.CommandoClient) {

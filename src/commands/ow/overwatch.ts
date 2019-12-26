@@ -2,43 +2,11 @@ import * as Commando from 'discord.js-commando'
 
 import { APIS } from '../../core/app'
 import { isMention } from '../../utils/utils'
-import { OverwatchAPI } from '../../apis/overwatch'; //eslint-disable-line
+import { OverwatchAPI } from '../../apis/overwatch' // eslint-disable-line no-unused-vars
+import { heroes } from '../../utils/ow_hero_names'
 
 // @ts-ignore
 const API: OverwatchAPI = APIS['ow']
-
-const heroes = {
-  'ana': [],
-  'ashe': ['Ashe', 'BOB', 'B.O.B.'],
-  'baptiste': ['Jean-Baptiste'],
-  'bastion': [],
-  'brigitte': ['brig'],
-  'doomfist': ['doom'],
-  'dva': ['D.Va'],
-  'genji': ['gengu'],
-  'hanzo': ['handsoap'],
-  'junkrat': ['junk', 'Chacal', 'Hunkrat'],
-  'lucio': ['Lúcio'],
-  'mccree': ['mc'],
-  'mei': ['satan'],
-  'mercy': ['ange', 'angela'],
-  'moira': [],
-  'orisa': ['Oriisa'],
-  'pharah': ['phara', 'fara'],
-  'reaper': ['faucheur'],
-  'reinhardt': ['rein'],
-  'roadhog': ['road', 'Chopper'],
-  'soldier76': ['76', 'soldier_76', 'soldier', 'soldier-76'],
-  'sombra': [],
-  'symmetra': ['symm'],
-  'torbjorn': ['torb'],
-  'tracer': [],
-  'widowmaker': ['widow', 'Fatale'],
-  'winston': ['monkey', 'harambe', 'scientist'],
-  'wrecking_ball': ['hammond', 'wreckingball', 'wrecking ball'],
-  'zarya': [],
-  'zenyatta': ['zen', 'Zeniyatta']
-}
 
 const platforms = ['pc', 'xbl', 'psn'],
   otherplatforms = ['xbl', 'psn'],
@@ -47,19 +15,13 @@ const platforms = ['pc', 'xbl', 'psn'],
   linkmodes = ['link', 'unlink'],
   lazymodes = ['unlink']
 
-/**
- * Checks whether a string is a valid battletag
- * @param str 
- */
+/** Checks whether a string is a valid battletag */
 function isBattletag(str: string) {
   const arr = str.split('#')
   return (arr.length == 2 && !isNaN(parseInt(arr[1])))
 }
 
-/**
- * Checks whether a string corresponds to a hero name, if so, returns the name
- * @param str 
- */
+/** Checks whether a string corresponds to a hero name, if so, returns the name */
 function checkHero(str: string) {
   str = str.toLowerCase()
   if (str == 'auto') return str
@@ -154,7 +116,7 @@ export default class OverwatchCMD extends Commando.Command {
         if (isMention(player)) {
           const res = API.checkDatabase(msg.author)
           if (res) {
-            if (platform) hero = platform;
+            if (platform) hero = platform; // lgtm [js/trivial-conditional]
             [player, platform] = res
           } else err = 'This user is not registered, please enter its battletag and platform manually.'
         } else err = 'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`'
@@ -168,61 +130,6 @@ export default class OverwatchCMD extends Commando.Command {
         }
       }
     }
-
-    // #region Old argument parsing
-    /*
-    if (platform) { // do we have anything?
-      if (!platforms.includes(platform)) { // is it NOT valid?
-        if (heromodes.includes(mode)) { // are we in heromode?
-          if (!hero) { // we need a hero
-            hero = platform;
-            platform = 'pc';
-          } else err = 'Please enter a valid platform.';
-        } else err = 'Please enter a valid platform.';
-      } // ok
-    } else platform = 'pc';
-    if (!hero) hero = 'auto';
-
-    if (!err) {
-      if (player) { // do we have anything?
-        if (isMention(player)) { // is it a mention?
-          const member = msg.guild.members.get(mentionToID(player));
-          if (member) { // is it a valid user?
-            const res = API.checkDatabase(member);
-            if (res) { // is the user in the DB?
-              // if (!hero) hero = platform;
-              [player, platform] = res;
-            } else err = 'This user has not linked their account: try using their battletag/GamerTag/PSN ID.';
-          } else err = 'Please mention a valid member of this guild.';
-        } else if (!isBattletag(player) && !otherplatforms.includes(platform)) { // is it NOT a battletag AND the platform is NOT pc?
-          if (heromodes.includes(mode)) { // is it a hero mode?
-            const res = API.checkDatabase(msg.author);
-            if (res) { // is the author in the database?
-              hero = player;
-              [player, platform] = res;
-            } else err = 'Please enter a valid battletag/GamerTag/PSN ID.';
-          } else err = 'Please enter a valid battletag/GamerTag/PSN ID.';
-        } // that's ok as it is
-      } else if (!lazymodes.includes(mode)) { // is it mandatory?
-        const res = API.checkDatabase(msg.author);
-        if (res) { // is the author in the DB?
-          [player, platform] = res;
-        } else err = 'Please enter a battletag/GamerTag/PSN ID.';
-      } // whatever
-
-      if (!err) {
-        if (heromodes.includes(mode)) { // are we in heromode?
-          if (hero) { // do we have anything?
-            const res = checkHero(hero);
-            if (res) { // is that a valid name?
-              hero = res;
-            } else err = 'Please enter a valid hero name.';
-          } else hero = 'auto';
-        } // whatever
-      }
-    }
-    */
-    // #endregion
 
     if (err) msg.reply(err)
     else msg.say(await API[mode](player, platform, msg, hero))
