@@ -1,6 +1,6 @@
 // Don't import this from utils because it will trigger the whole bot when just calling the function
 function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 export const heroes = {
@@ -35,7 +35,7 @@ export const heroes = {
   'hammond': ['wrecking_ball', 'wreckingball', 'wrecking ball'],
   'zarya': [],
   'zenyatta': ['zen', 'Zeniyatta']
-};
+}
 
 export type SupportedHero = keyof typeof heroes;
 
@@ -48,14 +48,14 @@ export function heroName(str: string): string {
     'lucio': 'Lúcio',
     'mccree': 'McCree',
     'soldier76': 'Soldier 76',
-  };
-  if (custom[str]) return custom[str];
-  const arr = str.split('_');
-  for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i]);
-  return arr.join(' ');
+  }
+  if (custom[str]) return custom[str]
+  const arr = str.split('_')
+  for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i])
+  return arr.join(' ')
 }
 
 /** Returns whether the supplied string is a SupportedHero */
 export function isSupported(hero: string): hero is SupportedHero {
-  return Object.keys(heroes).includes(hero);
+  return Object.keys(heroes).includes(hero)
 }
