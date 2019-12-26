@@ -1,6 +1,5 @@
 import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
-import { isWeaponName, isWeaponType, isOperator } from 'r6api.js/ts-utils';
-import { RainbowAPI, isPlatform } from '../../apis/rainbow'; // eslint-disable-line no-unused-vars
+import { RainbowAPI, isPlatform, constants } from '../../apis/rainbow'; // eslint-disable-line no-unused-vars
 import { APIS } from '../../core/app';
 import { isMention, mentionToID } from '../../utils/utils';
 
@@ -38,19 +37,19 @@ interface configParams {
   description: string
   /** Some technical info on how to use it, to put before the "player" info */
   details: string
-  /** The identifier for the extra, if any */
-  extra?: string
   /** A record of arguments-description
    * @example {'all user plat' : 'This is the description'}
    */
   examples: Record<string, string>
+  /** The identifier for the extra, if any */
+  extra?: string
 }
 
 /** Generates a config for a Rainbow 6 Siege sub-command
  * @param options The parameters to build the config
  */
 export function getConfig(method: string, { description, details, examples, extra }: configParams) {
-  const format = `${extra || ''}{username | @mention} [platform: (${validPlatforms.join(' | ')})]`;
+  const format = `${extra ? (requiresExtra(method) ? `<${extra}>` : `[${extra}]`) : ''} { username | @mention } [platform: (${validPlatforms.join(' | ')})]`;
 
   return {
     name: `r6 ${method}`,
@@ -87,6 +86,38 @@ function isValidExtra(method: string, extra: string) {
         m == 'op' ? e == 'auto' || isOperator(e) :
           false;
 }
+
+// #region Name utilities
+function isWeaponName(str: string) {
+  return typeof str == 'string'
+    && constants.WEAPONS.map(wp => wp.name.toLowerCase().split(' ').join('-'))
+      .includes(str.toLowerCase().split(' ').join('-'));
+}
+
+function getWeaponName(str: string) {
+  return constants.WEAPONS.map(wp => wp.name.toLowerCase().split(' ').join('-'))
+    .find(name => name == str.toLowerCase().split(' ').join('-'));
+}
+
+function isWeaponType(str: string) {
+  return typeof str == 'string'
+    && Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
+      .includes(str.toLowerCase().split(' ').join('-'));
+}
+
+function getWeaponType(str: string) {
+  return Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
+    .find(name => name == str.toLowerCase().split(' ').join('-'));
+}
+
+function isOperator(str: string) {
+  return typeof str == 'string'
+    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join('-'))
+      .includes(str.toLowerCase().split(' ').join('-'));
+}
+
+// #endregion
+
 // #endregion
 
 export default class RainbowCMD extends Command {
@@ -115,7 +146,7 @@ export default class RainbowCMD extends Command {
         default: ''
       }, {
         key: 'platform',
-        prompt: `The platform the user plays on. If none is entered, it will use \`uplay\` as default. Currently supported platforms: ${validPlatforms.map(str => `\`${str}\``).join(', ')}.`,
+        prompt: `The platform the user plays on.If none is entered, it will use \`uplay\` as default. Currently supported platforms: ${validPlatforms.map(str => `\`${str}\``).join(', ')}.`,
         type: 'string',
         default: ''
       }],
