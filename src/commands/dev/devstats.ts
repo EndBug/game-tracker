@@ -1,6 +1,6 @@
-import * as Commando from 'discord.js-commando';
+import * as Commando from 'discord.js-commando'
 
-import { client } from '../../core/app';
+import { client } from '../../core/app'
 
 export default class DevStatsCMD extends Commando.Command {
   constructor(client: Commando.CommandoClient) {
@@ -17,20 +17,20 @@ export default class DevStatsCMD extends Commando.Command {
       }],
       guildOnly: false,
       ownerOnly: true
-    });
+    })
   }
 
-  //@ts-ignore
+  // @ts-ignore
   run(msg: Commando.CommandoMessage, { mode }) {
     if (['servers', 'guilds'].includes(mode)) {
-      const text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().join(', ') + '\n```';
-      msg.say(text);
+      const text = `The bot is now in ${client.guilds.size} guilds:\n` + '```\n' + client.guilds.array().join(', ') + '\n```'
+      msg.say(text)
     } else if (['database', 'db'].includes(mode)) {
-      //@ts-ignore
-      const { ow }: { ow: Object } = client.provider.settings.get('global');
+      // @ts-ignore
+      const { ow }: { ow: Object } = client.provider.settings.get('global')
       msg.say('Here is the current database:\n' +
         `- Overwatch (${Object.keys(ow).length}):\n` +
-        '```json\n' + JSON.stringify(ow) + '\n```');
+        '```json\n' + JSON.stringify(ow) + '\n```')
     }
   }
 }

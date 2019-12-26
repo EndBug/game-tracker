@@ -25,11 +25,11 @@ export interface ErrorResponse extends OWAPIBlob {
 }
 
 export function isOWAPIBlob(data: any): data is OWAPIBlob {
-  return !!(data.any || data.eu || data.kr || data.us);
+  return !!(data.any || data.eu || data.kr || data.us)
 }
 
 export function isErrorResponse(data: any): data is ErrorResponse {
-  return !!(data.error || data.msg);
+  return !!(data.error || data.msg)
 }
 
 export interface Region {

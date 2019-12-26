@@ -1,19 +1,19 @@
-import { getHeroStats, HeroStats } from 'overwatch-stats-api'; // eslint-disable-line no-unused-vars
+import { getHeroStats, HeroStats } from 'overwatch-stats-api' // eslint-disable-line no-unused-vars
 
-import { API } from '../utils/utils';
-import { OWAPIBlob, Region, ErrorResponse } from '../types/owapi'; // eslint-disable-line no-unused-vars
-import { CommandoMessage } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
-import { User, GuildMember, RichEmbed } from 'discord.js';
-import { getShortName, capitalize, readHours, readMinutes, readNumber, equals, humanize, Cache } from '../utils/utils';
+import { API } from '../utils/utils'
+import { OWAPIBlob, Region, ErrorResponse } from '../types/owapi' // eslint-disable-line no-unused-vars
+import { CommandoMessage } from 'discord.js-commando' // eslint-disable-line no-unused-vars
+import { User, GuildMember, RichEmbed } from 'discord.js'
+import { getShortName, capitalize, readHours, readMinutes, readNumber, equals, humanize, Cache } from '../utils/utils'
 
-const requestNative = require('request-promise');
+const requestNative = require('request-promise')
 async function request(...args: any[]) {
-  var res = await requestNative(...args);
-  if (res.name == 'StatusCodeError') return res.error;
-  else return res;
+  var res = await requestNative(...args)
+  if (res.name == 'StatusCodeError') return res.error
+  else return res
 }
 
-const local_api_link_URL = '127.0.0.1:4444';
+const local_api_link_URL = '127.0.0.1:4444'
 
 // Imgur album link: https://imgur.com/a/Ljsllvo
 const img_links = {
@@ -47,14 +47,14 @@ const img_links = {
   'wrecking_ball': 'https://imgur.com/NpuqfRB.png',
   'zarya': 'https://imgur.com/lKgrayy.png',
   'zenyatta': 'https://imgur.com/yN2EJGI.png'
-};
+}
 
-//#region Local API checks & vars
+// #region Local API checks & vars
 
 /**
  * Either `'owapi.net'` or `'127.0.0.1:4444'`
  */
-var APIHost: string;
+var APIHost: string
 /**
  * Checks whether there is a local instance of OWAPI running in localhost.
  * Retuns the resulting host domain (and port)
@@ -82,18 +82,18 @@ async function checkLocalAPI() {
         'User-Agent': 'request'
       },
       json: true
-    });
-    APIHost = (res instanceof Error || res.error) ? 'owapi.net' : local_api_link_URL;
-    return APIHost;
+    })
+    APIHost = (res instanceof Error || res.error) ? 'owapi.net' : local_api_link_URL
+    return APIHost
   } catch {
-    APIHost = 'owapi.net';
-    return APIHost;
+    APIHost = 'owapi.net'
+    return APIHost
   }
 }
 
-//#endregion
+// #endregion
 
-var cache = new Cache('Overwacth');
+var cache = new Cache('Overwacth')
 
 /* #region Embeds */
 
@@ -103,7 +103,7 @@ var cache = new Cache('Overwacth');
  * @param platform 
  */
 function getLink(battletag: string, platform: string) {
-  return `https://playoverwatch.com/en-us/career/${platform || 'pc'}/${battletag.replace('#', '-')}`;
+  return `https://playoverwatch.com/en-us/career/${platform || 'pc'}/${battletag.replace('#', '-')}`
 }
 
 class CustomEmbed extends RichEmbed {
@@ -112,10 +112,10 @@ class CustomEmbed extends RichEmbed {
   mode: string
 
   constructor(msg: CommandoMessage, ...args: any[]) {
-    super(...args);
+    super(...args)
     return this.setTimestamp()
       .setAuthor('Overwatch Stats', 'https://i.imgur.com/MaJToTw.png')
-      .via(msg.author);
+      .via(msg.author)
   }
 
   /**
@@ -123,7 +123,7 @@ class CustomEmbed extends RichEmbed {
    * @param author
    */
   via(author: User) {
-    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL);
+    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL)
   }
 
   /**
@@ -132,45 +132,45 @@ class CustomEmbed extends RichEmbed {
    * @param platform 
    */
   addLink(battletag: string, platform: string) {
-    return this.setDescription(`View this profile on the Overwatch [website](${getLink(battletag, platform)})`);
+    return this.setDescription(`View this profile on the Overwatch [website](${getLink(battletag, platform)})`)
   }
 }
 
 class StatsEmbed extends CustomEmbed {
   constructor(data: Region, mode: string, msg: CommandoMessage, ...args: any[]) {
-    super(msg, ...args);
-    this.type = 'stats';
-    this.data = data;
-    this.mode = mode;
-    this.setColor('GREEN');
+    super(msg, ...args)
+    this.type = 'stats'
+    this.data = data
+    this.mode = mode
+    this.setColor('GREEN')
     this.addAccount()
       .addMostPlayed()
       .addGeneral()
-      .addBestPerformance();
+      .addBestPerformance()
   }
 
   /**
    * Adds account data to the embed
    */
   addAccount() {
-    const data = this.data.stats.quickplay.overall_stats;
+    const data = this.data.stats.quickplay.overall_stats
     this.addField('Account stats', `Level: **${data.prestige * 100 + data.level}**
     Endorsement: **${data.endorsement_level}**
     Rank: **${data.comprank ? data.comprank : '----'}**`, true)
-      .setThumbnail(data.avatar);
-    return this;
+      .setThumbnail(data.avatar)
+    return this
   }
 
   /**
    * Adds most played heroes to the embed
    */
   addMostPlayed() {
-    const data = this.data.heroes.playtime[this.mode];
-    const best_heroes = getBestKeys(3, data);
-    let text = '';
-    for (const hero of best_heroes) text += `\n${heroName(hero)}: **${readHours(data[hero])}**`;
-    this.addField('Most played heroes', text.trim(), true);
-    return this;
+    const data = this.data.heroes.playtime[this.mode]
+    const best_heroes = getBestKeys(3, data)
+    let text = ''
+    for (const hero of best_heroes) text += `\n${heroName(hero)}: **${readHours(data[hero])}**`
+    this.addField('Most played heroes', text.trim(), true)
+    return this
   }
 
   /**
@@ -179,37 +179,37 @@ class StatsEmbed extends CustomEmbed {
   addGeneral() {
     const mode_data = this.data.stats[this.mode],
       data = mode_data.game_stats,
-      overall = mode_data.overall_stats;
-    let win: string;
+      overall = mode_data.overall_stats
+    let win: string
 
-    if (this.mode == 'quickplay') win = `Games won: **${overall.wins}**`;
-    else win = `Win rate: **${statNum(overall.win_rate)}%** (${overall.wins}/${overall.losses})`;
+    if (this.mode == 'quickplay') win = `Games won: **${overall.wins}**`
+    else win = `Win rate: **${statNum(overall.win_rate)}%** (${overall.wins}/${overall.losses})`
     this.addField('General', `
     Kills/deaths: **${data.kpd}**
     ${win}
-    Longest on fire: **${readMinutes(data.time_spent_on_fire_most_in_game * 60)}**`, true);
-    return this;
+    Longest on fire: **${readMinutes(data.time_spent_on_fire_most_in_game * 60)}**`, true)
+    return this
   }
 
   /**
    * Adds record stats to the embed
    */
   addBestPerformance() {
-    const data = this.data.stats[this.mode].game_stats;
+    const data = this.data.stats[this.mode].game_stats
     this.addField('Performance', `
     Highest damage: **${statNum(data.hero_damage_done_most_in_game)}**
     Highest healing: **${statNum(data.healing_done_most_in_game)}**
-    Best kill streak: **${statNum(data.kill_streak_best)}**`, true);
-    return this;
+    Best kill streak: **${statNum(data.kill_streak_best)}**`, true)
+    return this
   }
 }
 
 class LinkEmbed extends CustomEmbed {
   constructor(mode: string, previous: string[], current: string[], msg: CommandoMessage, ...args) {
-    super(msg, ...args);
-    this.type = mode;
-    if (equals(previous, current)) mode = 'same';
-    this[mode](current, previous);
+    super(msg, ...args)
+    this.type = mode
+    if (equals(previous, current)) mode = 'same'
+    this[mode](current, previous)
   }
 
   /**
@@ -220,7 +220,7 @@ class LinkEmbed extends CustomEmbed {
   link(curr: string[], prev: string[]) {
     return this.setColor([0, 154, 228])
       .setTitle(`Blizzard profile ${prev ? 'updated' : 'linked'}`)
-      .setD(`Your profile is now linked: ${player(curr[0], curr[1])}`, prev);
+      .setD(`Your profile is now linked: ${player(curr[0], curr[1])}`, prev)
   }
 
   /**
@@ -231,7 +231,7 @@ class LinkEmbed extends CustomEmbed {
   // @ts-ignore
   unlink(curr?: string[], prev: string[]) {
     return this.setTitle('Blizzard profile unlinked')
-      .setD(undefined, prev);
+      .setD(undefined, prev)
   }
 
   /**
@@ -241,7 +241,7 @@ class LinkEmbed extends CustomEmbed {
   same(curr: string[]) {
     return this.setColor([0, 154, 228])
       .setTitle('Blizzard profile unchanged')
-      .setDescription(`Your linked profile is ${player(curr[0], curr[1])}`);
+      .setDescription(`Your linked profile is ${player(curr[0], curr[1])}`)
   }
 
   /**
@@ -250,7 +250,7 @@ class LinkEmbed extends CustomEmbed {
    * @param prev The previous [battletag, profile]
    */
   private setD(desc = '', prev: string[]) {
-    return this.setDescription(desc + (prev ? `\nYour previous linked profile was ${player(prev[0], prev[1])}.` : '\nYou had no previous linked profile.'));
+    return this.setDescription(desc + (prev ? `\nYour previous linked profile was ${player(prev[0], prev[1])}.` : '\nYou had no previous linked profile.'))
   }
 }
 
@@ -259,28 +259,28 @@ class HeroEmbed extends CustomEmbed {
   extra: HeroStats
 
   constructor(data: Region, mode: string, hero: string, extra: HeroStats, msg: CommandoMessage, ...args) {
-    super(msg, ...args);
-    this.type = 'hero';
-    this.data = data;
-    this.mode = mode.split(' ')[0];
-    this.hero = hero == 'auto' ? getBestKeys(1, data.heroes.playtime[this.mode])[0] : hero;
-    this.extra = extra;
+    super(msg, ...args)
+    this.type = 'hero'
+    this.data = data
+    this.mode = mode.split(' ')[0]
+    this.hero = hero == 'auto' ? getBestKeys(1, data.heroes.playtime[this.mode])[0] : hero
+    this.extra = extra
 
     this.setColor('GREEN')
-      .addImage();
+      .addImage()
 
     if (this.checkPlaytime())
       this.addHeroData()
         .addGeneric()
-        .addMedals();
-    else this.setDescription('You haven\'t played this hero in this mode yet :confused:');
+        .addMedals()
+    else this.setDescription('You haven\'t played this hero in this mode yet :confused:')
   }
 
   /**
    * Sets the thumbanail with the image of the hero
    */
   addImage() {
-    return this.setThumbnail(img_links[this.hero]);
+    return this.setThumbnail(img_links[this.hero])
   }
 
   /**
@@ -289,13 +289,13 @@ class HeroEmbed extends CustomEmbed {
   addHeroData() {
     // TODO: check from issue whether hero-specific stats are still a thing -> https://github.com/Fuyukai/OWAPI/issues/282
     // const herodata: Region['heroes']['stats']['competitive']['ana'] = this.data.heroes.stats[this.mode][this.hero].hero_stats;
-    //return this.addField('Hero statistics', '*To do: check if API still works.*');
-    const data: object = this.extra[this.mode][this.hero == 'wrecking_ball' ? 'hammond' : this.hero].hero_specific;
-    let str = '';
+    // return this.addField('Hero statistics', '*To do: check if API still works.*');
+    const data: object = this.extra[this.mode][this.hero == 'wrecking_ball' ? 'hammond' : this.hero].hero_specific
+    let str = ''
     for (const key in data) {
-      str += `${humanize(key).replace('avg per 10 min', '(avg 10m)')}: **${data[key]}**\n`;
+      str += `${humanize(key).replace('avg per 10 min', '(avg 10m)')}: **${data[key]}**\n`
     }
-    return this.addField('Hero statistics', str);
+    return this.addField('Hero statistics', str)
   }
 
 
@@ -303,11 +303,11 @@ class HeroEmbed extends CustomEmbed {
    * Adds a field with generic stats
    */
   addGeneric() {
-    const stats = this.data.heroes.stats[this.mode][this.hero].general_stats;
+    const stats = this.data.heroes.stats[this.mode][this.hero].general_stats
     return this.addField('General stats', `
     Time played: **${readHours(stats.time_played)}**
     Kills/deaths: **${readNumber(stats.eliminations / stats.deaths, 2)}** (${statNum(stats.eliminations)}/${statNum(stats.deaths)})
-    Games won: **${statNum(stats.games_won)}**`, true);
+    Games won: **${statNum(stats.games_won)}**`, true)
   }
 
 
@@ -315,51 +315,51 @@ class HeroEmbed extends CustomEmbed {
    * Adds a field with medal stats
    */
   addMedals() {
-    const stats = this.data.heroes.stats[this.mode][this.hero].general_stats;
-    const [gold, silver, bronze] = [stats.medals_gold, stats.medals_silver, stats.medals_bronze];
+    const stats = this.data.heroes.stats[this.mode][this.hero].general_stats
+    const [gold, silver, bronze] = [stats.medals_gold, stats.medals_silver, stats.medals_bronze]
     return this.addField('Medals', `
     Gold: **${gold ? statNum(gold) : 0}**
     Silver: **${silver ? statNum(silver) : 0}**
-    Bronze: **${bronze ? statNum(bronze) : 0}**`, true);
+    Bronze: **${bronze ? statNum(bronze) : 0}**`, true)
   }
 
   /**
    * Checks whether the hero has been played at least one time
    */
   checkPlaytime() {
-    return !!this.data.heroes.stats[this.mode][this.hero];
+    return !!this.data.heroes.stats[this.mode][this.hero]
   }
 }
 
 class ErrorEmbed extends CustomEmbed {
   constructor(error: string, msg: CommandoMessage, ...args: any[]) {
-    super(msg, ...args);
-    this.type = 'error';
+    super(msg, ...args)
+    this.type = 'error'
     return this.setColor('RED')
       .setTitle('I got an error from the server')
-      .setDescription(error);
+      .setDescription(error)
   }
 }
 
 class WarnEmbed extends CustomEmbed {
   constructor(error: string, msg: CommandoMessage, ...args: any[]) {
-    super(msg, ...args);
-    this.type = 'warn';
+    super(msg, ...args)
+    this.type = 'warn'
     return this.setColor('GOLD')
       .setTitle('Sorry...')
-      .setDescription(error);
+      .setDescription(error)
   }
 }
 
 class DownEmbed extends CustomEmbed {
   constructor(link: string, msg: CommandoMessage, ...args: any[]) {
-    super(msg, ...args);
-    this.type = 'down';
+    super(msg, ...args)
+    this.type = 'down'
     return this.setColor('GOLD')
       .setTitle('API down')
       .setDescription(`Blizzard seems to have a problem with its API that prevents the bot from getting your data :confused:
       Please try later; if you want to check the website yourself in the meantime, you can visit [this link](${link}).
-      If you think there's an error, please report it to the bot owner.`);
+      If you think there's an error, please report it to the bot owner.`)
   }
 }
 
@@ -387,30 +387,30 @@ interface EmbedParams {
  * 
  */
 function createEmbed({ battletag, data, platform, hero, mode, extra, msg, error }: EmbedParams) {
-  let embed: CustomEmbed;
+  let embed: CustomEmbed
 
   if (error) {
-    if (mode == 'error') embed = new ErrorEmbed(error, msg);
-    else if (mode == 'warn') embed = new WarnEmbed(error, msg);
-    else if (mode == 'down') embed = new DownEmbed(getLink(battletag, platform), msg);
+    if (mode == 'error') embed = new ErrorEmbed(error, msg)
+    else if (mode == 'warn') embed = new WarnEmbed(error, msg)
+    else if (mode == 'down') embed = new DownEmbed(getLink(battletag, platform), msg)
   } else if (['link', 'unlink'].includes(mode)) {
     // @ts-ignore
-    embed = new LinkEmbed(mode, data, [battletag, platform], msg);
+    embed = new LinkEmbed(mode, data, [battletag, platform], msg)
   } else if (mode.endsWith('hero')) {
-    embed = new HeroEmbed(data, mode, hero, extra, msg);
+    embed = new HeroEmbed(data, mode, hero, extra, msg)
     // @ts-ignore
-    embed.setTitle(`${capitalize(mode.split(' ')[0])} ${heroName(embed.hero)} stats for ${player(battletag, platform, false)}`);
+    embed.setTitle(`${capitalize(mode.split(' ')[0])} ${heroName(embed.hero)} stats for ${player(battletag, platform, false)}`)
   } else {
     embed = new StatsEmbed(data, mode, msg)
-      .setTitle(`${capitalize(mode)} stats for ${player(battletag, platform, false)}`);
+      .setTitle(`${capitalize(mode)} stats for ${player(battletag, platform, false)}`)
 
     if (mode == 'competitive' && !data.stats.competitive.overall_stats.comprank)
-      embed.description += '\n:warning: This account is not currently ranked: this data comes exclusively from off-season & placement matches.';
+      embed.description += '\n:warning: This account is not currently ranked: this data comes exclusively from off-season & placement matches.'
 
-    if (['hero', 'stats'].includes(embed.type)) embed.addLink(battletag, platform);
+    if (['hero', 'stats'].includes(embed.type)) embed.addLink(battletag, platform)
   }
 
-  return embed;
+  return embed
 }
 
 /* #endregion */
@@ -420,7 +420,7 @@ interface StatusCodeError {
   error: ErrorResponse
 }
 function isStatusCE(item: any): item is StatusCodeError {
-  return !!item.error;
+  return !!item.error
 }
 /**
  * Checks whether the data returned from OverwatchAPI.getRaw() is an error
@@ -431,30 +431,30 @@ function isStatusCE(item: any): item is StatusCodeError {
  */
 function errorCheck(data: Region | Error | StatusCodeError, [mode, battletag, platform]: string[], msg: CommandoMessage) {
   if (isStatusCE(data)) {
-    const obj = data.error;
+    const obj = data.error
     let error: string,
-      embedMode: string;
+      embedMode: string
     if (obj.error == 404) {
-      error = '`404` - Profile not found.';
-      embedMode = 'error';
+      error = '`404` - Profile not found.'
+      embedMode = 'error'
     } else if (obj.error == 'Private') {
-      error = 'This profile is private.';
-      embedMode = 'warn';
+      error = 'This profile is private.'
+      embedMode = 'warn'
     } else if (obj.error == 500 && obj.exc == 'IndexError(\'list index out of range\',)') {
-      error = obj.msg || 'api down';
-      embedMode = 'down';
+      error = obj.msg || 'api down'
+      embedMode = 'down'
     } else {
-      error = obj.msg ? `\`${obj.error}\` - \`${obj.msg}\`` : obj.toString();
-      embedMode = 'error';
+      error = obj.msg ? `\`${obj.error}\` - \`${obj.msg}\`` : obj.toString()
+      embedMode = 'error'
     }
-    error += `\nYou requested ${mode == 'link' ? 'to link' : `${mode} stats for`} ${player(battletag, platform)}`;
+    error += `\nYou requested ${mode == 'link' ? 'to link' : `${mode} stats for`} ${player(battletag, platform)}`
     return createEmbed({
       battletag,
       platform,
       mode: embedMode,
       error,
       msg
-    });
+    })
   } else if (data instanceof Error) {
     return createEmbed({
       battletag,
@@ -462,10 +462,10 @@ function errorCheck(data: Region | Error | StatusCodeError, [mode, battletag, pl
       mode: 'error',
       error: `Internal error:\n${data}`,
       msg
-    });
-  } else return null;
+    })
+  } else return null
 }
-//#endregion
+// #endregion
 
 /* #region Local utils */
 
@@ -476,15 +476,15 @@ function errorCheck(data: Region | Error | StatusCodeError, [mode, battletag, pl
  * @param reverse Whether to reverse-sort the keys
  */
 function getBestKeys(num: number, obj: Object, reverse = false) {
-  if (!num) return [];
+  if (!num) return []
   const sortable = [],
-    res: string[] = [];
-  for (const key in obj) sortable.push([key, obj[key]]);
+    res: string[] = []
+  for (const key in obj) sortable.push([key, obj[key]])
   sortable.sort((a, b) => {
-    return reverse ? a[1] - b[1] : b[1] - a[1];
-  });
-  for (let i = 0; i < num && i < sortable.length; i++) res.push(sortable[i][0]);
-  return res;
+    return reverse ? a[1] - b[1] : b[1] - a[1]
+  })
+  for (let i = 0; i < num && i < sortable.length; i++) res.push(sortable[i][0])
+  return res
 }
 
 /**
@@ -497,11 +497,11 @@ function heroName(str: string) {
     'lucio': 'Lúcio',
     'mccree': 'McCree',
     'soldier76': 'Soldier 76',
-  };
-  if (custom[str]) return custom[str];
-  const arr = str.split('_');
-  for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i]);
-  return arr.join(' ');
+  }
+  if (custom[str]) return custom[str]
+  const arr = str.split('_')
+  for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i])
+  return arr.join(' ')
 }
 
 /**
@@ -510,7 +510,7 @@ function heroName(str: string) {
  */
 // eslint-disable-next-line no-unused-vars
 function lockRegion(v: any): v is Region {
-  return true;
+  return true
 }
 
 /**
@@ -520,8 +520,8 @@ function lockRegion(v: any): v is Region {
  * @param bold Whether to make battletag and platform bold
  */
 function player(battletag: string, platform: string, bold = true) {
-  const b = bold ? '**' : '';
-  return b + battletag + b + ' - ' + b + platform.toUpperCase() + b;
+  const b = bold ? '**' : ''
+  return b + battletag + b + ' - ' + b + platform.toUpperCase() + b
 }
 
 /**
@@ -529,14 +529,14 @@ function player(battletag: string, platform: string, bold = true) {
  * @param number 
  */
 function statNum(number: number) {
-  return readNumber(number, 0);
+  return readNumber(number, 0)
 }
 
 /* #endregion */
 
 export class OverwatchAPI extends API {
   constructor() {
-    super('ow', 'Overwatch');
+    super('ow', 'Overwatch')
   }
 
   /**
@@ -545,8 +545,8 @@ export class OverwatchAPI extends API {
    * @param reverse Whether to return keys (default is false)
    */
   checkDatabase(id: string | User | GuildMember, reverse = false) {
-    if (id instanceof User || id instanceof GuildMember) id = id.id;
-    return !reverse ? this.store.get(id) : this.store.getKey(id.replace('#', '-'));
+    if (id instanceof User || id instanceof GuildMember) id = id.id
+    return !reverse ? this.store.get(id) : this.store.getKey(id.replace('#', '-'))
   }
 
   /**
@@ -555,13 +555,13 @@ export class OverwatchAPI extends API {
    * @param platform 
    */
   async getRaw(battletag: string, platform: string): Promise<Region | Error | StatusCodeError> {
-    if (!battletag) return;
-    battletag = battletag.replace('#', '-');
+    if (!battletag) return
+    battletag = battletag.replace('#', '-')
 
-    const cached = cache.get(battletag + platform);
-    if (cached) return cached;
+    const cached = cache.get(battletag + platform)
+    if (cached) return cached
 
-    let error: Error;
+    let error: Error
     const r: OWAPIBlob | ErrorResponse = await request({
       uri: encodeURI(`https://${APIHost || await checkLocalAPI()}/api/v3/u/${battletag}/blob${platform ? `?platform=${platform}` : ''}`),
       headers: {
@@ -569,28 +569,28 @@ export class OverwatchAPI extends API {
       },
       json: true
     }).catch(err => {
-      error = err;
-    });
+      error = err
+    })
 
-    if (!error && typeof r != 'object') error = new Error(`Request resolves into ${typeof r}`);
+    if (!error && typeof r != 'object') error = new Error(`Request resolves into ${typeof r}`)
 
-    if (error) return error;
+    if (error) return error
     else {
-      cache.add(battletag + platform, r.any || r.eu);
-      return r.any || r.eu;
+      cache.add(battletag + platform, r.any || r.eu)
+      return r.any || r.eu
     }
 
-    /*if (typeof r == 'object') cache.add(battletag + platform, r.any ? r.any : r.eu);
+    /* if (typeof r == 'object') cache.add(battletag + platform, r.any ? r.any : r.eu);
     return typeof r == 'object' ? r.any ? r.any : r.eu : errors[0];*/
   }
 
-  //#region Command methods
+  // #region Command methods
 
   async quick(battletag: string, platform: string, msg: CommandoMessage) {
     const data = await this.getRaw(battletag, platform),
       mode = 'quickplay',
-      check = errorCheck(data, [mode, battletag, platform], msg);
-    if (check) return check;
+      check = errorCheck(data, [mode, battletag, platform], msg)
+    if (check) return check
 
     if (lockRegion(data))
       return createEmbed({
@@ -599,14 +599,14 @@ export class OverwatchAPI extends API {
         platform,
         mode,
         msg
-      });
+      })
   }
 
   async comp(battletag: string, platform: string, msg: CommandoMessage) {
     const data = await this.getRaw(battletag, platform),
       mode = 'competitive',
-      check = errorCheck(data, [mode, battletag, platform], msg);
-    if (check) return check;
+      check = errorCheck(data, [mode, battletag, platform], msg)
+    if (check) return check
 
     if (lockRegion(data))
       return createEmbed({
@@ -615,19 +615,19 @@ export class OverwatchAPI extends API {
         platform,
         mode,
         msg
-      });
+      })
   }
 
   async link(battletag: string, platform: string, msg: CommandoMessage) {
     const data = await this.getRaw(battletag, platform),
       mode = 'link',
-      check = errorCheck(data, [mode, battletag, platform], msg);
-    if (check) return check;
+      check = errorCheck(data, [mode, battletag, platform], msg)
+    if (check) return check
 
     const prev = this.checkDatabase(msg.author),
-      next = [battletag, platform];
+      next = [battletag, platform]
 
-    if (next != prev) this.store.set(msg.author.id, next);
+    if (next != prev) this.store.set(msg.author.id, next)
 
     return createEmbed({
       battletag,
@@ -635,29 +635,29 @@ export class OverwatchAPI extends API {
       platform,
       mode,
       msg
-    });
+    })
   }
 
   async unlink(battletag: string, platform: string, msg: CommandoMessage) {
-    const prev = this.checkDatabase(msg.author);
+    const prev = this.checkDatabase(msg.author)
 
-    if (prev) this.store.delete(msg.author.id);
+    if (prev) this.store.delete(msg.author.id)
 
-    //@ts-ignore
+    // @ts-ignore
     return createEmbed({
       data: prev,
       mode: 'unlink',
       msg
-    });
+    })
   }
 
   async hero(battletag: string, platform: string, msg: CommandoMessage, hero: string) {
     const data = await this.getRaw(battletag, platform),
       mode = 'quickplay hero',
-      check = errorCheck(data, [mode, battletag, platform, hero], msg);
-    if (check) return check;
+      check = errorCheck(data, [mode, battletag, platform, hero], msg)
+    if (check) return check
 
-    const extraData = await getHeroStats(battletag.replace('#', '-'), platform);
+    const extraData = await getHeroStats(battletag.replace('#', '-'), platform)
 
     if (lockRegion(data))
       return createEmbed({
@@ -668,16 +668,16 @@ export class OverwatchAPI extends API {
         mode,
         msg,
         extra: extraData
-      });
+      })
   }
 
   async herocomp(battletag: string, platform: string, msg: CommandoMessage, hero: string) {
     const data = await this.getRaw(battletag, platform),
       mode = 'competitive hero',
-      check = errorCheck(data, [mode, battletag, platform, hero], msg);
-    if (check) return check;
+      check = errorCheck(data, [mode, battletag, platform, hero], msg)
+    if (check) return check
 
-    const extraData = await getHeroStats(battletag.replace('#', '-'), platform);
+    const extraData = await getHeroStats(battletag.replace('#', '-'), platform)
 
     if (lockRegion(data))
       return createEmbed({
@@ -688,10 +688,10 @@ export class OverwatchAPI extends API {
         mode,
         msg,
         extra: extraData
-      });
+      })
   }
 
-  //#endregion
+  // #endregion
 }
 
-export const ApiLoader = OverwatchAPI;
+export const ApiLoader = OverwatchAPI

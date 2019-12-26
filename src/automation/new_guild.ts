@@ -1,9 +1,9 @@
-import { client, owner } from '../core/app';
-import { getSupportInvite } from '../utils/utils';
+import { client, owner } from '../core/app'
+import { getSupportInvite } from '../utils/utils'
 
 client.on('guildCreate', async guild => {
-  const invite = await getSupportInvite();
-  if (!invite) return owner.send(`Problem with invite creation: ${invite}`);
+  const invite = await getSupportInvite()
+  if (!invite) return owner.send(`Problem with invite creation: ${invite}`)
 
   const msg = `Hi, thanks for choosing Game Tracker! Let me introduce you to the basics:
   
@@ -16,7 +16,7 @@ client.on('guildCreate', async guild => {
   If you need some help or you have suggestions, please join the support guild: ${invite}
   
   If you want to share this bot, please use the \`invite\` command and use that link ;)
-  `;
+  `
 
-  guild.owner.send(msg);
-});
+  guild.owner.send(msg)
+})

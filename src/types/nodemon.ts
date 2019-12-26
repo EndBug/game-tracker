@@ -24,8 +24,8 @@ interface nodemonSecond {
 type nodemonDefault = (settings: nodemonConfig | string) => nodemonSecond;
 
 declare module 'nodemon' {
-  export var nodemon: (settings: nodemonConfig | string) => nodemonSecond;
-  /*export default class nodemonDef extends nodemon {
+  export var nodemon: (settings: nodemonConfig | string) => nodemonSecond
+  /* export default class nodemonDef extends nodemon {
     constructor
   }*/
 }

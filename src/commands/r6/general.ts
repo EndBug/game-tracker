@@ -1,5 +1,5 @@
-import { Command, CommandoClient } from 'discord.js-commando'; // eslint-disable-line no-unused-vars
-import { getConfig } from './r6';
+import { Command, CommandoClient } from 'discord.js-commando' // eslint-disable-line no-unused-vars
+import { getConfig } from './r6'
 
 export default class R6GeneralWiki extends Command {
   constructor(client: CommandoClient) {
@@ -13,6 +13,6 @@ export default class R6GeneralWiki extends Command {
         'all': 'Displays your general PvP and PvE stats, if you linked your account.'
       },
       extra: 'playType'
-    }));
+    }))
   }
 }
