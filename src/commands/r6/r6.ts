@@ -16,7 +16,7 @@ const commandAliases = ['r6s', 'rainbow', 'rainbow6siege']
 
 /** Generates an alias array for the sub-commands */
 function getAliases(name: string) {
-  name = name.replace(new RegExp('/r6/', 'g'), '').trim()
+  name = (name || '').replace(new RegExp('/r6/', 'g'), '').trim()
   return commandAliases.map(al => al + ' ' + name)
 }
 
@@ -58,7 +58,7 @@ export function getConfig(method: string, { description, details, examples, extr
     group: 'r6',
     aliases: getAliases(method),
     description,
-    details: details.trim() + '\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
+    details: (details || '').trim() + '\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
     format,
     examples: getExamples(method, examples),
     guildOnly: true
@@ -115,15 +115,15 @@ function getWeaponType(str: string): WeaponType {
 
 function isOperator(str: string) {
   return typeof str == 'string'
-    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join('-'))
-      .includes(str.toLowerCase().split(' ').join('-'))
+    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join(''))
+      .includes(str.toLowerCase().split(' ').join(''))
 }
 
 function getOperator(str: string): Operator {
   // @ts-ignore
   return typeof str == 'string'
-    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join('-'))
-      .find(name => name == str.toLowerCase().split(' ').join('-'))
+    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join())
+      .find(name => name == str.toLowerCase().split(' ').join())
 }
 
 // #endregion

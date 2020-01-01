@@ -58,7 +58,8 @@ async function initClient() {
     ['data', 'Data management'],
     ['dbl', 'Discord Bots List'],
     ['dev', 'Developers'],
-    ['ow', 'Overwatch']
+    ['ow', 'Overwatch'],
+    ['r6', 'Rainbow 6 Siege']
   ]).registerDefaultGroups()
     .registerDefaultTypes()
     .registerDefaultCommands({

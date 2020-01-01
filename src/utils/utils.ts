@@ -329,7 +329,7 @@ export function readNumber(number: number, decimals = 2) {
 }
 
 /** It can be used to resolve users, colors and so on */
-export const resolver = new ClientDataResolver(client)
+export const resolver = client.publicResolver
 
 /**
  * Takes a number and takes the last two digits (adds a 0 if needed)
