@@ -1,6 +1,4 @@
-import R6API, { Stats, Operator, OperatorStats, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js' // eslint-disable-line no-unused-vars
-import { Platform } from 'r6api.js' // eslint-disable-line no-unused-vars
-import { isWeaponName, isWeaponType } from 'r6api.js/ts-utils'
+import R6API, { Stats, Operator, OperatorStats, Platform, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js' // eslint-disable-line no-unused-vars
 import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord, Cache, resolver } from '../utils/utils' // eslint-disable-line no-unused-vars
 import { RichEmbed, User, UserResolvable } from 'discord.js' // eslint-disable-line no-unused-vars
 import { CommandoMessage } from 'discord.js-commando' // eslint-disable-line no-unused-vars
@@ -398,6 +396,16 @@ interface EmbedParameters<T> {
 /** Checks wheter the argument is a platform */
 export function isPlatform(str: string): str is Platform {
   return ['uplay', 'xbl', 'psn'].includes(str)
+}
+
+function isWeaponName(value: string): value is WeaponName {
+  return typeof value == 'string'
+    && constants.WEAPONS.map(wp => wp.name).includes(value)
+}
+
+function isWeaponType(value: string): value is WeaponType {
+  // @ts-ignore
+  return typeof value == 'string' && Object.values(constants.WEAPONTYPES).includes(value)
 }
 
 /** Compares play regions to determine which is the most recent
