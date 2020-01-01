@@ -3,7 +3,7 @@ import { User, GuildMember, RichEmbed } from 'discord.js'
 import { CommandoMessage } from 'discord.js-commando' // eslint-disable-line no-unused-vars
 import * as owapi from 'overwatch-stats-api'
 
-import { API } from '../core/app'
+import { API } from '../utils/utils'
 import { Cache, getShortName, readHours, readNumber, readMinutes, humanize, capitalize, equals, enforceType, stringToSeconds } from '../utils/utils'
 import { heroName, SupportedHero, isSupported } from '../utils/ow_hero_names' // eslint-disable-line no-unused-vars
 
