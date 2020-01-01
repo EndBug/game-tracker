@@ -69,7 +69,7 @@ _Displays quickplay hero stats for the targeted user._
 **Format: `ow hero {account} [platform] [hero]`**
 
 To specify the player, enter their battletag/GamerTag/PSN ID. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#ow-link) it).  
-Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](./OW_HEROES) to see which names are allowed.
+Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](./OW_HEROES.md) to see which names are allowed.
 
 Examples:
 * `ow hero EeveeA#1716 genji` → Displays quickplay stats for `EeveeA#1716` by searching them in the PC category, shows Genji.
@@ -90,7 +90,7 @@ _Displays competitive hero stats for the targeted user._
 **Format: `ow herocomp {account} [platform] [hero]`**
 
 To specify the player, enter their battletag/GamerTag/PSN ID. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#ow-link) it).  
-Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](./OW_HEROES) to see which names are allowed.
+Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](./OW_HEROES.md) to see which names are allowed.
 
 Examples:
 * `ow herocomp EeveeA#1716 genji` → Displays competitive stats for `EeveeA#1716` by searching them in the PC category, shows Genji.
