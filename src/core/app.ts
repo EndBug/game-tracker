@@ -1,4 +1,4 @@
-require('dotenv').load()
+require('dotenv').config()
 
 type Class = { new(...args: any[]): any; };
 

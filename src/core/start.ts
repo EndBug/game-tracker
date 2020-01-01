@@ -1,4 +1,4 @@
-require('dotenv').load()
+require('dotenv').config()
 var nodemon = require('nodemon')('--watch src/utils/reloadme.json --exec ts-node src/core/app.ts')
 
 import * as fs from 'fs'

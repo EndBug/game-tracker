@@ -1,4 +1,4 @@
-require('dotenv').load()
+require('dotenv').config()
 
 import * as Discord from 'discord.js'
 import * as fs from 'fs'
