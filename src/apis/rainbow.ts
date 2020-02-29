@@ -631,7 +631,7 @@ export class RainbowAPI extends API {
     if (check) return check
     if (!enforceType<Stats>(rawStats)) return
 
-    let processedStats: GeneralStats
+    const processedStats = {} as GeneralStats
     let finalStats: Stats['pvp']['general'] | Stats['pve']['general']
     if (playType == 'all') finalStats = mergeAndSum(rawStats.pvp.general, rawStats.pve.general)
     else finalStats = rawStats[playType].general
