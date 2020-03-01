@@ -19,7 +19,7 @@ jobs:
         run: npm install --only=dev && npm install ts-node mkdirp --no-save
 
       - name: Update documentation
-        run: npm run doc
+        run: npm run docs:gen
 
       - name: Update source code
         run: npm run lint
@@ -28,7 +28,7 @@ jobs:
         uses: EndBug/add-and-commit@v2
         with:
           message: "[auto] Update repository"
-          path: doc src
+          path: docs src
           pattern: "*.*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

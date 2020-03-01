@@ -2,6 +2,15 @@ import table from 'markdown-table'
 import * as fs from 'fs'
 import * as path from 'path'
 
+// #region README
+function udpateREADME() {
+  const current = fs.readFileSync(path.join(__dirname, '../../README.md'), { encoding: 'utf8' })
+  const processed = current
+    .split('')
+}
+udpateREADME()
+// #endregion
+
 // #region Overwatch
 import { heroes, heroName } from '../utils/ow_hero_names'
 
@@ -62,7 +71,7 @@ const tables = [
     values: wpValues
   })
 ]
-const last = '# Rainbow 6 Siege cheatsheet\n' + tables.join('\n')
+const last = '# Rainbow 6 Siege cheatsheet\n' + tables.join('\n\n')
 writeToFile('r6/R6_NAMES.md', last)
 
 
@@ -99,7 +108,7 @@ interface TableOptions {
  * @param data The data to write to the file, as plain text
  */
 function writeToFile(relPath: string, data: string) {
-  return fs.writeFileSync(path.join(__dirname, '../../doc/', relPath), data)
+  return fs.writeFileSync(path.join(__dirname, '../../docs/', relPath), data)
 }
 
 /** Creates a table and writes it to a doc file */
@@ -110,4 +119,6 @@ interface WriteTableOptions extends TableOptions {
   /** The path relative to the doc directory */
   relPath: string
 }
+
+
 // #endregion

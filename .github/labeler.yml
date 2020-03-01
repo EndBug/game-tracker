@@ -1,7 +1,7 @@
 actions:
-- .github/workflows/**
-- actions/**
+  - .github/workflows/**
+  - actions/**
 
 docs:
-- doc/**
-- "*.md"
+  - docs/**
+  - "*.md"

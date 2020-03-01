@@ -59,6 +59,7 @@
 | Amaru            | `amaru`           |
 | Wamai            | `wamai`           |
 | Kali             | `kali`            |
+
 ### Weapon categories
 | Category | Aliases    |
 | -------- | ---------- |
@@ -72,6 +73,7 @@
 | Shield   | `shield`   |
 | Launcher | `launcher` |
 | Utility  | `utility`  |
+
 ### Weapon names
 | Weapon                         | Aliases             |
 | ------------------------------ | ------------------- |
