@@ -208,7 +208,7 @@ export function humanize(str: string) {
 
 /** Checks whether a string is a Discord mention */
 export function isMention(str: string) {
-  return (str.startsWith('<@') && str.endsWith('>') && str.length == 18 + 3)
+  return (typeof str == 'string' && str.startsWith('<@') && str.endsWith('>'))
 }
 
 /** Converts a map into an object */
@@ -234,7 +234,7 @@ export function mergeAndSum<T>(...objects: T[]): T {
     const result = obj1
     for (const key in obj2) {
       // @ts-ignore
-      if (result[key]) result[key] += obj2[key]
+      if (typeof result[key] == 'number') result[key] += obj2[key]
       else result[key] = obj2[key]
     }
     return result

@@ -75,7 +75,7 @@ class GeneralEmbed extends CustomEmbed {
     super(msg, ...args)
     this.type = 'general'
     return this.setHeader(`General ${playType == 'all' ? '' : readablePlayType(playType, true)}stats`, username, platform)
-      .addOpImage(raw, playType)
+      .addOpImage(raw, playType == 'all' ? 'pvp' : playType)
       .addAccount(stats)
       .addMatches(stats)
       .addPerformance(stats)
@@ -147,7 +147,7 @@ class ModesEmbed extends CustomEmbed {
 
     for (const statKey in mode) {
       // @ts-ignore
-      if (statKey != 'name') body += keyValue(statKey, mode[statKey])
+      if (statKey != 'name') body += keyValue(statKey, mode[statKey]) + '\n'
     }
 
     return this.addField(title, body.trim(), true)
@@ -164,7 +164,7 @@ class WeaponEmbed extends CustomEmbed {
       if (!playType.includes('name')) {
         if (!enforceType<strictPlayType>(playType)) return
         let str = ''
-        for (const key in category[playType].general) str += keyValue(key, category[playType].general[key])
+        for (const key in category[playType].general) str += keyValue(key, category[playType].general[key]) + '\n'
         this.addField(title + ` (${playType})`, str, true)
       }
     }
@@ -172,16 +172,16 @@ class WeaponEmbed extends CustomEmbed {
   }
 
   /** Adds a weapon to the embed */
-  addWeapon(category: WeaponEmbedStats, wpName: WeaponName, title?: string, only?: strictPlayType) {
+  addWeapon(category: WeaponEmbedStats, wpName: WeaponName, title?: string, only?: strictPlayType, name?: boolean) {
     if (!title) title = 'Weapon'
     for (const playType in category) {
-      if (!playType.includes('name')) {
-        if (only && playType != only) return
+      if (!playType.includes('name') && !(only && playType != only)) {
         if (!enforceType<strictPlayType>(playType)) return
         let str = ''
-        const wp = category[playType].list.find(wp => wp.name == wpName)
+        const wp = category[playType].list.find(wp => wpTrans(wp.name) == wpTrans(wpName))
+        if (name) str += `Name: **${wp.name}**\n`
         if (wp) for (const key in wp) {
-          if (key != 'name') str += keyValue(key, wp[key])
+          if (key != 'name') str += keyValue(key, wp[key]) + '\n'
         }
         if (str) this.addField(title + ` (${playType})`, str, true)
       }
@@ -199,12 +199,13 @@ class WeaponEmbed extends CustomEmbed {
 class WeaponSingleEmbed extends WeaponEmbed {
   type: 'wp-single'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-single'>, ...args) {
+  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-single'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'wp-single'
     const weapon = category.WPname
-    return this.setHeader(`${weapon} weapon`, username, platform)
+    return this.setHeader(`${category['pvp'].list.find(wp => wpTrans(wp.name) == wpTrans(weapon)).name} weapon`, username, platform)
       .addWeapon(category, weapon)
+      .addOpImage(raw, 'all')
       .addCategory(category, `${capitalize(category.CATname)} category`)
   }
 }
@@ -213,15 +214,18 @@ class WeaponSingleEmbed extends WeaponEmbed {
 class WeaponCategoryEmbed extends WeaponEmbed {
   type: 'wp-cat'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-cat'>, ...args) {
+  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-cat'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'wp-cat'
     const wpPvP = this.mostChosenWeapon(category.pvp.list),
       wpPvE = this.mostChosenWeapon(category.pve.list)
-    return this.setHeader(`${capitalize(category.CATname)} weapons`, username, platform)
+
+    this.setHeader(`${capitalize(category.CATname)} weapons`, username, platform)
+      .addOpImage(raw, 'all')
       .addCategory(category, 'Category overall')
-      .addWeapon(category, wpPvP.name, 'Most chosen weapon', 'pvp')
-      .addWeapon(category, wpPvE.name, 'Most chosen weapon', 'pve')
+
+    if (wpPvP.timesChosen > 0) this.addWeapon(category, wpPvP.name, 'Most chosen weapon', 'pvp', true)
+    if (wpPvE.timesChosen > 0) this.addWeapon(category, wpPvE.name, 'Most chosen weapon', 'pve', true)
   }
 }
 
@@ -248,6 +252,7 @@ class OperatorEmbed extends CustomEmbed {
     const { kills, deaths, wins, losses } = stats
 
     const title = readablePlayType(playType)
+    const other = (stats.gadget || []).map(g => keyValue(g.name, g.value)).join('\n- ')
     const str = `
     Kills/Deaths: ${statFormat((kills / deaths))} (${[deaths, kills].map(e => statFormat(e)).join(' / ')})
     Win rate: ${statFormat((wins / (wins + losses)) * 100, '%')}
@@ -257,8 +262,7 @@ class OperatorEmbed extends CustomEmbed {
     DBNOs: ${statFormat(stats.dbno)}
     XP: ${statFormat(stats.xp)}
     Playtime: **${readHours(stats.playtime / 60 / 60)}**
-    Other:
-      ${stats.gadget.map(g => keyValue(g.name, g.value)).join('\n  ')}
+    ${other ? `Other:\n- ${other}` : ''}
     `.trim()
 
     return this.addField(title, str, true)
@@ -284,7 +288,7 @@ class TypesEmbed extends CustomEmbed {
     let str = ''
     for (const key in value)
       str += keyValue(key, value[key]) + '\n'
-    return this.addField(name, str.trim(), true)
+    return this.addField(camelToReadable(name), str.trim(), true)
   }
 }
 
@@ -386,6 +390,7 @@ interface EmbedParameters<T> {
   id: string
   msg: CommandoMessage
   platform: Platform
+  player?: string
   playType?: playType
   /** The full stats object */
   raw?: Stats
@@ -398,14 +403,52 @@ export function isPlatform(str: string): str is Platform {
   return ['uplay', 'xbl', 'psn'].includes(str)
 }
 
-function isWeaponName(value: string): value is WeaponName {
-  return typeof value == 'string'
-    && constants.WEAPONS.map(wp => wp.name).includes(value)
+/** Checks whether the argument is a weapon */
+export function isWeaponName(str: string) {
+  return typeof str == 'string'
+    && constants.WEAPONS.map(wp => wpTrans(wp.name))
+      .includes(wpTrans(str))
 }
 
-function isWeaponType(value: string): value is WeaponType {
+/** Returns the exact weapon name from an argument-form name */
+export function getWeaponName(str: string): WeaponName {
   // @ts-ignore
-  return typeof value == 'string' && Object.values(constants.WEAPONTYPES).includes(value)
+  return constants.WEAPONS.map(wp => wpTrans(wp.name))
+    .find(name => wpTrans(name) == wpTrans(str))
+}
+
+
+function wpTrans(str: string) {
+  return str.toLowerCase().split(' ').join('-')
+}
+
+/** Checks whether the argument is a weapon category */
+export function isWeaponType(str: string) {
+  return typeof str == 'string'
+    && Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
+      .includes(str.toLowerCase().split(' ').join('-'))
+}
+
+/** Returns the exact weapon category from an argument-form name */
+export function getWeaponType(str: string): WeaponType {
+  // @ts-ignore
+  return Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
+    .find(name => name == str.toLowerCase().split(' ').join('-'))
+}
+
+/** Checks whether the argument is an operator */
+export function isOperator(str: string) {
+  return typeof str == 'string'
+    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join(''))
+      .includes(str.toLowerCase().split(' ').join(''))
+}
+
+/** Returns the exact operator name from an argument-form name */
+export function getOperator(str: string): Operator {
+  // @ts-ignore
+  return typeof str == 'string'
+    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join())
+      .find(name => name == str.toLowerCase().split(' ').join())
 }
 
 /** Compares play regions to determine which is the most recent
@@ -527,13 +570,13 @@ export class RainbowAPI extends API {
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
-  async createEmbed<T extends embedType_Type>({ id, embedType, msg, platform, playType, raw, stats }: EmbedParameters<T>) {
+  async createEmbed<T extends embedType_Type>({ id, embedType, msg, platform, player, playType, raw, stats }: EmbedParameters<T>) {
     if (embedType == 'error') {
       if (!enforceType<StatsType<'error'>>(stats)) return
       return new ErrorEmbed(stats instanceof Error ? stats.message : stats, msg)
     }
 
-    const username = await this.getUsername(id, platform)
+    const username = await this.getUsername(id, platform) || player
     let embed: CustomEmbed
 
     // Type guards are necessary, just copy & paste them block-by-block
@@ -546,10 +589,10 @@ export class RainbowAPI extends API {
       embed = new ModesEmbed(msg, username, platform, playType, stats, raw)
     } else if (embedType == 'wp-single') {
       if (!enforceType<StatsType<'wp-single'>>(stats)) return
-      embed = new WeaponSingleEmbed(msg, username, platform, stats)
+      embed = new WeaponSingleEmbed(msg, username, platform, stats, raw)
     } else if (embedType == 'wp-cat') {
       if (!enforceType<StatsType<'wp-cat'>>(stats)) return
-      embed = new WeaponCategoryEmbed(msg, username, platform, stats)
+      embed = new WeaponCategoryEmbed(msg, username, platform, stats, raw)
     } else if (embedType == 'op') {
       if (!enforceType<StatsType<'op'>>(stats)) return
       embed = new OperatorEmbed(msg, username, platform, stats)
@@ -603,8 +646,10 @@ export class RainbowAPI extends API {
       if (error.message == 'Stripped in prod' && this.isInvalidId(id, platform))
         error = new Error('Invalid id.')
     }
-    error.message += `\nParameters:\n- Id: \`${id}\`\n- Platform: \`${platform}\``
-    if (error) return error
+    if (error) {
+      error.message += `\nParameters:\n- Id: \`${id}\`\n- Platform: \`${platform}\``
+      return error
+    }
     else {
       if (useCache) cache.add(cacheID(id, platform), res)
       return res
@@ -625,7 +670,7 @@ export class RainbowAPI extends API {
 
 
   // #region Command methods
-  async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType) {
+  async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType, player: string) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -638,7 +683,7 @@ export class RainbowAPI extends API {
 
     const levelInfo = await this.getLevelInfo(id, platform)
     const rankInfo = await this.getRank(id, platform)
-    const region = getLastPlayedRegion(rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))])
+    const region = getLastPlayedRegion(rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))].regions)
 
     processedStats.account = {
       currentRank: {
@@ -673,13 +718,14 @@ export class RainbowAPI extends API {
       embedType: 'general',
       msg,
       platform,
+      player,
       playType,
       raw: rawStats,
       stats: processedStats
     })
   }
 
-  async modes(msg: CommandoMessage, id: string, platform: Platform, playType: strictPlayType) {
+  async modes(msg: CommandoMessage, id: string, platform: Platform, playType: strictPlayType, player: string) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -692,13 +738,14 @@ export class RainbowAPI extends API {
       embedType: 'modes',
       msg,
       platform,
+      player,
       playType,
       raw: rawStats,
       stats: processedStats
     })
   }
 
-  async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
+  async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType, player: string) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -706,14 +753,15 @@ export class RainbowAPI extends API {
 
     var processedStats: WeaponEmbedStats
     if (isWeaponName(wpOrCat)) {
+      const exactName = getWeaponName(wpOrCat)
       var CATname: WeaponType
       for (const cat in rawStats.pvp.weapons) {
-        if (enforceType<WeaponType>(cat) && rawStats.pvp.weapons[cat].list.some(wp => wp.name == wpOrCat))
+        if (enforceType<WeaponType>(cat) && rawStats.pvp.weapons[cat].list.some(wp => wpTrans(wp.name) == exactName))
           CATname = cat
       }
       processedStats = {
-        WPname: wpOrCat,
-        CATname,
+        WPname: getWeaponName(exactName),
+        CATname: getWeaponType(CATname),
         pve: rawStats.pve.weapons[CATname],
         pvp: rawStats.pvp.weapons[CATname]
       }
@@ -722,11 +770,13 @@ export class RainbowAPI extends API {
         id,
         msg,
         platform,
-        stats: processedStats
+        player,
+        stats: processedStats,
+        raw: rawStats
       })
     } else if (isWeaponType(wpOrCat)) {
       processedStats = {
-        CATname: wpOrCat,
+        CATname: getWeaponType(wpOrCat),
         pve: rawStats.pve.weapons[wpOrCat],
         pvp: rawStats.pvp.weapons[wpOrCat]
       }
@@ -735,12 +785,14 @@ export class RainbowAPI extends API {
         id,
         msg,
         platform,
-        stats: processedStats
+        player,
+        stats: processedStats,
+        raw: rawStats
       })
-    }
+    } else console.log(wpOrCat)
   }
 
-  async op(msg: CommandoMessage, id: string, platform: Platform, operator: Operator | 'auto') {
+  async op(msg: CommandoMessage, id: string, platform: Platform, operator: Operator | 'auto', player: string) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -761,6 +813,7 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
+      player,
       stats: 'No weapon stats have been found'
     })
 
@@ -769,11 +822,12 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
+      player,
       stats: processedStats
     })
   }
 
-  async types(msg: CommandoMessage, id: string, platform: Platform) {
+  async types(msg: CommandoMessage, id: string, platform: Platform, none: never, player: string) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -786,12 +840,13 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
+      player,
       raw: rawStats,
       stats: processedStats
     })
   }
 
-  async queue(msg: CommandoMessage, id: string, platform: Platform) {
+  async queue(msg: CommandoMessage, id: string, platform: Platform, none: never, player: string) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -804,19 +859,21 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
+      player,
       raw: rawStats,
       stats: processedStats
     })
   }
 
   /** Use the udpated `username` and `platform` */
-  async link(msg: CommandoMessage, username: string, platform: Platform) {
+  async link(msg: CommandoMessage, username: string, platform: Platform, none: never, p: string) {
     const id = await this.getID(username, platform)
     if (!id) return this.createEmbed({
       embedType: 'error',
       id: username,
       msg,
       platform,
+      player: p,
       stats: `${player(username, platform)} is not a valid player.`
     })
 
@@ -833,6 +890,7 @@ export class RainbowAPI extends API {
       id: username,
       msg,
       platform,
+      player: p,
       stats: {
         previous: prevStr,
         current: currStr,
@@ -852,6 +910,7 @@ export class RainbowAPI extends API {
       id: undefined,
       msg,
       platform: undefined,
+      player: undefined,
       stats: {
         previous: prevStr,
         mode: 'unlink'
