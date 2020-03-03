@@ -35,7 +35,7 @@ async function initClient() {
     owner: '218308478580555777',
     // @ts-ignore
     unknownCommandResponse: false
-  })
+  });
 
   client.on('error', console.error)
   client.on('warn', console.warn)
