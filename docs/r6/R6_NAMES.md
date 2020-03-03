@@ -1,4 +1,4 @@
-# Rainbow 6 Siege cheatsheet
+# Rainbow Six Siege cheatsheet
 ### Operators
 | Operator         | Aliases           |
 | ---------------- | ----------------- |
