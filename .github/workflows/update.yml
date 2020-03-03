@@ -1,5 +1,8 @@
-name: Update repo
-on: push
+name: Update repository
+on:
+  push:
+    paths:
+      - "src/**"
 
 jobs:
   update-repo:
@@ -13,22 +16,31 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 8.9.4
+          node-version: 10.x
 
       - name: Install dependencies
-        run: npm install --only=dev && npm install ts-node mkdirp --no-save
+        run: npm install
 
       - name: Update documentation
         run: npm run docs:gen
 
+      - name: Commit documentation changes
+        uses: EndBug/add-and-commit@v2
+        with:
+          message: "[auto] Update docs"
+          path: docs
+          pattern: "*.*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Update source code
         run: npm run lint
 
-      - name: Commit changes
+      - name: Commit source changes
         uses: EndBug/add-and-commit@v2
         with:
-          message: "[auto] Update repository"
-          path: docs src
+          message: "[auto] Lint source code"
+          path: src
           pattern: "*.*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
