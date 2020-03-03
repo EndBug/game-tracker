@@ -26,10 +26,10 @@ jobs:
         run: npm run contributors:generate
 
       - name: Commit README changes
-        uses: EndBug/add-and-commit@v3
+        uses: EndBug/add-and-commit@v4
         with:
           message: "[auto] Update contributors table"
-          pattern: "README.md"
+          add: "./README.md"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -37,10 +37,9 @@ jobs:
         run: npm run docs:gen
 
       - name: Commit documentation changes
-        uses: EndBug/add-and-commit@v2
+        uses: EndBug/add-and-commit@v4
         with:
           message: "[auto] Update docs"
-          path: docs
-          pattern: "*.*"
+          add: docs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
