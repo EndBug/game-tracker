@@ -21,7 +21,7 @@ These are the current commands:
 
 # Commands
 
-### `ow quick`
+#### `ow quick`
 
 _Displays quickplay stats for the targeted user._  
 This is the default command: that means that running `ow` by itself will trigger `ow quick`.
@@ -42,7 +42,7 @@ Examples:
 ![k](img/ow-quick-0.png)
 </details>
 
-### `ow comp`
+#### `ow comp`
 
 _Displays competitive stats for the targeted user._
 
@@ -62,7 +62,7 @@ Examples:
 ![k](img/ow-comp-0.png)
 </details>
 
-### `ow hero`
+#### `ow hero`
 
 _Displays quickplay hero stats for the targeted user._
 
@@ -83,7 +83,7 @@ Examples:
 ![k](img/ow-hero-0.png)
 </details>
 
-### `ow herocomp`
+#### `ow herocomp`
 
 _Displays competitive hero stats for the targeted user._
 
@@ -104,7 +104,7 @@ Examples:
 ![k](img/ow-herocomp-0.png)
 </details>
 
-### `ow link`
+#### `ow link`
 
 _Saves your battletag in the bot's database._
 
@@ -118,7 +118,7 @@ Examples:
 * `ow link FANKDA psn` → Links `FANKDA` by searching in the PlayStation Network.
 * `ow link` → Displays your current linked account.
 
-### `ow unlink`
+#### `ow unlink`
 
 _Unlinks your account._
 
