@@ -1,5 +1,8 @@
 name: "Lint source"
-on: push
+on:
+  push:
+    branches-ignore:
+      - master
 
 jobs:
   lint:
