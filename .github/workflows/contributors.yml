@@ -1,0 +1,46 @@
+name: Update contributors table
+on:
+  push:
+    paths:
+      - ".all-contributorsrc"
+
+jobs:
+  contributors:
+    name: Update contributors
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update README
+        run: npm run contributors:generate
+
+      - name: Commit README changes
+        uses: EndBug/add-and-commit@v2
+        with:
+          message: "[auto] Update contributors table"
+          path: "."
+          pattern: "README.txt"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update documentation
+        run: npm run docs:gen
+
+      - name: Commit documentation changes
+        uses: EndBug/add-and-commit@v2
+        with:
+          message: "[auto] Update docs"
+          path: docs
+          pattern: "*.*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
