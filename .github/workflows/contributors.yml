@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - ".all-contributorsrc"
+      - ".github/workflows/contributors.yml"
 
 jobs:
   contributors:
@@ -29,7 +30,7 @@ jobs:
         with:
           message: "[auto] Update contributors table"
           path: "."
-          pattern: "README.txt"
+          pattern: "README.*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
