@@ -77,7 +77,7 @@ const tables = [
     values: wpValues
   })
 ]
-const last = '# Rainbow 6 Siege cheatsheet\n' + tables.join('\n\n')
+const last = '# Rainbow Six Siege cheatsheet\n' + tables.join('\n\n')
 writeToFile('r6/R6_NAMES.md', last)
 
 

@@ -12,11 +12,18 @@
 
   <style>
     h3 code {
-      font-size: inherit !important;
+      font-size: 20px !important;
+      /* color: darkslategrey !important; */
     }
 
-    h4 code {
-      font-size: inherit !important;
+    h3 code::before {
+      content: '🔮';
+      padding-right: .2em;
+    }
+
+    blockquote p code {
+      font-size: unset !important;
+      color: black !important;
     }
   </style>
 </head>
@@ -32,6 +39,8 @@
     }
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
 </body>
 
 </html>
