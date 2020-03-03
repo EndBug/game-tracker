@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - "src/**"
+      - "README.md"
 
 jobs:
   update-repo:
