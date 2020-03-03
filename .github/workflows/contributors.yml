@@ -26,7 +26,7 @@ jobs:
         run: npm run contributors:generate
 
       - name: Commit README changes
-        uses: EndBug/add-and-commit@v2
+        uses: EndBug/add-and-commit@v3
         with:
           message: "[auto] Update contributors table"
           pattern: "README.md"
