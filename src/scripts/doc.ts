@@ -2,11 +2,17 @@ import table from 'markdown-table'
 import * as fs from 'fs'
 import * as path from 'path'
 
+const docs = {
+  githubURL: 'https://endbug.github.io/game-tracker/#',
+  internalURL: ''
+}
+
 // #region README
 function udpateREADME() {
-  const current = fs.readFileSync(path.join(__dirname, '../../README.md'), { encoding: 'utf8' })
-  const processed = current
-    .split('')
+  const READMEPath = path.join(__dirname, '../../README.md')
+  const current = fs.readFileSync(READMEPath, { encoding: 'utf8' })
+  const processed = current.split(docs.githubURL).join(docs.internalURL)
+  writeToFile('README.md', processed)
 }
 udpateREADME()
 // #endregion
