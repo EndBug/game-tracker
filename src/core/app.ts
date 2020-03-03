@@ -11,7 +11,7 @@ import * as fs from 'fs'
 import { API } from '../utils/utils' // eslint-disable-line no-unused-vars
 import * as stats_poster from '../utils/stats_poster'
 
-const { TOKEN } = process.env;
+const { TOKEN } = process.env
 
 export let client: Commando.CommandoClient
 export let homeguild: Discord.Guild
@@ -35,7 +35,7 @@ async function initClient() {
     owner: '218308478580555777',
     // @ts-ignore
     unknownCommandResponse: false
-  });
+  })
 
   client.on('error', console.error)
   client.on('warn', console.warn)
