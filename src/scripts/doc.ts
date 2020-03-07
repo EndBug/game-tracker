@@ -25,7 +25,7 @@ for (const hero in heroes)
 
 writeTable({
   getReadable: heroName,
-  relPath: 'ow/OW_HEROES.md',
+  relPath: 'ow/ow_heores.md',
   title: 'Overwatch heroes cheatsheet',
   type: 'Hero',
   values: heroes
@@ -78,7 +78,7 @@ const tables = [
   })
 ]
 const last = '# Rainbow Six Siege cheatsheet\n' + tables.join('\n\n')
-writeToFile('r6/R6_NAMES.md', last)
+writeToFile('r6/stored_data.md', last)
 
 
 // #endregion

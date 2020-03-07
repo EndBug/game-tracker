@@ -7,7 +7,7 @@ This is the stuff you'll need to know before submitting a PR:
  - All files submitted by you should be with the [TypeScript](https://www.typescriptlang.org/) extension (`.ts`): you don't need to explicitly type everything (valid JS is also valid TS), but using types would be appreciated.
  - Add [JSDoc](http://usejsdoc.org/) to your code: whenever you add a new function please add the JSDoc to it, unless it's extremely simple and/or self-explanatory. You can find examples in the existing files.
  - Please keep code formatting and style consistent; if you use ESLint in your IDE please use the rules defined in [`.eslintrc.json`](../.eslintrc.json).
- - For major edits, please test the code you wrote in a private instance before submuttung the PR: you can find a guide in ["How to setup a private instance"](../doc/PRIVATE_INSTANCE.md).
+ - For major edits, please test the code you wrote in a private instance before submuttung the PR: you can find a guide in ["How to setup a private instance"](../doc/private_instance.md).
  - Before creating a new utility method/function or adding a new npm package to import it, check if there's any already existing utility function that works for you. Utility function are located in [`src/utils/utils.ts`](../src/utils/utils.ts).
  - Use ES6 features (the ones supported by teh bot's version of TypeScript) such as dynamic imports, shorthands and stuff like that.
  - Do **NOT** build TypeScript code: the bot works using the [`ts-node`](https://www.npmjs.com/package/ts-node) package, if you build the files and try to run them by yourself they could not work.  

@@ -5,7 +5,7 @@ export default class R6WPWiki extends Command {
   constructor(client: CommandoClient) {
     super(client, getConfig('wp', {
       description: 'Displays weapon stats for the given weapon or weapon category.',
-      details: 'Specify the weapon to show by writing its name. Every weapon name or category can be written in lowercase and with `-` instead of spaces, e.g.: "Super Shorty" = "super-shorty".\nYou can find codes for supported weapons and weapon types here: <https://github.com/EndBug/game-tracker/blob/master/doc/r6/R6_NAMES.md#weapon-categories>',
+      details: 'Specify the weapon to show by writing its name. Every weapon name or category can be written in lowercase and with `-` instead of spaces, e.g.: "Super Shorty" = "super-shorty".\nYou can find codes for supported weapons and weapon types here: <https://github.com/EndBug/game-tracker/blob/master/doc/r6/stored_data.md#weapon-categories>',
       examples: {
         'camrs Snake_Nade': 'Displays CAMRS stats for `Snake_Nade` by searching the user in the `uplay` category.',
         'assault Saunshi xbl': 'Displays assault weapons stats for `Saunshi` by searching the user in the `xbl` category.',

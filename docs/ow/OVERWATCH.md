@@ -7,7 +7,7 @@ The Overwatch commands let you look up players from every platform and get their
 ### Custom definitions
 * `account` → the account you want to look for; it could be either a BattleTag, a GamerTag or a PSN ID, depending on the platform. If the user you want to look up has [linked](#ow-link) their account you can replace this with a Discord `@mention`. If you [linked](#ow-link) your account and you want to see your stats leave this blank, the bot will automatically use your linked account.
 * `platform` → the platform the account belongs to; it could be either `pc`, `xbl` or `psn`. If you leave this blank, the bot will automatically use `pc` as the default. If you use a linked profile, whether for another user or yourself, you can leave this blank.
-* `hero` → the hero you want to see stats for; it usually corresponds to the English name of the hero in lowercase, but you can check the [hero table](/ow/OW_HEROES.md) to be sure (names in other languages and nicknames are also supported).
+* `hero` → the hero you want to see stats for; it usually corresponds to the English name of the hero in lowercase, but you can check the [hero table](/ow/ow_heroes.md) to be sure (names in other languages and nicknames are also supported).
 
 ## Commands
 
@@ -59,7 +59,7 @@ _Displays quickplay hero stats for the targeted user._
 > Format: `ow hero {account} [platform] [hero]`
 
 To specify the player, enter their battletag/GamerTag/PSN ID. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#ow-link) it).  
-Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](/ow/OW_HEROES.md) to see which names are allowed.
+Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](/ow/ow_heroes.md) to see which names are allowed.
 
 Examples:
 * `ow hero EeveeA#1716 genji` → Displays quickplay stats for `EeveeA#1716` by searching them in the PC category, shows Genji.
@@ -80,7 +80,7 @@ _Displays competitive hero stats for the targeted user._
 > Format: `ow herocomp {account} [platform] [hero]`
 
 To specify the player, enter their battletag/GamerTag/PSN ID. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#ow-link) it).  
-Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](/ow/OW_HEROES.md) to see which names are allowed.
+Specify the hero after the player. If left blank, it will display the hero you have played for longer. Some nicknames are allowed too: check the [hero cheatsheet](/ow/ow_heroes.md) to see which names are allowed.
 
 Examples:
 * `ow herocomp EeveeA#1716 genji` → Displays competitive stats for `EeveeA#1716` by searching them in the PC category, shows Genji.
@@ -101,7 +101,7 @@ _Saves your battletag in the bot's database._
 > Format: `ow link {account} [platform]`
 
 Just enter your battletag/GamerTag/PSN ID. If you are on Xbox or PlayStation, specify the platform after it (default one is `pc`).  
-If you want to know more about how the bot manages and stores accounts, click [here](/other/STORED_DATA).
+If you want to know more about how the bot manages and stores accounts, click [here](/other/stored_data).
 
 Examples:
 * `ow link EeveeA#1716` → Links `EeveeA#1716` by searching in the PC category.
