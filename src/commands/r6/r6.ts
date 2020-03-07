@@ -191,7 +191,7 @@ export default class RainbowCMD extends Command {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
         else if (isWeaponType(extra)) extra = getWeaponType(extra)
       } else if (method == 'op') extra = getOperator(extra)
-      msg.say(await API[method](msg, id, platform, extra, isMention(player) ? undefined : player))
+      msg.say(await API[method](msg, id, platform, extra))
     }
 
     msg.channel.stopTyping()

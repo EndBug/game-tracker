@@ -348,10 +348,10 @@ class LinkEmbed extends CustomEmbed {
   }
 
   /** Changes the color, adds title and description to the embed */
-  same(curr: string) {
+  same(curr: string, prev: string) {
     return this.setColor([0, 154, 228])
       .setTitle('R6S profile unchanged')
-      .setDescription(`Your linked profile is ${curr}`)
+      .setDescription(`Your linked profile is ${prev}`)
   }
 
   /** Adds a custom description */
@@ -390,7 +390,6 @@ interface EmbedParameters<T> {
   id: string
   msg: CommandoMessage
   platform: Platform
-  player?: string
   playType?: playType
   /** The full stats object */
   raw?: Stats
@@ -570,13 +569,13 @@ export class RainbowAPI extends API {
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
-  async createEmbed<T extends embedType_Type>({ id, embedType, msg, platform, player, playType, raw, stats }: EmbedParameters<T>) {
+  async createEmbed<T extends embedType_Type>({ id, embedType, msg, platform, playType, raw, stats }: EmbedParameters<T>) {
     if (embedType == 'error') {
       if (!enforceType<StatsType<'error'>>(stats)) return
       return new ErrorEmbed(stats instanceof Error ? stats.message : stats, msg)
     }
 
-    const username = await this.getUsername(id, platform) || player
+    const username = ['link', 'unlink'].includes(embedType) ? undefined : await this.getUsername(id, platform)
     let embed: CustomEmbed
 
     // Type guards are necessary, just copy & paste them block-by-block
@@ -613,7 +612,7 @@ export class RainbowAPI extends API {
   // #region API wrappers
   /** Returns an ID from the API */
   async getID(username: string, platform: Platform) {
-    return (ensureOne(await r6api.getId(platform, username)) || {})['id']
+    return (ensureOne(await r6api.getId(platform, username)) || {})['userId']
   }
 
   /** Returns the level info for a player from the API */
@@ -670,7 +669,7 @@ export class RainbowAPI extends API {
 
 
   // #region Command methods
-  async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType, player: string) {
+  async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -718,14 +717,13 @@ export class RainbowAPI extends API {
       embedType: 'general',
       msg,
       platform,
-      player,
       playType,
       raw: rawStats,
       stats: processedStats
     })
   }
 
-  async modes(msg: CommandoMessage, id: string, platform: Platform, playType: strictPlayType, player: string) {
+  async modes(msg: CommandoMessage, id: string, platform: Platform, playType: strictPlayType) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -738,14 +736,13 @@ export class RainbowAPI extends API {
       embedType: 'modes',
       msg,
       platform,
-      player,
       playType,
       raw: rawStats,
       stats: processedStats
     })
   }
 
-  async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType, player: string) {
+  async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -770,7 +767,6 @@ export class RainbowAPI extends API {
         id,
         msg,
         platform,
-        player,
         stats: processedStats,
         raw: rawStats
       })
@@ -785,14 +781,13 @@ export class RainbowAPI extends API {
         id,
         msg,
         platform,
-        player,
         stats: processedStats,
         raw: rawStats
       })
     } else console.log(wpOrCat)
   }
 
-  async op(msg: CommandoMessage, id: string, platform: Platform, operator: Operator | 'auto', player: string) {
+  async op(msg: CommandoMessage, id: string, platform: Platform, operator: Operator | 'auto') {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -813,7 +808,6 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
-      player,
       stats: 'No weapon stats have been found'
     })
 
@@ -822,12 +816,11 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
-      player,
       stats: processedStats
     })
   }
 
-  async types(msg: CommandoMessage, id: string, platform: Platform, none: never, player: string) {
+  async types(msg: CommandoMessage, id: string, platform: Platform) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -840,13 +833,12 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
-      player,
       raw: rawStats,
       stats: processedStats
     })
   }
 
-  async queue(msg: CommandoMessage, id: string, platform: Platform, none: never, player: string) {
+  async queue(msg: CommandoMessage, id: string, platform: Platform) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -859,38 +851,40 @@ export class RainbowAPI extends API {
       id,
       msg,
       platform,
-      player,
       raw: rawStats,
       stats: processedStats
     })
   }
 
   /** Use the udpated `username` and `platform` */
-  async link(msg: CommandoMessage, username: string, platform: Platform, none: never, p: string) {
-    const id = await this.getID(username, platform)
-    if (!id) return this.createEmbed({
-      embedType: 'error',
-      id: username,
-      msg,
-      platform,
-      player: p,
-      stats: `${player(username, platform)} is not a valid player.`
-    })
+  async link(msg: CommandoMessage, username: string, platform: Platform) {
+    let mode: 'same' | 'link',
+      id, currStr
 
-    const prev = this.checkDatabase(msg.message),
-      prevStr = prev instanceof Array ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined,
+    const prev = this.checkDatabase(msg.message)
+    const prevStr = (prev instanceof Array && prev[0] && prev[1]) ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined
+
+
+    if (username) {
+      id = await this.getID(username, platform)
+      if (!id) return this.createEmbed({
+        embedType: 'error',
+        id: username,
+        msg,
+        platform,
+        stats: `${player(username, platform)} is not a valid player.`
+      })
+
       currStr = player(username, platform)
-
-    const mode: 'same' | 'link' = prevStr == currStr ? 'same' : 'link'
+      mode = prevStr == currStr ? 'same' : 'link'
+    } else mode = 'same'
 
     if (mode == 'link') this.store.set(msg.author.id, [id, platform])
-
     return this.createEmbed({
       embedType: 'link',
       id: username,
       msg,
       platform,
-      player: p,
       stats: {
         previous: prevStr,
         current: currStr,
@@ -910,7 +904,6 @@ export class RainbowAPI extends API {
       id: undefined,
       msg,
       platform: undefined,
-      player: undefined,
       stats: {
         previous: prevStr,
         mode: 'unlink'
