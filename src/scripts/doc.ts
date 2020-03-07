@@ -78,7 +78,7 @@ const tables = [
   })
 ]
 const last = '# Rainbow Six Siege cheatsheet\n' + tables.join('\n\n')
-writeToFile('r6/stored_data.md', last)
+writeToFile('r6/r6_names.md', last)
 
 
 // #endregion
