@@ -59,6 +59,8 @@
 | Amaru            | `amaru`           |
 | Wamai            | `wamai`           |
 | Kali             | `kali`            |
+| Oryx             | `oryx`            |
+| Iana             | `iana`            |
 
 ### Weapon categories
 | Category | Aliases    |
