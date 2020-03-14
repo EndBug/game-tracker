@@ -81,7 +81,7 @@ async function initClient() {
 
   // Starts the stat poster interval
   if (stats_poster.available) try {
-    await stats_poster.start()
+    // await stats_poster.start()
   } catch (e) { console.error(e) }
   else console.log('No optional DBL token found.')
 

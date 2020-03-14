@@ -57,7 +57,7 @@ export function getConfig(method: string, { description, details, examples, extr
     group: 'r6',
     aliases: getAliases(method),
     description,
-    details: (details || '').trim() + '\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
+    details: (details || '').trim() + `\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you \`r6 link\`ed it).\nTo go to the online docs for this command, go to <https://game-tracker.js.org/#/r6/rainbow?id=r6-${method}>`,
     format,
     examples: getExamples(method, examples),
     guildOnly: true
@@ -97,7 +97,7 @@ export default class RainbowCMD extends Command {
       aliases: commandAliases,
       group: 'r6',
       description: 'Rainbow 6 Siege API interface',
-      details: 'The main command to access the Rainbow 6 Siege API.',
+      details: 'The main command to access the Rainbow 6 Siege API. To access the online docs and see all the available commands you can go to <https://game-tracker.js.org/#/r6/rainbow>',
       args: [{
         key: 'method',
         prompt: 'The action you want to perform.',

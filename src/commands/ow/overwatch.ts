@@ -41,10 +41,10 @@ export default class OverwatchCMD extends Commando.Command {
       group: 'ow',
       memberName: 'ow',
       description: 'Overwatch API interface',
-      details: 'The main command to access the Overwatch API.',
+      details: 'The main command to access the Overwatch API. To access the online docs and see all the available commands you can go to <https://game-tracker.js.org/#/ow/overwatch>',
       args: [{
         key: 'mode',
-        prompt: 'The action you want to perform. If left blank, will redirect to `ow quick`', // todo
+        prompt: 'The action you want to perform. If left blank, will redirect to `ow quick`.',
         type: 'string',
         default: ''
       }, {
