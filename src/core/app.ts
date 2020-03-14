@@ -2,10 +2,9 @@ require('dotenv').config()
 
 type Class = { new(...args: any[]): any; };
 
-import * as Discord from 'discord.js'
-import * as sqlite from 'sqlite'
-import * as path from 'path'
+import { join as path } from 'path'
 import * as fs from 'fs'
+import { Client, Guild, User, Role, GuildMember } from 'discord.js' // eslint-disable-line no-unused-vars
 
 import { API } from '../utils/utils' // eslint-disable-line no-unused-vars
 import * as stats_poster from '../utils/stats_poster'
@@ -15,15 +14,16 @@ const { TOKEN } = process.env
 export const commandPrefix = '-'
 export const ownerID = '218308478580555777'
 
-export let client: Discord.Client
-export let homeguild: Discord.Guild
-export let owner: Discord.User
-export let roles: Record<string, Discord.Role> = {}
+export let client: Client
+export let homeguild: Guild
 export let links: Record<string, string> = {}
+export let owner: User
+export let roles: Record<string, Role> = {}
+
 export const APIS: Record<string, API> = {}
 export let APIUtil: {
-  find(target: string | Discord.GuildMember | Discord.User, realName?: boolean): { [api: string]: any }
-  erase(target: string | Discord.GuildMember | Discord.User): string[]
+  find(target: string | GuildMember | User, realName?: boolean): { [api: string]: any }
+  erase(target: string | GuildMember | User): string[]
 }
 
 import * as backup from './backup'
@@ -32,7 +32,7 @@ import * as backup from './backup'
  * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs 
  */
 async function initClient() {
-  client = new Discord.Client()
+  client = new Client()
 
   client.on('error', console.error)
   client.on('warn', console.warn)
@@ -63,19 +63,12 @@ async function initClient() {
     .registerDefaultCommands({
       ping: false,
       unknownCommand: false
-    }).registerEvalObjects({
-      backup,
-      Discord,
-      fs,
     })
 
   client.login(TOKEN)
 
   // Provider needs a compelte rework
-  await client.setProvider(
-    // @ts-ignore
-    sqlite.open(path.join(__dirname, '../../data/settings.sqlite3')).then(db => new Commando.SQLiteProvider(db)) // tslint-disable-line
-  ).catch(console.error)
+
 
   // Starts the stat poster interval
   if (stats_poster.available) try {
@@ -85,22 +78,8 @@ async function initClient() {
 
   loadAPIs()
 
-  // #region "Manual" command loading
-  /* const commandDirs = path.join(__dirname, '../commands');
-  const dirs = fs.readdirSync(commandDirs);
-  for (const groupDir of dirs) {
-    if (groupDir != 'samples') {
-      const files = fs.readdirSync(path.join(commandDirs, groupDir));
-      for (const file of files) {
-        const c = require(path.join(commandDirs, groupDir, file)).default;
-        client.registry.registerCommand(c);
-      }
-    }
-  }*/
-  // #endregion
-
   client.registry.registerCommandsIn({
-    dirname: path.join(__dirname, '../commands'),
+    dirname: path(__dirname, '../commands'),
     filter: /(.+)\.ts$/,
     excludeDirs: /^\.(git|svn)|samples$/,
     recursive: true
@@ -121,10 +100,10 @@ export function loader(name: string) {
  * Loads every api in ../apis into APIS, builds APIUtil
  */
 function loadAPIs() {
-  const dir = path.join(__dirname, '../apis')
+  const dir = path(__dirname, '../apis')
   const files = fs.readdirSync(dir)
   for (const file of files) {
-    const ClassFromModule: Class = require(path.join(__dirname, '../apis', file)).ApiLoader
+    const ClassFromModule: Class = require(path(__dirname, '../apis', file)).ApiLoader
     const api: API = new ClassFromModule()
     APIS[api.name] = api
     loader(`apis/${file}`)
@@ -135,8 +114,8 @@ function loadAPIs() {
    * @param target The GuildMember, User or user ID of the target
    * @param realName Whether to use the real or key name for APIs
    */
-  const find = (target: string | Discord.GuildMember | Discord.User, realName = false) => { // find data in every API
-    if (target instanceof Discord.GuildMember || target instanceof Discord.User) target = target.id
+  const find = (target: string | GuildMember | User, realName = false) => { // find data in every API
+    if (target instanceof GuildMember || target instanceof User) target = target.id
     const res: { [api: string]: any } = {}
     for (const key in APIS) {
       const req = APIS[key].store.get(target)
@@ -149,8 +128,8 @@ function loadAPIs() {
    * Deletes every entry with the target from every API.
    * @param target The GuildMember, User or user ID of the target
    */
-  const erase = (target: string | Discord.GuildMember | Discord.User) => { // erase data from every API
-    if (target instanceof Discord.GuildMember || target instanceof Discord.User) target = target.id
+  const erase = (target: string | GuildMember | User) => { // erase data from every API
+    if (target instanceof GuildMember || target instanceof User) target = target.id
     const res: string[] = []
     for (const key in find(target)) {
       res.push(key)
@@ -168,10 +147,10 @@ const custom_modules = ['automation']
  */
 function loadModules() {
   for (const groupName of custom_modules) {
-    const groupDirectory = path.join(__dirname, '..', groupName)
+    const groupDirectory = path(__dirname, '..', groupName)
     const files = fs.readdirSync(groupDirectory)
     for (const file of files) {
-      require(path.join(groupDirectory, file))
+      require(path(groupDirectory, file))
       loader(`${groupName}/${file}`)
     }
   }
