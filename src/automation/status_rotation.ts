@@ -1,11 +1,11 @@
-import { ActivityType, PresenceStatus } from 'discord.js' // eslint-disable-line no-unused-vars
+import { ActivityType, PresenceStatusData } from 'discord.js' // eslint-disable-line no-unused-vars
 import { client } from '../core/app'
 
 const interval = 12500
 
 /** Class that makes it easier to add custom statuses (add them into the `status` array) */
 class Presence {
-  status: PresenceStatus
+  status: PresenceStatusData
   afk: boolean
   game: {
     name: string
@@ -13,7 +13,7 @@ class Presence {
     url?: string
   }
 
-  constructor(name: string, type?: ActivityType, status?: PresenceStatus, stream?: string) {
+  constructor(name: string, type?: ActivityType, status?: PresenceStatusData, stream?: string) {
     this.status = status || 'online'
     this.afk = false
     this.game = {
@@ -26,8 +26,8 @@ class Presence {
   /** Replaces the dynamic variables inside the presence name */
   getName() {
     return this.game.name
-      .replace(new RegExp('/guildCount/', 'g'), client.guilds.size.toString())
-      .replace(new RegExp('/userCount/', 'g'), client.users.size.toString())
+      .replace(new RegExp('/guildCount/', 'g'), client.guilds.cache.size.toString())
+      .replace(new RegExp('/userCount/', 'g'), client.users.cache.size.toString())
   }
 }
 

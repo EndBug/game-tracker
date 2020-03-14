@@ -3,7 +3,6 @@ require('dotenv').config()
 type Class = { new(...args: any[]): any; };
 
 import * as Discord from 'discord.js'
-import * as Commando from 'discord.js-commando'
 import * as sqlite from 'sqlite'
 import * as path from 'path'
 import * as fs from 'fs'
@@ -13,7 +12,10 @@ import * as stats_poster from '../utils/stats_poster'
 
 const { TOKEN } = process.env
 
-export let client: Commando.CommandoClient
+export const commandPrefix = '-'
+export const ownerID = '218308478580555777'
+
+export let client: Discord.Client
 export let homeguild: Discord.Guild
 export let owner: Discord.User
 export let roles: Record<string, Discord.Role> = {}
@@ -30,22 +32,17 @@ import * as backup from './backup'
  * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs 
  */
 async function initClient() {
-  client = new Commando.CommandoClient({
-    commandPrefix: '-',
-    owner: '218308478580555777',
-    // @ts-ignore
-    unknownCommandResponse: false
-  })
+  client = new Discord.Client()
 
   client.on('error', console.error)
   client.on('warn', console.warn)
   client.on('debug', console.log)
 
   client.on('ready', () => {
-    homeguild = client.guilds.get('475792603867119626')
-    owner = homeguild.members.get('218308478580555777').user
+    homeguild = client.guilds.cache.get('475792603867119626')
+    owner = homeguild.members.cache.get('218308478580555777').user
     roles = {
-      dev: homeguild.roles.get('498225931299848193')
+      dev: homeguild.roles.cache.get('498225931299848193')
     }
     links = {
       invite: `<https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=93248>`,
@@ -53,6 +50,7 @@ async function initClient() {
     }
   })
 
+  // Command system needs a complete rework
   client.registry.registerGroups([
     ['bot', 'Bot'],
     ['data', 'Data management'],
@@ -67,13 +65,13 @@ async function initClient() {
       unknownCommand: false
     }).registerEvalObjects({
       backup,
-      Commando,
       Discord,
       fs,
     })
 
   client.login(TOKEN)
 
+  // Provider needs a compelte rework
   await client.setProvider(
     // @ts-ignore
     sqlite.open(path.join(__dirname, '../../data/settings.sqlite3')).then(db => new Commando.SQLiteProvider(db)) // tslint-disable-line

@@ -186,7 +186,7 @@ export function getShortName(user: User | GuildMember) {
  * @param codeOnly Whether to return only the code of the invite instead of the URL (default is `false`)
  */
 export async function getSupportInvite(codeOnly = false) {
-  const readme = homeguild.channels.get('505805487166586901') || homeguild.channels.find(c => c.name == 'readme')
+  const readme = homeguild.channels.cache.get('505805487166586901') || homeguild.channels.cache.find(c => c.name == 'readme')
   if (!readme) {
     owner.send('Can\'t find \'readme\' channel, please check the ID.')
     return
@@ -327,9 +327,6 @@ export function readMinutes(minutes: number, readable = true) {
 export function readNumber(number: number, decimals = 2) {
   return numberFormat(number, decimals, '.', '\'')
 }
-
-/** It can be used to resolve users, colors and so on */
-export const resolver = client.publicResolver
 
 /**
  * Takes a number and takes the last two digits (adds a 0 if needed)
