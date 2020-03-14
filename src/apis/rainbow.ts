@@ -60,9 +60,11 @@ class ErrorEmbed extends CustomEmbed {
   constructor(error: string, msg: CommandoMessage, ...args: any[]) {
     super(msg, ...args)
     this.type = 'error'
+    let sub = error.substr(0, 2048 - 3)
+    sub = sub.substr(0, sub.lastIndexOf(' ')) + '...'
     return this.setColor('RED')
       .setTitle('I got an error from the server')
-      .setDescription(error)
+      .setDescription(sub)
   }
 }
 
