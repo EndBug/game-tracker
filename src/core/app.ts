@@ -4,15 +4,16 @@ type Class = { new(...args: any[]): any; };
 
 import { join as path } from 'path'
 import * as fs from 'fs'
-import { Client, Guild, User, Role, GuildMember } from 'discord.js' // eslint-disable-line no-unused-vars
+import { Client, Guild, User, Role, GuildMember } from 'discord.js'
 
-import { API } from '../utils/utils' // eslint-disable-line no-unused-vars
+import { API } from '../utils/utils'
 import * as stats_poster from '../utils/stats_poster'
 
 const { TOKEN } = process.env
 
 export const commandPrefix = '-'
 export const ownerID = '218308478580555777'
+export const supportHardLink = 'https://discord.gg/ZhnWkqc'
 
 export let client: Client
 export let homeguild: Guild
@@ -67,7 +68,7 @@ async function initClient() {
 
   client.login(TOKEN)
 
-  // Provider needs a compelte rework
+  // Provider needs a complete rework
 
 
   // Starts the stat poster interval

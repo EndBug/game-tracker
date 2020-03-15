@@ -1,7 +1,7 @@
 /* eslint-disable no-dupe-class-members */
 import { readFileSync, writeFileSync } from 'fs'
 import { join as path } from 'path'
-import { Snowflake } from 'discord.js' // eslint-disable-line no-unused-vars
+import { Snowflake } from 'discord.js'
 
 const filePath = '../../data/settings.json'
 

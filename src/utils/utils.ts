@@ -1,7 +1,7 @@
-import { TSMap as Map } from 'typescript-map' // eslint-disable-line no-unused-vars
-import { User, GuildMember } from 'discord.js' // eslint-disable-line no-unused-vars
-import { homeguild, owner } from '../core/app'
-import { APIKey, provider } from '../utils/provider' // eslint-disable-line no-unused-vars
+import { TSMap as Map } from 'typescript-map'
+import { User, GuildMember } from 'discord.js'
+import { homeguild, owner, ownerID } from '../core/app'
+import { APIKey, provider } from '../utils/provider'
 
 // #region Types
 export type PartialRecord<K extends keyof any, T> = {
@@ -92,7 +92,7 @@ export function capitalize(str: string) {
  * @example if (!enforceType<YourType>(parameter)) return;
  */
 /* eslint-disable-next-line no-unused-vars*/
-export function enforceType<T>(parameter: any): parameter is T {
+export function enforceType<T>(_parameter: any): _parameter is T {
   return true
 }
 
@@ -158,6 +158,10 @@ export function humanize(str: string) {
     .replace(/^[a-z]/g, first => first.toUpperCase())
 }
 
+/** Returns whether the user is the bot owner */
+export function isOwner(user: User | GuildMember) {
+  return user.id == ownerID
+}
 
 /** Checks whether a string is a Discord mention */
 export function isMention(str: string) {

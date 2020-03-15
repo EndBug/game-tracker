@@ -1,4 +1,4 @@
-import { ActivityType, PresenceStatusData } from 'discord.js' // eslint-disable-line no-unused-vars
+import { ActivityType, PresenceStatusData } from 'discord.js'
 import { client } from '../core/app'
 
 const interval = 12500
