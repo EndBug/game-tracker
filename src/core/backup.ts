@@ -1,38 +1,37 @@
 require('dotenv').config()
 
-import * as Discord from 'discord.js'
-import * as fs from 'fs'
-import request from 'request-promise'
-import * as path from 'path'
+import { Client, Guild, TextChannel } from 'discord.js'
+import { accessSync, createWriteStream } from 'fs'
+import axios from 'axios'
+import { join as path } from 'path'
 
 const token = process.env.BACKUP
 export const available = !!token
 
-const client = new Discord.Client()
-let guild: Discord.Guild, channel: Discord.TextChannel
+const client = new Client()
+let guild: Guild, channel: TextChannel
 
-const settingsPath = path.join(__dirname, '../../data/settings.sqlite3')
+const settingsPath = path(__dirname, '../../data/settings.json')
 
-/**
- * Returns whether the database already exists.
- */
+/** Returns whether the database already exists.*/
 function exists() {
   try {
-    fs.accessSync(settingsPath)
+    accessSync(settingsPath)
     return true
   } catch {
     return false
   }
 }
 
-/**
- * Fecthes the last backup.
- */
+/** Fetches the last backup. */
 async function getLast(): Promise<any> {
-  const attachment = channel.lastMessageID ? (await channel.fetchMessage(channel.lastMessageID)).attachments.first() : undefined
-  if (attachment && attachment.url) {
-    const { url } = attachment
-    return request(url)
+  const attachment = channel.lastMessageID ? (await channel.messages.fetch(channel.lastMessageID)).attachments.first() : undefined
+  if (attachment?.url) {
+    return axios(attachment.url, {
+      headers: {
+        'User-Agent': `https://github.com/EndBug/game-tracker Node.js/${process.version}`
+      }
+    })
   }
 }
 
@@ -42,7 +41,7 @@ const IDs = {
   'notifications': '487686182155583509',
   'bot': '488408689103863838'
 }
-const channels: { [key: string]: Discord.TextChannel } = {}
+const channels: { [key: string]: TextChannel } = {}
 
 /**
  * Loads 'channels'
@@ -51,8 +50,8 @@ const channels: { [key: string]: Discord.TextChannel } = {}
 function loadChannels(check = true) {
   for (const key in IDs) {
     const channel = IDs[key]
-    const tempC = guild.channels.get(channel)
-    if (!((tempC): tempC is Discord.TextChannel => tempC.type === 'text')(tempC)) return
+    const tempC = guild.channels.cache.get(channel)
+    if (!((tempC): tempC is TextChannel => tempC.type === 'text')(tempC)) return
     channels[key] = tempC
   }
 
@@ -74,7 +73,7 @@ export function init(doRestore = true) {
     client.on('error', reject)
     client.login(process.env.BACKUP).catch(reject)
     client.on('ready', async () => {
-      guild = client.guilds.get(guildID)
+      guild = client.guilds.cache.get(guildID)
       if (!guild || !guild.available)
         return reject(`Guild '${guildID}' is ${guild ? 'unavailable' : 'undefined'}`)
       loadChannels()
@@ -93,8 +92,8 @@ export function init(doRestore = true) {
 export function restore(force = false) {
   if (exists() && !force) console.log('Trying to load database...')
   // @ts-ignore
-  else return getLast().then(fs.createWriteStream(settingsPath))
-    .catch(err => console.log(`Unable to restore SQL database, creating a new one. Error: \`\`\`\n${err}\n\`\`\``))
+  else return getLast().then(createWriteStream(settingsPath))
+    .catch(err => console.log(`Unable to restore previous database, creating a new one. Error: \`\`\`\n${err}\n\`\`\``))
 }
 
 /**

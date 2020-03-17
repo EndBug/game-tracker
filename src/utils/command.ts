@@ -1,11 +1,12 @@
-import { Message } from 'discord.js'
+import { Message, Snowflake, Client } from 'discord.js'
 import { stripIndents } from 'common-tags'
 import { isOwner } from './utils'
-import { owner, supportHardLink } from '../core/app'
+import { owner, supportHardLink, client } from '../core/app'
 
-export default class Command {
+export class Command {
   // #region Properties
   name: string
+  group: string
   aliases: string[]
   description: string
   onlineDocs: string
@@ -17,6 +18,9 @@ export default class Command {
   hidden: boolean
   throttling: ThrottlingOptions
   args: ArgumentInfo[]
+  client: Client
+
+  private throttles: Map<Snowflake, Throttle>
   // #endregion
 
   constructor(options: CommandInfo) {
@@ -26,14 +30,18 @@ export default class Command {
     this.aliases = options.aliases || []
     this.description = options.description
     this.onlineDocs = options.onlineDocs
-    this.format = options.format
-    this.details = options.details
+    this.details = options.details || ''
     this.examples = options.examples || []
     this.guildOnly = Boolean(options.guildOnly)
     this.ownerOnly = Boolean(options.ownerOnly)
     this.hidden = Boolean(options.hidden)
     this.throttling = options.throttling
     this.args = options.args || []
+    this.format = options.format || this.genFormat()
+
+    this.client = client
+
+    this.throttles = new Map()
   }
 
   hasPermission(message: Message, ownerOverride = true): boolean | string {
@@ -43,7 +51,7 @@ export default class Command {
       return `The \`${this.name}\` command can only be used by the bot owner.`
   }
 
-  async run(message: Message, args: any[]) {
+  async run(message: Message, args: any[]): Promise<Message | Message[]> { // eslint-disable-line
     throw new Error(`${this.constructor.name} doesn't have a \`run()\` method.`)
   }
 
@@ -54,7 +62,7 @@ export default class Command {
   }
 
   // Add data type (use type switch <T>)
-  onBlock(message: Message, reason: blockReason, data) {
+  onBlock(message: Message, reason: blockReason, data?: blockData) {
     switch (reason) {
       case 'guildOnly':
         return message.reply(`The \`${this.name}\` command must be used in a server channel.`)
@@ -67,6 +75,9 @@ export default class Command {
           `You may not use the \`${this.name}\` command again for another ${data?.remaining.toFixed(1)} seconds.`
         )
       }
+      case 'validation': {
+        return message.reply(data.response || 'One of your arguments has failed the validation, but there\'s no further info.')
+      }
       default:
         return null
     }
@@ -78,6 +89,29 @@ export default class Command {
 			You shouldn't ever receive an error like this.
 			Please contact ${owner.tag} in this server: ${supportHardLink}
 		`)
+  }
+
+  throttle(userID: Snowflake) {
+    if (!this.throttling || isOwner(userID)) return null
+
+    let throttle = this.throttles.get(userID)
+    if (!throttle) {
+      throttle = {
+        start: Date.now(),
+        usages: 0,
+        timeout: setTimeout(() => {
+          this.throttles.delete(userID)
+        }, this.throttling.duration * 1000)
+      }
+      this.throttles.set(userID, throttle)
+    }
+
+    return throttle
+  }
+
+  genFormat() {
+    return this.name + ' ' + this.args.map(arg => typeof arg.default == 'string' ? `[${arg.key}]` : `<${arg.key}>`)
+      .join(' ')
   }
 
   validateInfo(info: CommandInfo) {
@@ -111,6 +145,21 @@ export default class Command {
   }
 }
 
+interface CommandInfo {
+  name: string
+  aliases?: string[]
+  description: string
+  onlineDocs?: string
+  format?: string
+  details?: string
+  examples?: string[]
+  guildOnly?: boolean
+  ownerOnly?: boolean
+  hidden?: boolean
+  throttling?: ThrottlingOptions
+  args?: ArgumentInfo[]
+}
+
 interface ArgumentInfo {
   key: string
   prompt: string
@@ -119,25 +168,22 @@ interface ArgumentInfo {
   parse?: (val: string, msg: Message) => any
 }
 
-interface CommandInfo {
-  name: string
-  aliases?: string[]
-  description: string
-  onlineDocs?: string
-  format: string
-  details: string
-  examples: string[]
-  guildOnly?: boolean
-  ownerOnly?: boolean
-  hidden?: boolean
-  throttling?: ThrottlingOptions
-  args?: ArgumentInfo[]
-}
-
 interface ThrottlingOptions {
   usages: number
   /** In seconds */
   duration: number
 }
 
-type blockReason = 'guildOnly' | 'permission' | 'throttling'
+interface Throttle {
+  start: number
+  usages: number
+  timeout: NodeJS.Timeout
+}
+
+type blockReason = 'guildOnly' | 'permission' | 'throttling' | 'validation'
+
+interface blockData {
+  throttle?: Throttle,
+  remaining?: number
+  response?: string
+}

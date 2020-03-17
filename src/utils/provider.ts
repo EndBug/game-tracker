@@ -2,6 +2,8 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { join as path } from 'path'
 import { Snowflake } from 'discord.js'
+import { APIKey, APIUtil } from './api'
+import { PartialRecord, enforceType } from './utils'
 
 const filePath = '../../data/settings.json'
 
@@ -11,18 +13,17 @@ export interface Settings
 
 export type ProviderKey = keyof Settings
 export type SettingsKey = 'p'
-export type APIKey = 'ow' | 'r6'
 
 class Provider {
   path: string
   private settings: Settings
   private lastSave: Settings
-  private interval: NodeJS.Timeout
+  private _interval: NodeJS.Timeout
 
   constructor() {
     this.path = path(__dirname, filePath)
     this.settings = this.readData()
-    this.interval = setInterval(this.save, 5000)
+    this._interval = setInterval(this.save, 5000)
   }
 
   delete<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T]) {
@@ -41,6 +42,15 @@ class Provider {
 
   set<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T], value: Settings[T][keyof Settings[T]]) {
     this.settings[settingsKey][recordKey] = value
+  }
+
+  stats(): Record<APIKey, number> {
+    const res: PartialRecord<APIKey, number> = {}
+    for (const key in APIUtil.APIs) {
+      res[key] = Object.keys(this.settings[key]).length
+    }
+    if (enforceType<Record<APIKey, number>>(res))
+      return res
   }
 
   private readData(): Settings {

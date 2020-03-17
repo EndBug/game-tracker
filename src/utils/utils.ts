@@ -1,7 +1,6 @@
 import { TSMap as Map } from 'typescript-map'
-import { User, GuildMember } from 'discord.js'
+import { User, GuildMember, PartialMessage, Message } from 'discord.js'
 import { homeguild, owner, ownerID } from '../core/app'
-import { APIKey, provider } from '../utils/provider'
 
 // #region Types
 export type PartialRecord<K extends keyof any, T> = {
@@ -10,32 +9,6 @@ export type PartialRecord<K extends keyof any, T> = {
 // #endregion
 
 // #region Classes
-export class API {
-  name: APIKey;
-  game: string;
-
-  constructor(key: APIKey, game: string) {
-    this.name = key
-    this.game = game
-  }
-
-  get(key: string) {
-    return provider.get(this.name, key)
-  }
-
-  getKey(value) {
-    return provider.getKey(this.name, value)
-  }
-
-  delete(key: string) {
-    return provider.delete(this.name, key)
-  }
-
-  set(key: string, value: string[]) {
-    return provider.set(this.name, key, value)
-  }
-}
-
 /** Temporarily stores data that gets fecthed through OverwatchAPI.getRaw, in order to avoid too many requests */
 export class Cache {
   name: string;
@@ -159,13 +132,17 @@ export function humanize(str: string) {
 }
 
 /** Returns whether the user is the bot owner */
-export function isOwner(user: User | GuildMember) {
-  return user.id == ownerID
+export function isOwner(user: User | GuildMember | string) {
+  return (typeof user == 'string' ? user : user.id) == ownerID
 }
 
 /** Checks whether a string is a Discord mention */
 export function isMention(str: string) {
   return (typeof str == 'string' && str.startsWith('<@') && str.endsWith('>'))
+}
+
+export function isPartialMessage(msg: Message | PartialMessage): msg is PartialMessage {
+  return msg.partial
 }
 
 /** Converts a map into an object */

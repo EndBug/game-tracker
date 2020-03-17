@@ -1,19 +1,32 @@
-import Command from './command'
+import { Command } from './command'
 import { readdirSync } from 'fs'
 import { join as path } from 'path'
-import { commandPrefix } from '../core/app'
+import { commandPrefix, client } from '../core/app'
 import { Message } from 'discord.js'
 import { provider } from './provider'
+import { isMention, mentionToID, capitalize } from './utils'
 
-const loadedCommands: Command[] = []
+const ignoredDirs = ['samples']
+const groupDict: Record<string, string> = {
+  'dbl': 'Discord Bots Lists',
+  'dev': 'Developer',
+  'ow': 'Overwatch',
+  'r6': 'Rainbow Six Siege',
+  'util': 'Utility'
+}
+
+export const loadedCommands: Command[] = []
+
+export const groups: string[] = []
 
 export function loadCommands() {
   const commandsPath = path(__dirname, '../commands')
-  const groups = readdirSync(commandsPath, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
+  const groupNames = readdirSync(commandsPath, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory() && !ignoredDirs.includes(dirent.name))
     .map(dirent => dirent.name)
 
-  for (const group of groups) {
+  for (const group of groupNames) {
+    groups.push(group)
     const groupPath = path(commandsPath, group)
     const files = readdirSync(groupPath, { withFileTypes: true })
       .filter(dirent => dirent.isFile())
@@ -22,31 +35,139 @@ export function loadCommands() {
     for (const file of files) {
       const commandClass = require(path(groupPath, file))
       const loadedCommand: Command = new commandClass()
+      loadedCommand.group = group
 
       loadedCommands.push(loadedCommand)
     }
   }
 }
 
-async function handleMessage(message: Message) {
-  const { command, args } = parseMessage(message)
+export async function handleMessage(message: Message) {
+  const { command, rawArgs } = parseMessage(message)
 
   let responses
   if (command) {
-    responses = await runCommand(command, args, message)
+    responses = await runCommand(command, rawArgs, message)
     if (Array.isArray(responses)) responses = await Promise.all(responses)
   }
 }
 
 function parseMessage(message: Message) {
   // Find the command to run with default command handling
-  const prefix = provider.get('p', message.guild?.id) || commandPrefix
-  const command = loadedCommands.find(cmd => [cmd.name, ...cmd.aliases].some(str => message.content.startsWith(prefix + str)))
-  const args = message.content.split(' ')
-  args.shift()
-  return { command, args }
+  const rawArgs = message.content.split(' ')
+  let prefix = provider.get('p', message.guild?.id) || commandPrefix
+
+  if (isMention(rawArgs[0])) {
+    if (mentionToID(rawArgs[0]) != client.user.id) return
+    prefix = ''
+    rawArgs.shift()
+  } else {
+    if (!rawArgs[0].startsWith(prefix)) return
+    rawArgs[0] = rawArgs[0].substr(prefix.length)
+  }
+
+  const command = loadedCommands
+    .find(cmd => [cmd.name, ...cmd.aliases]
+      .some(str => str == rawArgs[0]))
+
+  rawArgs.shift()
+  return { command, rawArgs }
 }
 
-function runCommand(command: Command, args: string[], message: Message) {
-  return message.reply()
+async function runCommand(command: Command, rawArgs: string[], message: Message) {
+  if (command.guildOnly && !message.guild)
+    return command.onBlock(message, 'guildOnly')
+
+  const hasPermission = command.hasPermission(message)
+  if (!hasPermission || typeof hasPermission === 'string') {
+    const data = { response: typeof hasPermission === 'string' ? hasPermission : undefined }
+    return command.onBlock(message, 'permission', data)
+  }
+
+  const throttle = command.throttle(message.author.id)
+  if (throttle && throttle.usages + 1 > command.throttling.usages) {
+    const remaining = (throttle.start + (command.throttling.duration * 1000) - Date.now()) / 1000
+    const data = { throttle, remaining }
+    return command.onBlock(message, 'throttling', data)
+  }
+
+  const args: string[] = []
+  for (let i = 0; i < command.args.length; i++) {
+    const info = command.args[i],
+      arg = rawArgs[i]
+    let processed: any
+
+    if (info.validate) {
+      const validation = info.validate(arg, message)
+      if (typeof validation == 'string') return command.onBlock(message, 'validation', { response: validation })
+      if (!validation) return command.onBlock(message, 'validation', {
+        response: `\`${arg}\` is not valid for the \`${info.key}\` argument, please try again.`
+      })
+    }
+
+    if (!!arg && info.parse) processed = info.parse(arg, message)
+
+    if (!arg && info.default === undefined) return command.onBlock(message, 'validation', {
+      response: `\`${info.key}\`is not an optional argument, please provide a value.`
+    })
+
+    args.push(processed ?? info.default)
+  }
+
+  if (throttle) throttle.usages++
+  const typingCount = message.channel.typingCount
+  try {
+    client.emit('debug', `Running command ${command.group}:${command.name}.`)
+    return command.run(message, args)
+  } catch (err) {
+    if (message.channel.typingCount > typingCount) message.channel.stopTyping()
+    return command.onError(err, message)
+  }
+}
+
+/**
+ * Finds all commands that match the search string
+ * @param [searchString] - The string to search for
+ * @param [exact=false] - Whether the search should be exact
+ * @param [message] - The message to check usability against
+ * @return All commands that are found
+ */
+export function findCommands(searchString: string = null, exact: boolean = false, message: Message = null) {
+  if (!searchString) {
+    return message ?
+      loadedCommands.filter(cmd => cmd.isUsable(message)) :
+      loadedCommands
+  }
+
+  // Find all matches
+  const lcSearch = searchString.toLowerCase()
+  const matchedCommands = loadedCommands.filter(
+    exact ? commandFilterExact(lcSearch) : commandFilterInexact(lcSearch)
+  )
+  if (exact) return matchedCommands
+
+  // See if there's an exact match
+  for (const command of matchedCommands) {
+    if (command.name === lcSearch || (command.aliases && command.aliases.some(ali => ali === lcSearch))) {
+      return [command]
+    }
+  }
+
+  return matchedCommands
+}
+
+function commandFilterExact(search: string) {
+  return (cmd: Command) => cmd.name === search ||
+    (cmd.aliases && cmd.aliases.some(ali => ali === search)) ||
+    `${cmd.group}:${cmd.name}` === search
+}
+
+function commandFilterInexact(search: string) {
+  return (cmd: Command) => cmd.name.includes(search) ||
+    `${cmd.group}:${cmd.name}` === search ||
+    (cmd.aliases && cmd.aliases.some(ali => ali.includes(search)))
+}
+
+export function groupName(group: string) {
+  return groupDict[group] ?? capitalize(group)
 }
