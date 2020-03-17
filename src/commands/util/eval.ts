@@ -1,14 +1,13 @@
 import util from 'util'
-import * as Discord from 'discord.js'
-const { splitMessage } = Discord.Util
+import { Util, Message } from 'discord.js'
+const { splitMessage } = Util
 import { stripIndents } from 'common-tags'
-import Command from '../../utils/command'
-
+import { Command } from '../../utils/command'
 
 const nl = '!!NL!!'
 const nlPattern = new RegExp(nl, 'g')
 
-function escapeRegex(str) {
+function escapeRegex(str: string) {
   return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
 }
 
@@ -20,8 +19,6 @@ export default class EvalCommand extends Command {
   constructor() {
     super({
       name: 'eval',
-      group: 'util',
-      memberName: 'eval',
       description: 'Executes JavaScript code.',
       details: 'Only the bot owner(s) may use this command.',
       ownerOnly: true,
@@ -29,8 +26,7 @@ export default class EvalCommand extends Command {
       args: [
         {
           key: 'script',
-          prompt: 'What code would you like to evaluate?',
-          type: 'string'
+          prompt: 'What code would you like to evaluate?'
         }
       ]
     })
@@ -39,9 +35,9 @@ export default class EvalCommand extends Command {
     Object.defineProperty(this, '_sensitivePattern', { value: null, configurable: true })
   }
 
-  run(msg, args) {
+  run(msg: Message, [script]: string[]) {
     // Make a bunch of helpers
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-unused-vars-experimental */
     const message = msg
     const client = msg.client
     const lastResult = this.lastResult
@@ -57,13 +53,13 @@ export default class EvalCommand extends Command {
         }
       }
     }
-    /* eslint-enable no-unused-vars */
+    /* eslint-enable @typescript-eslint/no-unused-vars-experimental */
 
     // Run the code and measure its execution time
     let hrDiff
     try {
       const hrStart = process.hrtime()
-      this.lastResult = eval(args.script)
+      this.lastResult = eval(script)
       hrDiff = process.hrtime(hrStart)
     } catch (err) {
       return msg.reply(`Error while evaluating: \`${err}\``)
@@ -71,9 +67,9 @@ export default class EvalCommand extends Command {
 
     // Prepare for callback time and respond
     this.hrStart = process.hrtime()
-    const result = this.makeResultMessages(this.lastResult, hrDiff, args.script)
+    const result = this.makeResultMessages(this.lastResult, hrDiff, script)
     if (Array.isArray(result)) {
-      return result.map(item => msg.reply(item))
+      return Promise.all(result.map(item => msg.reply(item)))
     } else {
       return msg.reply(result)
     }
