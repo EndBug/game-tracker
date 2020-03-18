@@ -89,11 +89,15 @@ export function init(doRestore = true) {
  * Restores last backup
  * @param force Whether to ignore an existing databse (default is false)
  */
-export function restore(force = false) {
+export async function restore(force = false) {
   if (exists() && !force) console.log('Trying to load database...')
-  // @ts-ignore
-  else return getLast().then(createWriteStream(settingsPath))
-    .catch(err => console.log(`Unable to restore previous database, creating a new one. Error: \`\`\`\n${err}\n\`\`\``))
+  else try {
+    await getLast()
+    return createWriteStream(settingsPath)
+  }
+  catch (err) {
+    return console.log(`Unable to restore previous database, creating a new one. Error: \`\`\`\n${err}\n\`\`\``)
+  }
 }
 
 /**
