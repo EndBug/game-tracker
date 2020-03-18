@@ -1,6 +1,6 @@
 import { TSMap as Map } from 'typescript-map'
 import { User, GuildMember, PartialMessage, Message } from 'discord.js'
-import { homeguild, owner, ownerID } from '../core/app'
+import { homeguild, owner, ownerID, baseDocsURL } from '../core/app'
 
 // #region Types
 export type PartialRecord<K extends keyof any, T> = {
@@ -96,6 +96,18 @@ export function equals(...items: any[]) {
   return true
 }
 
+/**
+ * Returns a link to the online docs
+ * @param path the relative path to the section
+ * @example 
+ * getDocksLink() => 'https://game-tracker.js.org'
+ * getDocsLink('rainbow?id=r6-general') => 'https://game-tracker.js.org/#/r6/rainbow?id=r6-general'
+ */
+export function getDocsLink(path?: string) {
+  if (!path) return baseDocsURL.replace('/#/', '')
+  else return baseDocsURL + path
+}
+
 /** Returns a plain full name for a given user */
 export function getFullName(user: User | GuildMember) {
   if (user instanceof GuildMember) user = user.user
@@ -120,7 +132,6 @@ export async function getSupportInvite(codeOnly = false) {
   const invite = await readme.createInvite({ maxAge: 0 })
   return codeOnly ? invite.code : `https://discord.gg/${invite.code}`
 }
-
 
 /** Makes a string readable */
 export function humanize(str: string) {

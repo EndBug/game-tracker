@@ -14,6 +14,7 @@ const { TOKEN } = process.env
 export const commandPrefix = '-'
 export const ownerID = '218308478580555777'
 export const supportHardLink = 'https://discord.gg/ZhnWkqc'
+export const baseDocsURL = 'https://game-tracker.js.org/#/'
 
 export let client: Client
 export let homeguild: Guild

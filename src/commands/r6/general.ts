@@ -1,9 +1,9 @@
-import { Command, CommandoClient } from 'discord.js-commando' // eslint-disable-line no-unused-vars
 import { getConfig } from './r6'
+import { Command } from '../../utils/command'
 
 export default class R6GeneralWiki extends Command {
-  constructor(client: CommandoClient) {
-    super(client, getConfig('general', {
+  constructor() {
+    super(getConfig('general', {
       description: 'Displays general stats for the given play types.',
       details: 'Specify the play type to show by writing either `pvp`, `pve` or `all`.',
       examples: {

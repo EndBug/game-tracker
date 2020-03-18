@@ -1,9 +1,9 @@
-import { Command, CommandoClient } from 'discord.js-commando' // eslint-disable-line no-unused-vars
 import { getConfig } from './r6'
+import { Command } from '../../utils/command'
 
 export default class R6OPWiki extends Command {
-  constructor(client: CommandoClient) {
-    super(client, getConfig('op', {
+  constructor() {
+    super(getConfig('op', {
       description: 'Displays operator stats for the given operator.',
       details: 'Specify the operator to show by writing their name. Every operator can be written in lowercase with no spaces or dots, e.g.: "Recruit SAS" = "recruitsas".\nYou can find codes for supported operators here: <https://game-tracker.js.org/#/r6/r6_names?id=operators>',
       examples: {

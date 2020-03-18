@@ -1,6 +1,6 @@
 import { Message, Snowflake, Client } from 'discord.js'
 import { stripIndents } from 'common-tags'
-import { isOwner } from './utils'
+import { isOwner, getDocsLink } from './utils'
 import { owner, supportHardLink, client } from '../core/app'
 
 export class Command {
@@ -9,7 +9,6 @@ export class Command {
   group: string
   aliases: string[]
   description: string
-  onlineDocs: string
   format: string
   details: string
   examples: string[]
@@ -20,6 +19,7 @@ export class Command {
   args: ArgumentInfo[]
   client: Client
 
+  private onlineDocs: string
   private throttles: Map<Snowflake, Throttle>
   // #endregion
 
@@ -42,6 +42,21 @@ export class Command {
     this.client = client
 
     this.throttles = new Map()
+  }
+
+  get docsLink() {
+    if (typeof this.onlineDocs == 'string') return this.onlineDocs
+
+    switch (this.group) {
+      case 'ow':
+        return getDocsLink('ow/overwatch?id=' + this.name.replace(/ /g, ''))
+
+      case 'r6':
+        return getDocsLink('r6/rainbow?id=' + this.name.replace(/ /g, ''))
+
+      default:
+        return getDocsLink()
+    }
   }
 
   hasPermission(message: Message, ownerOverride = true): boolean | string {
@@ -145,7 +160,7 @@ export class Command {
   }
 }
 
-interface CommandInfo {
+export interface CommandInfo {
   name: string
   aliases?: string[]
   description: string
