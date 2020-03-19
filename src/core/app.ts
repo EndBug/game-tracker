@@ -27,7 +27,7 @@ import * as backup from './backup'
 /**
  * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs 
  */
-async function initClient() {
+function initClient() {
   client = new Client()
 
   client.on('error', console.error)
@@ -36,7 +36,7 @@ async function initClient() {
 
   client.on('message', msg => !isPartialMessage(msg) && handleMessage(msg).catch(err => client.emit('error', err)))
 
-  client.on('ready', () => {
+  client.on('ready', async () => {
     homeguild = client.guilds.cache.get('475792603867119626')
     owner = homeguild.members.cache.get('218308478580555777').user
     roles = {
@@ -46,15 +46,15 @@ async function initClient() {
       invite: `<https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=93248>`,
       support: 'https://discord.gg/ZhnWkqc'
     }
+
+    // Starts the stat poster interval
+    if (stats_poster.available) try {
+      await stats_poster.start()
+    } catch (e) { console.error(e) }
+    else console.log('No optional DBL token found.')
   })
 
   client.login(TOKEN)
-
-  // Starts the stat poster interval
-  if (stats_poster.available) try {
-    await stats_poster.start()
-  } catch (e) { console.error(e) }
-  else console.log('No optional DBL token found.')
 
   APIUtil.loadAPIs()
 
