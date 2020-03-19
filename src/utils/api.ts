@@ -36,7 +36,10 @@ type Class = { new(...args: any[]): any; };
 
 export class APIUtil {
   /** Where all APIs are stored */
-  static APIs: Record<APIKey, API>
+  static APIs: Record<APIKey, API> = {
+    ow: undefined,
+    r6: undefined
+  }
 
   static getAPIName(key: APIKey) {
     return this.APIs[key].gameName
