@@ -2,7 +2,7 @@ import { oneLine } from 'common-tags'
 import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
 
-module.exports = class PingCommand extends Command {
+export default class PingCommand extends Command {
   constructor() {
     super({
       name: 'ping',

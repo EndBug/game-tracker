@@ -5,7 +5,7 @@ import { provider } from '../../utils/provider'
 import { commandPrefix, client } from '../../core/app'
 import { isOwner } from '../../utils/utils'
 
-module.exports = class PrefixCommand extends Command {
+export default class PrefixCommand extends Command {
   constructor() {
     super({
       name: 'prefix',

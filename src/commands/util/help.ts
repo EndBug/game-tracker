@@ -16,7 +16,7 @@ function usage(name: string, guildID?: string, usePref?: boolean) {
   return '`' + pref + name + '`'
 }
 
-module.exports = class HelpCommand extends Command {
+export default class HelpCommand extends Command {
   constructor() {
     super({
       name: 'help',

@@ -33,7 +33,7 @@ export function loadCommands() {
       .map(dirent => dirent.name)
 
     for (const file of files) {
-      const commandClass = require(path(groupPath, file))
+      const commandClass = require(path(groupPath, file)).default
       const loadedCommand: Command = new commandClass()
       loadedCommand.group = group
 
@@ -58,11 +58,11 @@ function parseMessage(message: Message) {
   let prefix = provider.get('p', message.guild?.id) || commandPrefix
 
   if (isMention(rawArgs[0])) {
-    if (mentionToID(rawArgs[0]) != client.user.id) return
+    if (mentionToID(rawArgs[0]) != client.user.id) return {}
     prefix = ''
     rawArgs.shift()
   } else {
-    if (!rawArgs[0].startsWith(prefix)) return
+    if (!rawArgs[0].startsWith(prefix)) return {}
     rawArgs[0] = rawArgs[0].substr(prefix.length)
   }
 
