@@ -32,7 +32,7 @@ export default class PrefixCommand extends Command {
   async run(msg: Message, [prefix]: string[]) {
     // Just output the prefix
     if (!prefix) {
-      const pref = msg.guild ? provider.get('p', msg.guild.id) : commandPrefix
+      const pref = provider.get('p', msg.guild?.id) || commandPrefix
       return msg.reply(stripIndents`
 				${pref ? `The command prefix is \`\`${pref}\`\`.` : 'There is no command prefix.'}
 				To run commands, use \`${pref || `${client.user.tag} `}command\`.
@@ -50,17 +50,18 @@ export default class PrefixCommand extends Command {
 
     // Save the prefix
     const lowercase = prefix.toLowerCase()
-    const pref = lowercase === 'none' ? '' : prefix
+    let pref = lowercase === 'none' ? '' : prefix
     let response
     if (lowercase === 'default') {
       if (msg.guild) provider.delete('p', msg.guild.id)
-      response = `Reset the command prefix to the default (currently ${commandPrefix}).`
+      response = `Reset the command prefix to the default (currently \`${commandPrefix}\`).`
+      pref = commandPrefix
     } else {
       if (msg.guild) provider.set('p', msg.guild.id, pref)
       response = pref ? `Set the command prefix to \`\`${prefix}\`\`.` : 'Removed the command prefix entirely.'
     }
 
-    await msg.reply(`${response} To run commands, use \`${pref || `${client.user.tag} `}command\`.`)
+    await msg.reply(`${response} To run commands, use \`${pref || `@${client.user.tag} `}command\`.`)
     return null
   }
 }
