@@ -1,5 +1,5 @@
 import { ActivityType, PresenceStatusData } from 'discord.js'
-import { client } from '../core/app'
+import { client, isDev } from '../core/app'
 
 const interval = 12500
 
@@ -7,7 +7,7 @@ const interval = 12500
 class Presence {
   status: PresenceStatusData
   afk: boolean
-  game: {
+  activity: {
     name: string
     type: ActivityType
     url?: string
@@ -16,7 +16,7 @@ class Presence {
   constructor(name: string, type?: ActivityType, status?: PresenceStatusData, stream?: string) {
     this.status = status || 'online'
     this.afk = false
-    this.game = {
+    this.activity = {
       name,
       type: type || 'PLAYING',
       url: stream
@@ -25,17 +25,19 @@ class Presence {
 
   /** Replaces the dynamic variables inside the presence name */
   getName() {
-    return this.game.name
+    return this.activity.name
       .replace(new RegExp('/guildCount/', 'g'), client.guilds.cache.size.toString())
       .replace(new RegExp('/userCount/', 'g'), client.users.cache.size.toString())
   }
 }
 
-const status = [
-  new Presence('for your requests!', 'WATCHING'),
-  new Presence('/guildCount/ servers.', 'WATCHING'),
-  new Presence('/userCount/ users.', 'LISTENING')
-]
+const status = isDev ? [
+  new Presence('BETA', 'PLAYING', 'dnd')
+] : [
+    new Presence('for your requests!', 'WATCHING'),
+    new Presence('/guildCount/ servers.', 'WATCHING'),
+    new Presence('/userCount/ users.', 'LISTENING')
+  ]
 
 var index = 0
 
@@ -43,13 +45,10 @@ var index = 0
  * @param pres The `Presence` to read
  */
 function setPresence(indexOverride?: number) {
-  const pres = indexOverride ? status[indexOverride] : status[index]
+  const pres = status[indexOverride || index]
   index++
   index %= status.length
-  client.user.setStatus(pres.status)
-  client.user.setActivity(pres.getName(), {
-    type: pres.game.type
-  })
+  client.user.setPresence(pres)
 }
 
 

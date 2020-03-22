@@ -17,6 +17,7 @@ export const commandPrefix = '-'
 export const ownerID = '218308478580555777'
 export const supportHardLink = 'https://discord.gg/ZhnWkqc'
 export const baseDocsURL = 'https://game-tracker.js.org/#/'
+export const isDev = process.env.NODE_ENV == 'dev'
 
 export let client: Client
 export let homeguild: Guild
@@ -40,7 +41,7 @@ function initClient() {
 
   client.on('ready', async () => {
     homeguild = client.guilds.cache.get('475792603867119626')
-    owner = homeguild.members.cache.get('218308478580555777').user
+    owner = homeguild.members.cache.get(ownerID).user
     roles = {
       dev: homeguild.roles.cache.get('498225931299848193')
     }
