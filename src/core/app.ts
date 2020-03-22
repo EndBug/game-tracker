@@ -11,7 +11,7 @@ import { APIUtil } from '../utils/api'
 
 const { TOKEN } = process.env
 
-const deactivatePoster = true
+const deactivatePoster = false
 
 export const commandPrefix = '-'
 export const ownerID = '218308478580555777'
