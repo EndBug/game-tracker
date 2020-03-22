@@ -1,4 +1,4 @@
-import { ActivityType, PresenceStatusData } from 'discord.js'
+import { ActivityType, PresenceStatusData, PresenceData } from 'discord.js'
 import { client, isDev } from '../core/app'
 
 const interval = 12500
@@ -29,6 +29,17 @@ class Presence {
       .replace(new RegExp('/guildCount/', 'g'), client.guilds.cache.size.toString())
       .replace(new RegExp('/userCount/', 'g'), client.users.cache.size.toString())
   }
+
+  get obj(): PresenceData {
+    return {
+      activity: {
+        ...this.activity,
+        name: this.getName()
+      },
+      afk: this.afk,
+      status: this.status
+    }
+  }
 }
 
 const status = isDev ? [
@@ -48,7 +59,7 @@ function setPresence(indexOverride?: number) {
   const pres = status[indexOverride || index]
   index++
   index %= status.length
-  client.user.setPresence(pres)
+  client.user.setPresence(pres.obj)
 }
 
 
