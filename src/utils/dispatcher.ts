@@ -46,12 +46,11 @@ export function loadCommands() {
 export async function handleMessage(message: Message) {
   const { command, fromMention, rawArgs } = parseMessage(message)
 
-  let responses
   if (command) {
-    responses = await runCommand(command, rawArgs, message)
-    if (Array.isArray(responses)) responses = await Promise.all(responses)
+    const responses = await runCommand(command, rawArgs, message)
+    if (Array.isArray(responses)) await Promise.all(responses)
   } else if (fromMention) {
-    responses = await message.reply('Unknown command. Use the `help` command to see a list of available commands')
+    await message.reply('Unknown command. Use the `help` command to see a list of available commands')
   }
 }
 
@@ -59,13 +58,12 @@ export function parseMessage(message: Message) {
   // Find the command to run with default command handling
   const rawArgs = message.content.split(' '),
     isDM = message.channel.type == 'dm'
-  let prefix = isDM ? '' : provider.get('p', message.guild?.id) || commandPrefix
+  const prefix = isDM ? '' : provider.get('p', message.guild?.id) || commandPrefix
 
   let fromMention = false
 
   if (isMention(rawArgs[0])) {
     if (mentionToID(rawArgs[0]) != client.user.id) return {}
-    prefix = ''
     rawArgs.shift()
     fromMention = true
   } else {
