@@ -95,6 +95,7 @@ export default class RainbowCMD extends Command {
       aliases: commandAliases,
       description: 'Rainbow 6 Siege API interface',
       details: 'The main command to access the Rainbow 6 Siege API.',
+      onlineDocs: 'base',
       args: [{
         key: 'method',
         prompt: 'The action you want to perform.',

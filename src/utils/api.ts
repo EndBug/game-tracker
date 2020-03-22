@@ -3,6 +3,7 @@ import { readdirSync } from 'fs'
 import { join as path } from 'path'
 import { GuildMember, User, Snowflake } from 'discord.js'
 import { enforceType, PartialRecord } from './utils'
+import { client } from '../core/app'
 
 export type APIKey = 'ow' | 'r6'
 
@@ -53,6 +54,8 @@ export class APIUtil {
       const ClassFromModule: Class = require(path(__dirname, '../apis', file)).ApiLoader
       const api: API = new ClassFromModule()
       this.APIs[api.apiKey] = api
+
+      client.emit('debug', `[API] Loaded ${this.getAPIName(api.apiKey)} API`)
     }
   }
 

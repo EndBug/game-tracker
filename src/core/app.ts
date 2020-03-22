@@ -53,7 +53,9 @@ function initClient() {
     if (!deactivatePoster && stats_poster.available) try {
       await stats_poster.start()
     } catch (e) { console.error(e) }
-    else console.log('No optional DBL token found.')
+    else client.emit('debug', deactivatePoster ? '[dbots] dbots not loaded.' : '[dbots] No optional DBL token found.')
+
+    loadModules()
   })
 
   client.login(TOKEN)
@@ -83,7 +85,7 @@ function loadModules() {
     const files = fs.readdirSync(groupDirectory)
     for (const file of files) {
       require(path(groupDirectory, file))
-      loader(`${groupName}/${file}`)
+      client.emit('debug', `[Module] Loaded ${groupName}/${file} module.`)
     }
   }
 }
@@ -91,6 +93,5 @@ function loadModules() {
 (async () => {
   if (backup.available) await backup.init().catch(console.error)
   else console.log('No backup token found.')
-  await initClient()
-  loadModules()
+  initClient()
 })().catch(console.error)

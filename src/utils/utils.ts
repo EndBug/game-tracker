@@ -103,9 +103,9 @@ export function equals(...items: any[]) {
  * getDocksLink() => 'https://game-tracker.js.org'
  * getDocsLink('rainbow?id=r6-general') => 'https://game-tracker.js.org/#/r6/rainbow?id=r6-general'
  */
-export function getDocsLink(path?: string) {
+export function getDocsLink(path?: string, id?: string) {
   if (!path) return baseDocsURL.replace('/#/', '')
-  else return baseDocsURL + path
+  else return baseDocsURL + path + (id ? `?id=${id}` : '')
 }
 
 /** Returns a plain full name for a given user */

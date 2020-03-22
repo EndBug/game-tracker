@@ -16,14 +16,16 @@ export type SettingsKey = 'p'
 
 class Provider {
   path: string
-  private settings: Settings
-  private lastSave: Settings
+  settings: Settings
+  lastSave: Settings
   private _interval: NodeJS.Timeout
 
   constructor() {
     this.path = path(__dirname, filePath)
     this.settings = this.readData()
-    this._interval = setInterval(this.save, 5000)
+
+    const self = this
+    this._interval = setInterval(() => self.save(), 5000)
   }
 
   delete<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T]) {
@@ -58,7 +60,7 @@ class Provider {
     return JSON.parse(str)
   }
 
-  private save() {
+  save() {
     const str = JSON.stringify(this.settings)
     if (str == JSON.stringify(this.lastSave)) return
 

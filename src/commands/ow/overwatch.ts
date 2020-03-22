@@ -39,7 +39,8 @@ export default class OverwatchCMD extends Command {
       name: 'ow',
       aliases: ['overwatch'],
       description: 'Overwatch API interface',
-      details: 'The main command to access the Overwatch API. To access the online docs and see all the available commands you can go to <https://game-tracker.js.org/#/ow/overwatch>',
+      details: 'The main command to access the Overwatch API.',
+      onlineDocs: 'base',
       args: [{
         key: 'mode',
         prompt: 'The action you want to perform. If left blank, will redirect to `ow quick`.',
@@ -89,7 +90,7 @@ export default class OverwatchCMD extends Command {
           err = 'Please enter a battletag.'
           if (!linkmodes.includes(mode)) err += ' If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.'
         }
-      } else if (isBattletag(player)) {
+      } else if (isBattletag(player) || otherplatforms.includes(platform)) {
         if (!platform) platform = 'pc'
         else if (!platforms.includes(platform)) {
           hero = platform

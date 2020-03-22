@@ -45,14 +45,16 @@ export class Command {
   }
 
   get docsLink() {
-    if (typeof this.onlineDocs == 'string') return this.onlineDocs
+    if (typeof this.onlineDocs == 'string' && this.onlineDocs != 'base') return this.onlineDocs
+
+    const id = this.onlineDocs == 'base' ? '' : this.name.replace(/ /g, '-')
 
     switch (this.group) {
       case 'ow':
-        return getDocsLink('ow/overwatch?id=' + this.name.replace(/ /g, ''))
+        return getDocsLink('ow/overwatch', id)
 
       case 'r6':
-        return getDocsLink('r6/rainbow?id=' + this.name.replace(/ /g, ''))
+        return getDocsLink('r6/rainbow', id)
 
       default:
         return getDocsLink()

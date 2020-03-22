@@ -38,29 +38,36 @@ export function loadCommands() {
       loadedCommand.group = group
 
       loadedCommands.push(loadedCommand)
+      client.emit('debug', `[Command] Loaded ${group}:${loadedCommand.name} command.`)
     }
   }
 }
 
 export async function handleMessage(message: Message) {
-  const { command, rawArgs } = parseMessage(message)
+  const { command, fromMention, rawArgs } = parseMessage(message)
 
   let responses
   if (command) {
     responses = await runCommand(command, rawArgs, message)
     if (Array.isArray(responses)) responses = await Promise.all(responses)
+  } else if (fromMention) {
+    responses = await message.reply('Unknown command. Use the `help` command to see a list of available commands')
   }
 }
 
-function parseMessage(message: Message) {
+export function parseMessage(message: Message) {
   // Find the command to run with default command handling
-  const rawArgs = message.content.split(' ')
-  let prefix = provider.get('p', message.guild?.id) || commandPrefix
+  const rawArgs = message.content.split(' '),
+    isDM = message.channel.type == 'dm'
+  let prefix = isDM ? '' : provider.get('p', message.guild?.id) || commandPrefix
+
+  let fromMention = false
 
   if (isMention(rawArgs[0])) {
     if (mentionToID(rawArgs[0]) != client.user.id) return {}
     prefix = ''
     rawArgs.shift()
+    fromMention = true
   } else {
     if (!rawArgs[0].startsWith(prefix)) return {}
     rawArgs[0] = rawArgs[0].substr(prefix.length)
@@ -71,7 +78,7 @@ function parseMessage(message: Message) {
       .some(str => str == rawArgs[0]))
 
   rawArgs.shift()
-  return { command, rawArgs }
+  return { command, fromMention, rawArgs }
 }
 
 async function runCommand(command: Command, rawArgs: string[], message: Message) {
@@ -95,20 +102,22 @@ async function runCommand(command: Command, rawArgs: string[], message: Message)
   for (let i = 0; i < command.args.length; i++) {
     const info = command.args[i],
       arg = rawArgs[i]
-    let processed: any
+    let processed = arg
+
+    const promptStr = ' ' + (info.prompt ? `\`${info.key}\`: ${info.prompt}` : '')
 
     if (info.validate) {
       const validation = info.validate(arg, message)
       if (typeof validation == 'string') return command.onBlock(message, 'validation', { response: validation })
       if (!validation) return command.onBlock(message, 'validation', {
-        response: `\`${arg}\` is not valid for the \`${info.key}\` argument, please try again.`
+        response: `\`${arg}\` is not valid for the \`${info.key}\` argument, please try again.` + promptStr
       })
     }
 
     if (!!arg && info.parse) processed = info.parse(arg, message)
 
     if (!arg && info.default === undefined) return command.onBlock(message, 'validation', {
-      response: `\`${info.key}\`is not an optional argument, please provide a value.`
+      response: `\`${info.key}\` is not an optional argument, please provide a value.` + promptStr
     })
 
     args.push(processed ?? info.default)

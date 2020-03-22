@@ -1,7 +1,7 @@
 import { stripIndents, oneLine } from 'common-tags'
 import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
-import { findCommands, groupName, groups, loadedCommands } from '../../utils/dispatcher'
+import { findCommands, groupName, groups, loadedCommands, parseMessage } from '../../utils/dispatcher'
 import { provider } from '../../utils/provider'
 import { client } from '../../core/app'
 
@@ -38,7 +38,10 @@ export default class HelpCommand extends Command {
     })
   }
 
-  async run(msg: Message, [command]: string[]) { // eslint-disable-line complexity
+  async run(msg: Message) {
+    const { rawArgs } = parseMessage(msg)
+    const command = rawArgs.join(' ')
+
     const commands = findCommands(command, false, msg)
     const showAll = command && command.toLowerCase() === 'all'
     if (command && !showAll) {
@@ -57,7 +60,7 @@ export default class HelpCommand extends Command {
 					(\`${commands[0].group}:${commands[0].name}\`)
 				`}`
         if (commands[0].details) help += `\n**Details:** ${commands[0].details}`
-        if (commands[0].examples) help += `\n**Examples:**\n${commands[0].examples.join('\n')}`
+        if (commands[0].examples && commands[0].examples.length > 0) help += `\n**Examples:**\n${commands[0].examples.join('\n')}`
         if (commands[0].docsLink) help += `\n**Online docs:** <${commands[0].docsLink}>`
 
         const messages: Message[] = []
