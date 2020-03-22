@@ -47,7 +47,7 @@ export function heroName(str: string): string {
     'dva': 'D.Va',
     'lucio': 'Lúcio',
     'mccree': 'McCree',
-    'soldier76': 'Soldier 76',
+    'soldier76': 'Soldier 76'
   }
   if (custom[str]) return custom[str]
   const arr = str.split('_')

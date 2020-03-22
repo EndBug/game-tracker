@@ -1,7 +1,8 @@
-import R6API, { Stats, Operator, OperatorStats, Platform, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js' // eslint-disable-line no-unused-vars
-import { API, getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord, Cache, resolver } from '../utils/utils' // eslint-disable-line no-unused-vars
-import { RichEmbed, User, UserResolvable } from 'discord.js' // eslint-disable-line no-unused-vars
-import { CommandoMessage } from 'discord.js-commando' // eslint-disable-line no-unused-vars
+import R6API, { Stats, Operator, OperatorStats, Platform, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js'
+import { getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord, Cache } from '../utils/utils'
+import { Message, MessageEmbed, User, UserResolvable } from 'discord.js'
+import { API } from '../utils/api'
+import { client } from '../core/app'
 
 const { UbisoftEmail, UbisoftPassword } = process.env
 const r6api = new R6API(UbisoftEmail, UbisoftPassword)
@@ -22,10 +23,10 @@ var cache = new Cache('Rainbow 6 Siege')
 type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types' | 'queue' | 'link' | 'unlink'
 
 /** Custom embed class that acts as base for other embeds */
-class CustomEmbed extends RichEmbed {
+class CustomEmbed extends MessageEmbed {
   type: embedType_Type
 
-  constructor(msg: CommandoMessage, ...args) {
+  constructor(msg: Message, ...args) {
     super(...args)
     return this.setTimestamp()
       .setAuthor('Rainbow 6 Siege Stats', 'https://i.imgur.com/RgoDkpy.png')
@@ -51,13 +52,13 @@ class CustomEmbed extends RichEmbed {
 
   /** Adds the name of the user that requested the data as in the footer */
   via(author: User) {
-    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL)
+    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL())
   }
 }
 
 /** Embed class for handling errors */
 class ErrorEmbed extends CustomEmbed {
-  constructor(error: string, msg: CommandoMessage, ...args: any[]) {
+  constructor(error: string, msg: Message, ...args: any[]) {
     super(msg, ...args)
     this.type = 'error'
     let sub = error.substr(0, 2048 - 3)
@@ -73,7 +74,7 @@ class ErrorEmbed extends CustomEmbed {
 class GeneralEmbed extends CustomEmbed {
   type: 'general'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, playType: playType, stats: StatsType<'general'>, raw: Stats, ...args) {
+  constructor(msg: Message, username: string, platform: Platform, playType: playType, stats: StatsType<'general'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'general'
     return this.setHeader(`General ${playType == 'all' ? '' : readablePlayType(playType, true)}stats`, username, platform)
@@ -124,7 +125,7 @@ class GeneralEmbed extends CustomEmbed {
 class ModesEmbed extends CustomEmbed {
   type: 'modes'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, playType: strictPlayType, stats: StatsType<'modes'>, raw: Stats, ...args) {
+  constructor(msg: Message, username: string, platform: Platform, playType: strictPlayType, stats: StatsType<'modes'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'modes'
     return this.setHeader(`${readablePlayType(playType)}`, username, platform)
@@ -201,7 +202,7 @@ class WeaponEmbed extends CustomEmbed {
 class WeaponSingleEmbed extends WeaponEmbed {
   type: 'wp-single'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-single'>, raw: Stats, ...args) {
+  constructor(msg: Message, username: string, platform: Platform, category: StatsType<'wp-single'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'wp-single'
     const weapon = category.WPname
@@ -216,7 +217,7 @@ class WeaponSingleEmbed extends WeaponEmbed {
 class WeaponCategoryEmbed extends WeaponEmbed {
   type: 'wp-cat'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, category: StatsType<'wp-cat'>, raw: Stats, ...args) {
+  constructor(msg: Message, username: string, platform: Platform, category: StatsType<'wp-cat'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'wp-cat'
     const wpPvP = this.mostChosenWeapon(category.pvp.list),
@@ -235,7 +236,7 @@ class WeaponCategoryEmbed extends WeaponEmbed {
 class OperatorEmbed extends CustomEmbed {
   type: 'op'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, stats: StatsType<'op'>, ...args) {
+  constructor(msg: Message, username: string, platform: Platform, stats: StatsType<'op'>, ...args) {
     super(msg, ...args)
     this.type = 'op'
 
@@ -275,7 +276,7 @@ class OperatorEmbed extends CustomEmbed {
 class TypesEmbed extends CustomEmbed {
   type: 'types'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, stats: StatsType<'types'>, raw: Stats, ...args) {
+  constructor(msg: Message, username: string, platform: Platform, stats: StatsType<'types'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'types'
 
@@ -298,7 +299,7 @@ class TypesEmbed extends CustomEmbed {
 class QueueEmbed extends CustomEmbed {
   type: 'queue'
 
-  constructor(msg: CommandoMessage, username: string, platform: Platform, stats: StatsType<'queue'>, raw: Stats, ...args) {
+  constructor(msg: Message, username: string, platform: Platform, stats: StatsType<'queue'>, raw: Stats, ...args) {
     super(msg, ...args)
     this.type = 'queue'
 
@@ -327,7 +328,7 @@ class QueueEmbed extends CustomEmbed {
 class LinkEmbed extends CustomEmbed {
   type: 'link' | 'unlink'
 
-  constructor(msg: CommandoMessage, stats: StatsType<'link' | 'unlink'>, ...args) {
+  constructor(msg: Message, stats: StatsType<'link' | 'unlink'>, ...args) {
     super(msg, ...args)
     const { mode, previous, current } = stats
     this.type = mode == 'same' ? 'link' : mode
@@ -344,13 +345,13 @@ class LinkEmbed extends CustomEmbed {
   /** Adds title and descirption to the embed
    * @param curr Unnecessary parameter, keep it `undefined` 
    */
-  unlink(curr: string, prev: string) {
+  unlink(_ignore: any, prev: string) {
     return this.setTitle('R6S profile unlinked')
       .setD(undefined, prev)
   }
 
   /** Changes the color, adds title and description to the embed */
-  same(curr: string, prev: string) {
+  same(_ignore: any, prev: string) {
     return this.setColor([0, 154, 228])
       .setTitle('R6S profile unchanged')
       .setDescription(`Your linked profile is ${prev}`)
@@ -390,7 +391,7 @@ type StatsType<T> =
 interface EmbedParameters<T> {
   embedType: T
   id: string
-  msg: CommandoMessage
+  msg: Message
   platform: Platform
   playType?: playType
   /** The full stats object */
@@ -548,7 +549,7 @@ export class RainbowAPI extends API {
   }
 
   /** Checks request results to determine whether there was an error and if so, returns an `ErrorEmbed` */
-  errorCheck(stats: Error | Stats, id: string, platform: Platform, msg: CommandoMessage) {
+  errorCheck(stats: Error | Stats, id: string, platform: Platform, msg: Message) {
     if (stats instanceof Array) throw new Error('Multiple results')
     if (stats === undefined || stats instanceof Error) {
       let err: Error
@@ -566,8 +567,9 @@ export class RainbowAPI extends API {
 
   /** Gets the saved credentials of a user from the database */
   checkDatabase(discordUser: UserResolvable): [string, Platform] {
-    const id = resolver.resolveUserID(discordUser)
-    return this.store.get(id)
+    const id = client.users.resolveID(discordUser)
+    const res = this.get(id)
+    return enforceType<[string, Platform]>(res) && res
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
@@ -671,7 +673,7 @@ export class RainbowAPI extends API {
 
 
   // #region Command methods
-  async general(msg: CommandoMessage, id: string, platform: Platform, playType: playType) {
+  async general(msg: Message, id: string, platform: Platform, playType: playType) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -725,7 +727,7 @@ export class RainbowAPI extends API {
     })
   }
 
-  async modes(msg: CommandoMessage, id: string, platform: Platform, playType: strictPlayType) {
+  async modes(msg: Message, id: string, platform: Platform, playType: strictPlayType) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -744,7 +746,7 @@ export class RainbowAPI extends API {
     })
   }
 
-  async wp(msg: CommandoMessage, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
+  async wp(msg: Message, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -789,7 +791,7 @@ export class RainbowAPI extends API {
     } else console.log(wpOrCat)
   }
 
-  async op(msg: CommandoMessage, id: string, platform: Platform, operator: Operator | 'auto') {
+  async op(msg: Message, id: string, platform: Platform, operator: Operator | 'auto') {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -822,7 +824,7 @@ export class RainbowAPI extends API {
     })
   }
 
-  async types(msg: CommandoMessage, id: string, platform: Platform) {
+  async types(msg: Message, id: string, platform: Platform) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -840,7 +842,7 @@ export class RainbowAPI extends API {
     })
   }
 
-  async queue(msg: CommandoMessage, id: string, platform: Platform) {
+  async queue(msg: Message, id: string, platform: Platform) {
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -859,11 +861,11 @@ export class RainbowAPI extends API {
   }
 
   /** Use the udpated `username` and `platform` */
-  async link(msg: CommandoMessage, username: string, platform: Platform) {
+  async link(msg: Message, username: string, platform: Platform) {
     let mode: 'same' | 'link',
       id, currStr
 
-    const prev = this.checkDatabase(msg.message)
+    const prev = this.checkDatabase(msg)
     const prevStr = (prev instanceof Array && prev[0] && prev[1]) ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined
 
 
@@ -881,7 +883,7 @@ export class RainbowAPI extends API {
       mode = prevStr == currStr ? 'same' : 'link'
     } else mode = 'same'
 
-    if (mode == 'link') this.store.set(msg.author.id, [id, platform])
+    if (mode == 'link') this.set(msg.author.id, [id, platform])
     return this.createEmbed({
       embedType: 'link',
       id: username,
@@ -895,11 +897,11 @@ export class RainbowAPI extends API {
     })
   }
 
-  async unlink(msg: CommandoMessage) {
-    const prev = this.checkDatabase(msg.message),
+  async unlink(msg: Message) {
+    const prev = this.checkDatabase(msg),
       prevStr = prev instanceof Array ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined
 
-    if (prevStr) this.store.delete(msg.author.id)
+    if (prevStr) this.delete(msg.author.id)
 
     return this.createEmbed({
       embedType: 'unlink',

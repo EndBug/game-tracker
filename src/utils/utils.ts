@@ -1,6 +1,6 @@
-import { TSMap as Map } from 'typescript-map' // eslint-disable-line no-unused-vars
-import { User, GuildMember } from 'discord.js' // eslint-disable-line no-unused-vars
-import { homeguild, owner, client } from '../core/app'
+import { TSMap as Map } from 'typescript-map'
+import { User, GuildMember, PartialMessage, Message } from 'discord.js'
+import { homeguild, owner, ownerID, baseDocsURL } from '../core/app'
 
 // #region Types
 export type PartialRecord<K extends keyof any, T> = {
@@ -9,80 +9,6 @@ export type PartialRecord<K extends keyof any, T> = {
 // #endregion
 
 // #region Classes
-
-export class API {
-  name: string;
-  game: string;
-  store: APIStore;
-
-  constructor(key: string, game: string) {
-    this.name = key
-    this.game = game
-    this.store = new APIStore(key)
-  }
-}
-class APIStore {
-  api: string
-  store: Map<string, any>
-
-  constructor(api: string) {
-    this.api = api
-
-    const existing = client.provider.get('global', api)
-    if (existing) this.store = new Map(Object.entries(existing))
-    else {
-      this.store = new Map()
-      this.save()
-    }
-  }
-
-  /**
-   * Gets the value with a given key
-   * @param key The key for the value
-   */
-  get(key: string) {
-    return this.store.get(key)
-  }
-
-  /**
-   * Deletes the entry with a given key, then runs .save()
-   * @param key The key for the entry
-   */
-  delete(key: string) {
-    this.store.delete(key)
-    this.save()
-    return this
-  }
-
-  /**
-   * Creates a new entry with a given key and value, then runs .save()
-   * @param key The key for the entry
-   * @param value The value for the entry
-   */
-  set(key: string, value) {
-    this.store.set(key, value)
-    this.save()
-    return this
-  }
-
-  /**
-   * Finds the key for a given value (returns only the first result)
-   * @param value The value for the key
-   */
-  getKey(value): string {
-    for (const key of this.store.keys()) {
-      if (this.store.get(key) == value) return key
-    }
-  }
-
-  /**
-   * Saves the store into the database under the 'global' scope
-   */
-  save() {
-    return client.provider.set('global', this.api, mapToObj(this.store))
-  }
-}
-
 /** Temporarily stores data that gets fecthed through OverwatchAPI.getRaw, in order to avoid too many requests */
 export class Cache {
   name: string;
@@ -139,7 +65,7 @@ export function capitalize(str: string) {
  * @example if (!enforceType<YourType>(parameter)) return;
  */
 /* eslint-disable-next-line no-unused-vars*/
-export function enforceType<T>(parameter: any): parameter is T {
+export function enforceType<T>(_parameter: any): _parameter is T {
   return true
 }
 
@@ -170,6 +96,18 @@ export function equals(...items: any[]) {
   return true
 }
 
+/**
+ * Returns a link to the online docs
+ * @param path the relative path to the section
+ * @example 
+ * getDocksLink() => 'https://game-tracker.js.org'
+ * getDocsLink('rainbow?id=r6-general') => 'https://game-tracker.js.org/#/r6/rainbow?id=r6-general'
+ */
+export function getDocsLink(path?: string, id?: string) {
+  if (!path) return baseDocsURL.replace('/#/', '')
+  else return baseDocsURL + path + (id ? `?id=${id}` : '')
+}
+
 /** Returns a plain full name for a given user */
 export function getFullName(user: User | GuildMember) {
   if (user instanceof GuildMember) user = user.user
@@ -186,7 +124,7 @@ export function getShortName(user: User | GuildMember) {
  * @param codeOnly Whether to return only the code of the invite instead of the URL (default is `false`)
  */
 export async function getSupportInvite(codeOnly = false) {
-  const readme = homeguild.channels.get('505805487166586901') || homeguild.channels.find(c => c.name == 'readme')
+  const readme = homeguild.channels.cache.get('505805487166586901') || homeguild.channels.cache.find(c => c.name == 'readme')
   if (!readme) {
     owner.send('Can\'t find \'readme\' channel, please check the ID.')
     return
@@ -194,7 +132,6 @@ export async function getSupportInvite(codeOnly = false) {
   const invite = await readme.createInvite({ maxAge: 0 })
   return codeOnly ? invite.code : `https://discord.gg/${invite.code}`
 }
-
 
 /** Makes a string readable */
 export function humanize(str: string) {
@@ -205,10 +142,18 @@ export function humanize(str: string) {
     .replace(/^[a-z]/g, first => first.toUpperCase())
 }
 
+/** Returns whether the user is the bot owner */
+export function isOwner(user: User | GuildMember | string) {
+  return (typeof user == 'string' ? user : user.id) == ownerID
+}
 
 /** Checks whether a string is a Discord mention */
 export function isMention(str: string) {
   return (typeof str == 'string' && str.startsWith('<@') && str.endsWith('>'))
+}
+
+export function isPartialMessage(msg: Message | PartialMessage): msg is PartialMessage {
+  return msg.partial
 }
 
 /** Converts a map into an object */
@@ -327,9 +272,6 @@ export function readMinutes(minutes: number, readable = true) {
 export function readNumber(number: number, decimals = 2) {
   return numberFormat(number, decimals, '.', '\'')
 }
-
-/** It can be used to resolve users, colors and so on */
-export const resolver = client.publicResolver
 
 /**
  * Takes a number and takes the last two digits (adds a 0 if needed)

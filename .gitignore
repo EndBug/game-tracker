@@ -3,4 +3,4 @@ project.bat
 *.ini
 src/utils/reloadme.json
 .env
-settings.sqlite3
+settings.json

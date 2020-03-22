@@ -1,10 +1,11 @@
-import { Command, CommandoClient, CommandoMessage } from 'discord.js-commando' // eslint-disable-line no-unused-vars
-import { RainbowAPI, isPlatform, isWeaponName, isWeaponType, isOperator, getWeaponName, getWeaponType, getOperator } from '../../apis/rainbow' // eslint-disable-line no-unused-vars
-import { APIS } from '../../core/app'
+import { RainbowAPI, isPlatform, isWeaponName, isWeaponType, isOperator, getWeaponName, getWeaponType, getOperator } from '../../apis/rainbow'
 import { isMention, mentionToID } from '../../utils/utils'
+import { Command, CommandInfo } from '../../utils/command'
+import { APIUtil } from '../../utils/api'
+import { Message } from 'discord.js'
 
 // @ts-ignore
-const API: RainbowAPI = APIS['r6']
+const API: RainbowAPI = APIUtil.APIs['r6']
 
 // #region Utility
 const validMethods = ['general', 'modes', 'wp', 'op', 'types', 'queue', 'link', 'unlink'],
@@ -48,16 +49,14 @@ interface configParams {
 /** Generates a config for a Rainbow 6 Siege sub-command
  * @param options The parameters to build the config
  */
-export function getConfig(method: string, { description, details, examples, extra }: configParams) {
+export function getConfig(method: string, { description, details, examples, extra }: configParams): CommandInfo {
   const format = `${extra ? (requiresExtra(method) ? `<${extra}>` : `[${extra}]`) : ''} { username | @mention } [platform: (${validPlatforms.join(' | ')})]`
 
   return {
     name: `r6 ${method}`,
-    memberName: `r6-${method}`,
-    group: 'r6',
     aliases: getAliases(method),
     description,
-    details: (details || '').trim() + `\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you \`r6 link\`ed it).\nTo go to the online docs for this command, go to <https://game-tracker.js.org/#/r6/rainbow?id=r6-${method}>`,
+    details: (details || '').trim() + '\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
     format,
     examples: getExamples(method, examples),
     guildOnly: true
@@ -90,41 +89,35 @@ function isValidExtra(method: string, extra: string) {
 // #endregion
 
 export default class RainbowCMD extends Command {
-  constructor(client: CommandoClient) {
-    super(client, {
+  constructor() {
+    super({
       name: 'r6',
-      memberName: 'r6',
       aliases: commandAliases,
-      group: 'r6',
       description: 'Rainbow 6 Siege API interface',
-      details: 'The main command to access the Rainbow 6 Siege API. To access the online docs and see all the available commands you can go to <https://game-tracker.js.org/#/r6/rainbow>',
+      details: 'The main command to access the Rainbow 6 Siege API.',
+      onlineDocs: 'base',
       args: [{
         key: 'method',
         prompt: 'The action you want to perform.',
-        type: 'string',
         parse: (str: string) => str.toLowerCase()
       }, {
         key: 'extra',
         prompt: 'The extra argument needed for some sub-commands.',
-        type: 'string',
         default: ''
       }, {
         key: 'player',
         prompt: 'The player you want the stats for. If you have already linked your account you can leave this blank, otherwise you\'ll need to write your username. You can also mention another user: if they linked their account, it will display their stats.',
-        type: 'string',
         default: ''
       }, {
         key: 'platform',
         prompt: `The platform the user plays on.If none is entered, it will use \`uplay\` as default. Currently supported platforms: ${validPlatforms.map(str => `\`${str}\``).join(', ')}.`,
-        type: 'string',
         default: ''
       }],
       guildOnly: true
     })
   }
 
-  // @ts-ignore
-  async run(msg: CommandoMessage, { method, extra, player, platform }: Record<string, string>) {
+  async run(msg: Message, [method, extra, player, platform]: string[]) {
     msg.channel.startTyping()
 
     let err: string,
@@ -184,16 +177,14 @@ export default class RainbowCMD extends Command {
       }
     }
 
-    if (err) msg.reply(err)
+    if (err) return msg.reply(err).finally(() => msg.channel.stopTyping())
     else {
       if (method == 'link') id = player
       else if (method == 'wp') {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
         else if (isWeaponType(extra)) extra = getWeaponType(extra)
       } else if (method == 'op') extra = getOperator(extra)
-      msg.say(await API[method](msg, id, platform, extra))
+      return msg.channel.send(await API[method](msg, id, platform, extra)).finally(() => msg.channel.stopTyping())
     }
-
-    msg.channel.stopTyping()
   }
 }

@@ -1,4 +1,4 @@
-import { Poster, PosterOptions } from 'dbots' // eslint-disable-line no-unused-vars
+import { Poster, PosterOptions } from 'dbots'
 import { client } from '../core/app'
 
 const { topgg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist, divinediscordbots, discordboats } = process.env

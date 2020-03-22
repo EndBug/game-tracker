@@ -18,7 +18,10 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "project": [
+      "./tsconfig.json"
+    ]
   },
   "rules": {
     "no-cond-assign": [
@@ -36,7 +39,8 @@
     "new-cap": 0,
     "no-caller": 2,
     "no-undef": 2,
-    "no-unused-vars": 1,
+    "no-unused-vars": 0,
+    "@typescript-eslint/no-unused-vars-experimental": 1,
     "no-empty": [
       "error",
       {
@@ -58,6 +62,7 @@
       "warn",
       "never"
     ],
-    "spaced-comment": "warn"
+    "spaced-comment": "warn",
+    "comma-dangle": "warn"
   }
 }

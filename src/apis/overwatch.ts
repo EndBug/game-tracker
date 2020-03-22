@@ -1,11 +1,10 @@
 /* eslint-disable no-dupe-class-members */
-import { User, GuildMember, RichEmbed } from 'discord.js'
-import { CommandoMessage } from 'discord.js-commando' // eslint-disable-line no-unused-vars
+import { User, GuildMember, Message, MessageEmbed } from 'discord.js'
 import * as owapi from 'overwatch-stats-api'
 
-import { API } from '../utils/utils'
+import { API } from '../utils/api'
 import { Cache, getShortName, readHours, readNumber, readMinutes, humanize, capitalize, equals, enforceType, stringToSeconds } from '../utils/utils'
-import { heroName, SupportedHero, isSupported } from '../utils/ow_hero_names' // eslint-disable-line no-unused-vars
+import { heroName, SupportedHero, isSupported } from '../utils/ow_hero_names'
 
 type platform = 'pc' | 'xbl' | 'psn'
 function isPlatform(value): value is platform {
@@ -125,7 +124,7 @@ type EmbedOptions<T> =
 interface StatsEmbedOptions<T> {
   battletag: string
   mode: T
-  msg: CommandoMessage
+  msg: Message
   platform: platform
   stats: StatsType<T>
 }
@@ -140,7 +139,7 @@ function isPlayerEntry(value): value is playerEntry {
 
 interface LinkOptions<T> {
   mode: T
-  msg: CommandoMessage
+  msg: Message
   previous: playerEntry
   current?: playerEntry
 }
@@ -148,7 +147,7 @@ interface LinkOptions<T> {
 interface ErrorOptions<T> {
   error: string
   mode: T
-  msg: CommandoMessage
+  msg: Message
 }
 
 /** Returns whether the supplied rank object has a valid score */
@@ -181,10 +180,10 @@ type EmbedSwitch<T> =
   T extends 'error' ? ErrorEmbed :
   T extends 'warn' ? WarnEmbed : CustomEmbed
 
-class CustomEmbed extends RichEmbed {
+class CustomEmbed extends MessageEmbed {
   mode: embedType
 
-  constructor(msg: CommandoMessage, ...args: any[]) {
+  constructor(msg: Message, ...args: any[]) {
     super(...args)
     this.setTimestamp(msg.createdAt)
       .setAuthor('Overwatch Stats', 'https://i.imgur.com/MaJToTw.png')
@@ -193,7 +192,7 @@ class CustomEmbed extends RichEmbed {
 
   /** Adds the name of the user that requested the data as in the footer. */
   via(author: User) {
-    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL)
+    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL())
   }
 
   /** Adds the website link of the targeted profile to the embed description */
@@ -219,7 +218,7 @@ class CustomEmbed extends RichEmbed {
 class StatsEmbed extends CustomEmbed {
   mode: 'comp' | 'quick'
 
-  constructor(msg: CommandoMessage, battletag: string, platform: platform, stats: RegularStats, ...args) {
+  constructor(msg: Message, battletag: string, platform: platform, stats: RegularStats, ...args) {
     super(msg, ...args)
 
     this.mode = stats.type == 'competitive' ? 'comp' : 'quick'
@@ -292,7 +291,7 @@ class StatsEmbed extends CustomEmbed {
 class HeroEmbed extends CustomEmbed {
   mode: 'herocomp' | 'hero'
 
-  constructor(msg: CommandoMessage, battletag: string, platform: platform, stats: HeroStats, ...args) {
+  constructor(msg: Message, battletag: string, platform: platform, stats: HeroStats, ...args) {
     super(msg, ...args)
 
     this.mode = stats.type == 'competitive' ? 'herocomp' : 'hero'
@@ -394,7 +393,7 @@ class LinkEmbed extends CustomEmbed {
 class WarnEmbed extends CustomEmbed {
   mode: 'warn'
 
-  constructor(msg: CommandoMessage, error: string, ...args: any[]) {
+  constructor(msg: Message, error: string, ...args: any[]) {
     super(msg, ...args)
     this.mode = 'warn'
     return this.setColor('GOLD')
@@ -406,7 +405,7 @@ class WarnEmbed extends CustomEmbed {
 class ErrorEmbed extends CustomEmbed {
   mode: 'error'
 
-  constructor(msg: CommandoMessage, error: string, ...args: any[]) {
+  constructor(msg: Message, error: string, ...args: any[]) {
     super(msg, ...args)
     this.mode = 'error'
     return this.setColor('RED')
@@ -429,7 +428,7 @@ export class OverwatchAPI extends API {
    */
   checkDatabase(id: string | User | GuildMember, reverse = false) {
     if (id instanceof User || id instanceof GuildMember) id = id.id
-    return !reverse ? this.store.get(id) : this.store.getKey(id.replace('#', '-'))
+    return !reverse ? this.get(id) : this.getKey(id.replace('#', '-'))
   }
 
   private createEmbed<T extends embedType>(options: EmbedOptions<T>): EmbedSwitch<T> {
@@ -484,7 +483,7 @@ export class OverwatchAPI extends API {
   }
 
   /** Converts a getStats rejection into a error/warn embed */
-  buildRejection(error: Error, msg: CommandoMessage, action: Exclude<embedType, 'error' | 'warn'>, battletag: string, platform: platform) {
+  buildRejection(error: Error, msg: Message, action: Exclude<embedType, 'error' | 'warn'>, battletag: string, platform: platform) {
     const actionDict: Record<Exclude<embedType, 'error' | 'warn'>, string> = {
       quick: 'quickplay stats',
       comp: 'competitive stats',
@@ -533,7 +532,7 @@ export class OverwatchAPI extends API {
     return account
   }
 
-  async quick(battletag: string, platform: platform, msg: CommandoMessage) {
+  async quick(battletag: string, platform: platform, msg: Message) {
     const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'quick', battletag, platform))
     if (stats instanceof CustomEmbed) return stats
 
@@ -576,7 +575,7 @@ export class OverwatchAPI extends API {
     })
   }
 
-  async comp(battletag: string, platform: platform, msg: CommandoMessage) {
+  async comp(battletag: string, platform: platform, msg: Message) {
     const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'comp', battletag, platform))
     if (stats instanceof CustomEmbed) return stats
 
@@ -619,7 +618,7 @@ export class OverwatchAPI extends API {
     })
   }
 
-  async hero(battletag: string, platform: platform, msg: CommandoMessage, hero: SupportedHero | 'auto') {
+  async hero(battletag: string, platform: platform, msg: Message, hero: SupportedHero | 'auto') {
     const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'hero', battletag, platform))
     if (stats instanceof CustomEmbed) return stats
 
@@ -671,7 +670,7 @@ export class OverwatchAPI extends API {
     })
   }
 
-  async herocomp(battletag: string, platform: platform, msg: CommandoMessage, hero: SupportedHero | 'auto') {
+  async herocomp(battletag: string, platform: platform, msg: Message, hero: SupportedHero | 'auto') {
     const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'herocomp', battletag, platform))
     if (stats instanceof CustomEmbed) return stats
 
@@ -723,14 +722,14 @@ export class OverwatchAPI extends API {
     })
   }
 
-  async link(battletag: string, platform: platform, msg: CommandoMessage) {
+  async link(battletag: string, platform: platform, msg: Message) {
     const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'link', battletag, platform))
     if (stats instanceof CustomEmbed) return stats
 
     const prev = this.checkDatabase(msg.author),
       next: playerEntry = [battletag, platform]
 
-    if (!isPlayerEntry(prev) || !equals(prev, next)) this.store.set(msg.author.id, next)
+    if (!isPlayerEntry(prev) || !equals(prev, next)) this.set(msg.author.id, next)
 
     return this.createEmbed({
       mode: 'link',
@@ -740,10 +739,10 @@ export class OverwatchAPI extends API {
     })
   }
 
-  async unlink(battletag: string, platform: platform, msg: CommandoMessage) {
+  async unlink(_ignore1: any, _ignore2: any, msg: Message) {
     const prev = this.checkDatabase(msg.author)
 
-    if (prev) this.store.delete(msg.author.id)
+    if (prev) this.delete(msg.author.id)
 
     return this.createEmbed({
       mode: 'unlink',

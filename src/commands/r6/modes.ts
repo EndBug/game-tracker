@@ -1,9 +1,9 @@
-import { Command, CommandoClient } from 'discord.js-commando' // eslint-disable-line no-unused-vars
 import { getConfig } from './r6'
+import { Command } from '../../utils/command'
 
 export default class R6ModesWiki extends Command {
-  constructor(client: CommandoClient) {
-    super(client, getConfig('modes', {
+  constructor() {
+    super(getConfig('modes', {
       description: 'Displays modes stats for the given play type.',
       details: 'Specify the play type to show by writing either `pvp` or `pve`.',
       examples: {

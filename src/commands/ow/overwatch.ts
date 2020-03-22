@@ -1,12 +1,12 @@
-import * as Commando from 'discord.js-commando'
-
-import { APIS } from '../../core/app'
 import { isMention } from '../../utils/utils'
-import { OverwatchAPI } from '../../apis/overwatch' // eslint-disable-line no-unused-vars
+import { OverwatchAPI } from '../../apis/overwatch'
 import { heroes } from '../../utils/ow_hero_names'
+import { APIUtil } from '../../utils/api'
+import { Command } from '../../utils/command'
+import { Message } from 'discord.js'
 
 // @ts-ignore
-const API: OverwatchAPI = APIS['ow']
+const API: OverwatchAPI = APIUtil.APIs['ow']
 
 const platforms = ['pc', 'xbl', 'psn'],
   otherplatforms = ['xbl', 'psn'],
@@ -33,42 +33,36 @@ function checkHero(str: string) {
   }
 }
 
-export default class OverwatchCMD extends Commando.Command {
-  constructor(client: Commando.CommandoClient) {
-    super(client, {
+export default class OverwatchCMD extends Command {
+  constructor() {
+    super({
       name: 'ow',
       aliases: ['overwatch'],
-      group: 'ow',
-      memberName: 'ow',
       description: 'Overwatch API interface',
-      details: 'The main command to access the Overwatch API. To access the online docs and see all the available commands you can go to <https://game-tracker.js.org/#/ow/overwatch>',
+      details: 'The main command to access the Overwatch API.',
+      onlineDocs: 'base',
       args: [{
         key: 'mode',
         prompt: 'The action you want to perform. If left blank, will redirect to `ow quick`.',
-        type: 'string',
         default: ''
       }, {
         key: 'player',
         prompt: 'The player you want the stats for. If you have already linked your account in this guild, you can leave this blank, otherwise you need to write your Battletag (e.g. `Name#1234`). You can also mention another user: if they linked their account, it will display their stats.',
-        type: 'string',
         default: ''
       }, {
         key: 'platform',
         prompt: 'The platform you want stats for. If none is entered, it will display stats for `pc`.',
-        type: 'string',
         default: ''
       }, {
         key: 'hero',
         prompt: 'The hero you want stats for.',
-        type: 'string',
         default: ''
       }],
       guildOnly: true
     })
   }
 
-  // @ts-ignore
-  async run(msg: Commando.CommandoMessage, { mode, player, platform, hero }: { [x: string]: string }) {
+  async run(msg: Message, [mode, player, platform, hero]: string[]) {
     msg.channel.startTyping()
 
     let err: string,
@@ -96,7 +90,7 @@ export default class OverwatchCMD extends Commando.Command {
           err = 'Please enter a battletag.'
           if (!linkmodes.includes(mode)) err += ' If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.'
         }
-      } else if (isBattletag(player)) {
+      } else if (isBattletag(player) || otherplatforms.includes(platform)) {
         if (!platform) platform = 'pc'
         else if (!platforms.includes(platform)) {
           hero = platform
@@ -131,9 +125,8 @@ export default class OverwatchCMD extends Commando.Command {
       }
     }
 
-    if (err) msg.reply(err)
-    else msg.say(await API[mode](player, platform, msg, hero))
-
-    msg.channel.stopTyping(true)
+    if (err) return msg.reply(err).finally(() => msg.channel.stopTyping(true))
+    else return msg.channel.send(await API[mode](player, platform, msg, hero))
+      .finally(() => msg.channel.stopTyping(true))
   }
 }

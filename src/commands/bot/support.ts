@@ -1,26 +1,22 @@
-import * as Commando from 'discord.js-commando'
 import { getSupportInvite } from '../../utils/utils'
 import { owner } from '../../core/app'
+import { Command } from '../../utils/command'
+import { Message } from 'discord.js'
 
-export default class SupportCMD extends Commando.Command {
-  constructor(client: Commando.CommandoClient) {
-    super(client, {
+export default class SupportCMD extends Command {
+  constructor() {
+    super({
       name: 'support',
       aliases: ['supportguild', 'supportserver', 'feedback', 'issue'],
-      group: 'bot',
-      memberName: 'support',
-      description: 'Gives you the invite to enter in the official Game Tracker support server.',
-      guildOnly: false,
-      ownerOnly: false
+      description: 'Gives you the invite to enter in the official Game Tracker support server.'
     })
   }
 
-  // @ts-ignore
-  async run(msg: Commando.CommandoMessage) {
+  async run(msg: Message) {
     const invite = await getSupportInvite()
     if (!invite) {
       owner.send(`Problem with invite creation: ${invite}`)
-      msg.say('Sorry, this command is temporarily unavailable, please retry later.\nIronic, huh?')
-    } else msg.say(`Thank you for choosing Game Tracker!\nYou can enter in the support guild through this invite: ${invite}`)
+      return msg.channel.send('Sorry, this command is temporarily unavailable, please retry later.\nIronic, huh?')
+    } else return msg.channel.send(`Thank you for choosing Game Tracker!\nYou can enter in the support guild through this invite: ${invite}`)
   }
 }
