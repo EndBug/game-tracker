@@ -66,6 +66,8 @@ export class Command {
 
     if (this.ownerOnly && !isOwner(message.author))
       return `The \`${this.name}\` command can only be used by the bot owner.`
+
+    return true
   }
 
   async run(message: Message, args: any[]): Promise<Message | Message[]> { // eslint-disable-line
