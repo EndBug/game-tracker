@@ -3,7 +3,7 @@ import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
 import { findCommands, groupName, groups, loadedCommands, parseMessage } from '../../utils/dispatcher'
 import { provider } from '../../utils/provider'
-import { client } from '../../core/app'
+import { client, commandPrefix } from '../../core/app'
 
 function disambiguation(items: object[], label: string, property = 'name') {
   const itemList = items.map(item => `"${(property ? item[property] : item).replace(/ /g, '\xa0')}"`).join(',   ')
@@ -12,7 +12,7 @@ function disambiguation(items: object[], label: string, property = 'name') {
 
 function usage(name: string, guildID?: string, usePref?: boolean) {
   const pref = !usePref ? '' :
-    guildID ? provider.get('p', guildID) : `@${client.user.tag} `
+    guildID ? (provider.get('p', guildID) || commandPrefix) : `@${client.user.tag} `
   return '`' + pref + name + '`'
 }
 
