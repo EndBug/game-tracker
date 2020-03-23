@@ -26,7 +26,7 @@ You can get a complete list of the commands by using the `help` command.
 The currently supported games are:
 
  - [Overwatch](/ow/overwatch)
- - [Rianbow Six Siege](/r6/rainbow)
+ - [Rianbow Six Siege](/r6/rainbow) ([on hold](/r6/hold))
  
 You can see the preview of each game's commands by looking either at the docs (click the name of the game in the above list) or at the dedicated channel in the "examples" category of the [support server](#what-if-i-have-a-problem).  
 More games are yet to come ;)
