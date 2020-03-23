@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 const docs = {
-  githubURL: 'https://endbug.github.io/game-tracker/#',
+  githubURL: 'https://game-tracker.js.org/#',
   internalURL: ''
 }
 

@@ -25,8 +25,8 @@ When added, the bot will message the server owner to inform them about the bot.
 You can get a complete list of the commands by using the `help` command.
 The currently supported games are:
 
- - [Overwatch](https://endbug.github.io/game-tracker/#/ow/overwatch)
- - [Rianbow Six Siege](https://endbug.github.io/game-tracker/#/r6/rainbow)
+ - [Overwatch](https://game-tracker.js.org/#/ow/overwatch)
+ - [Rianbow Six Siege](https://game-tracker.js.org/#/r6/rainbow) ([on hold](https://game-tracker.js.org/#/r6/hold))
  
 You can see the preview of each game's commands by looking either at the docs (click the name of the game in the above list) or at the dedicated channel in the "examples" category of the [support server](#what-if-i-have-a-problem).  
 More games are yet to come ;)
