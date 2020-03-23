@@ -44,6 +44,7 @@ export function loadCommands() {
 }
 
 export async function handleMessage(message: Message) {
+  if (message.author.bot) return
   const { command, fromMention, rawArgs } = parseMessage(message)
 
   if (command) {
