@@ -1,8 +1,11 @@
 import { Poster, PosterOptions } from 'dbots'
 import { client } from '../core/app'
 
-const { topgg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist, divinediscordbots, discordboats } = process.env
-const tokens: PosterOptions['apiKeys'] = { topgg, botsondiscord, botsfordiscord, discordbotsgg, discordbotlist, divinediscordbots, discordboats }
+const tokens: PosterOptions['apiKeys'] = {}
+
+for (const key in process.env) {
+  if (key.startsWith('BOTLIST_')) tokens[key.replace('BOTLIST_', '')] = process.env[key]
+}
 
 export var available: boolean = !!Object.values(tokens).find(e => !!e)
 export var interval: number = 1800000 // ms
