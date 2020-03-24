@@ -63,7 +63,8 @@ _Displays weapon stats for the given weapon or weapon category._
 > Format: `r6 wp <weaponName | weaponType> {account} [platform]`
 
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).  
-Specify the weapon to show by writing its name. Every weapon name or category can be written in lowercase and with `-` instead of spaces, e.g.: "Super Shorty" = "super-shorty".\nYou can find codes for supported weapons and weapon types [here](/r6/stored_data#weapon-categories).
+Specify the weapon to show by writing its name. Every weapon name or category can be written in lowercase and with `-` instead of spaces, e.g.: `"Super Shorty" = "super-shorty"`.  
+You can find codes for supported weapons and weapon types [here](/r6/stored_data#weapon-categories).
 
 Examples:  
 * `r6 wp camrs Snake_Nade` → Displays CAMRS stats for `Snake_Nade` by searching the user in the `uplay` category.
@@ -86,7 +87,8 @@ _Displays operator stats for the given operator._
 > Format: `r6 op <operator> {account} [platform]`
 
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).  
-Specify the operator to show by writing their name. Every operator can be written in lowercase with no spaces or dots, e.g.: "Recruit SAS" = "recruitsas".\nYou can find codes for supported operators [here](/r6/stored_data#operators).
+Specify the operator to show by writing their name. Every operator can be written in lowercase with no spaces or dots, e.g.: `"Recruit SAS" = "recruitsas"`.  
+You can find codes for supported operators [here](/r6/stored_data#operators).
 
 Examples:  
 * `r6 op recruitsas Snake_Nade` → Displays Recruit SAS stats for `Snake_Nade` by searching the user in the `uplay` category.
