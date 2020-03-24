@@ -11,13 +11,13 @@ import { APIUtil } from '../utils/api'
 
 const { TOKEN } = process.env
 
-const deactivatePoster = false
-
 export const commandPrefix = '-'
 export const ownerID = '218308478580555777'
 export const supportHardLink = 'https://discord.gg/ZhnWkqc'
 export const baseDocsURL = 'https://game-tracker.js.org/#/'
 export const isDev = process.env.NODE_ENV == 'dev'
+
+const deactivatePoster = false || isDev
 
 export let client: Client
 export let homeguild: Guild
