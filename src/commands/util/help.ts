@@ -52,6 +52,7 @@ export default class HelpCommand extends Command {
 						${commands[0].guildOnly ? ' (Usable only in servers)' : ''}
 					`}
 
+          **Online docs:** <${commands[0].docsLink}>
 					**Format:** ${commands[0].format}
 				`
         if (commands[0].aliases.length > 0) help += `\n**Aliases:** ${commands[0].aliases.join(', ')}`
@@ -61,7 +62,6 @@ export default class HelpCommand extends Command {
 				`}`
         if (commands[0].details) help += `\n**Details:** ${commands[0].details}`
         if (commands[0].examples && commands[0].examples.length > 0) help += `\n**Examples:**\n${commands[0].examples.join('\n')}`
-        if (commands[0].docsLink) help += `\n**Online docs:** <${commands[0].docsLink}>`
 
         const messages: Message[] = []
         try {
