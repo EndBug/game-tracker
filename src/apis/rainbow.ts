@@ -456,13 +456,9 @@ export function getOperator(str: string): Operator {
 /** Compares play regions to determine which is the most recent
  * @param regions The regions to compare
  */
-function getLastPlayedRegion(regions: RankSeason['regions']) {
-  const key = Object.values(regions).sort((a, b) => {
-    const ad = new Date(a.updateTime),
-      bd = new Date(b.updateTime)
-    return -(ad.getTime() - bd.getTime()) // from the most recent to the oldest
-  })[0].region
-  return regions[key]
+function getBestRegion(regions: RankSeason['regions']) {
+  return Object.values(regions)
+    .sort((a, b) => b.current.mmr - a.current.mmr)[0]
 }
 
 /** Returns the stats of the most played operator. 
@@ -616,7 +612,7 @@ export class RainbowAPI extends API {
   // #region API wrappers
   /** Returns an ID from the API */
   async getID(username: string, platform: Platform) {
-    return (ensureOne(await r6api.getId(platform, username)) || {})['userId']
+    return (ensureOne(await r6api.getId(platform, username)) || {})[platform == 'uplay' ? 'userId' : 'id']
   }
 
   /** Returns the level info for a player from the API */
@@ -686,7 +682,7 @@ export class RainbowAPI extends API {
 
     const levelInfo = await this.getLevelInfo(id, platform)
     const rankInfo = await this.getRank(id, platform)
-    const region = getLastPlayedRegion(rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))].regions)
+    const region = getBestRegion(rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))].regions)
 
     processedStats.account = {
       currentRank: {
