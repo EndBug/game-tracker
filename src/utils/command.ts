@@ -3,6 +3,8 @@ import { stripIndents } from 'common-tags'
 import { isOwner, getDocsLink } from './utils'
 import { owner, supportHardLink, client } from '../core/app'
 
+const ownerOnlyOverride = ['r6']
+
 export class Command {
   // #region Properties
   name: string
@@ -64,7 +66,7 @@ export class Command {
   hasPermission(message: Message, ownerOverride = true): boolean | string {
     if (ownerOverride && isOwner(message.author)) return true
 
-    if (this.ownerOnly && !isOwner(message.author))
+    if ((this.ownerOnly || ownerOnlyOverride.includes(this.group)) && !isOwner(message.author))
       return `The \`${this.name}\` command can only be used by the bot owner.`
 
     return true
