@@ -17,19 +17,15 @@ export type SettingsKey = 'p'
 class Provider {
   path: string
   settings: Settings
-  lastSave: Settings
-  private _interval: NodeJS.Timeout
 
   constructor() {
     this.path = path(__dirname, filePath)
     this.settings = this.readData()
-
-    const self = this
-    this._interval = setInterval(() => self.save(), 5000)
   }
 
   delete<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T]) {
     delete this.settings[settingsKey][recordKey]
+    this.save()
   }
 
   get<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T]) {
@@ -44,6 +40,7 @@ class Provider {
 
   set<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T], value: Settings[T][keyof Settings[T]]) {
     this.settings[settingsKey][recordKey] = value
+    this.save()
   }
 
   stats(): Record<APIKey, number> {
@@ -62,10 +59,7 @@ class Provider {
 
   save() {
     const str = JSON.stringify(this.settings)
-    if (str == JSON.stringify(this.lastSave)) return
-
     writeFileSync(this.path, str)
-    this.lastSave = this.settings
   }
 }
 
