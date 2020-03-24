@@ -9,7 +9,7 @@ The Rainbow Six Siege commands let you look up players from every platform and g
 ### Custom definitions
 * `username` → the username of the player you're looking up. If the user you want to look up has [linked](#r6-link) their account you can replace this with a Discord `@mention`. If you [linked](#r6-link) your account and you want to see your stats leave this blank, the bot will automatically use your linked account.
 * `platform` → the platform the account belongs to; it could be either `uplay` (for pc), `xbl` or `psn`. If you leave this blank, the bot will automatically use `uplay` as the default. If you use a linked profile, whether for another user or yourself, you can leave this blank.
-* `weaponName`, `weaponType` and `operator` → these are names of weapons, weapon categories and operators: you can find a the acceptable names in this [cheat sheet](/r6/stored_data).
+* `weaponName`, `weaponType` and `operator` → these are names of weapons, weapon categories and operators: you can find a the acceptable names in this [cheat sheet](/r6/r6_names).
 * `playType`: either `pvp` or `pve`. If you see `playType | all` that means that you can also use `all`, and it will show stats for both play types.
 
 ## Commands
@@ -64,7 +64,7 @@ _Displays weapon stats for the given weapon or weapon category._
 
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).  
 Specify the weapon to show by writing its name. Every weapon name or category can be written in lowercase and with `-` instead of spaces, e.g.: `"Super Shorty" = "super-shorty"`.  
-You can find codes for supported weapons and weapon types [here](/r6/stored_data#weapon-categories).
+You can find codes for supported weapons and weapon types [here](/r6/r6_names#weapon-categories).
 
 Examples:  
 * `r6 wp camrs Snake_Nade` → Displays CAMRS stats for `Snake_Nade` by searching the user in the `uplay` category.
@@ -88,7 +88,7 @@ _Displays operator stats for the given operator._
 
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).  
 Specify the operator to show by writing their name. Every operator can be written in lowercase with no spaces or dots, e.g.: `"Recruit SAS" = "recruitsas"`.  
-You can find codes for supported operators [here](/r6/stored_data#operators).
+You can find codes for supported operators [here](/r6/r6_names#operators).
 
 Examples:  
 * `r6 op recruitsas Snake_Nade` → Displays Recruit SAS stats for `Snake_Nade` by searching the user in the `uplay` category.
