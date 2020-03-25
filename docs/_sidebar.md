@@ -9,5 +9,4 @@
   * [Overwatch](ow/overwatch)
     * [Hero cheat sheet](/ow/ow_heroes)
   * [Rainbow Six Siege](/r6/rainbow)
-    * [Temporary hold](/r6/hold)
     * [Operators & Weapons cheat sheet](/r6/r6_names)

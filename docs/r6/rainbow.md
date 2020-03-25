@@ -1,6 +1,4 @@
 # Rainbow Six Siege
-!> ⚠️ This module is temporarily disabled because of the issue with the UBI API, look [here](/r6/hold) for more info.
-
 The Rainbow Six Siege commands let you look up players from every platform and get their stats.
 
 ## Format guide
