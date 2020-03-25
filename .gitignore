@@ -4,3 +4,4 @@ project.bat
 src/utils/reloadme.json
 .env
 settings.json
+docs/README.md

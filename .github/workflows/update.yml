@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: 12.x
 
       - name: Install dependencies
         run: npm install
@@ -26,11 +26,11 @@ jobs:
         run: npm run docs:gen
 
       - name: Commit documentation changes
-        uses: EndBug/add-and-commit@v2
+        uses: EndBug/add-and-commit@v4
         with:
+          add: docs
           message: "[auto] Update docs"
-          path: docs
-          pattern: "*.*"
+          force: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -38,10 +38,9 @@ jobs:
         run: npm run lint
 
       - name: Commit source changes
-        uses: EndBug/add-and-commit@v2
+        uses: EndBug/add-and-commit@v4
         with:
+          add: src
           message: "[auto] Lint source code"
-          path: src
-          pattern: "*.*"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
