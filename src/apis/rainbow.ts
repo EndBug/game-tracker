@@ -13,7 +13,7 @@ var cache = new Cache('Rainbow 6 Siege')
 
 /* API data store structure:
   "Discord ID": [
-    "1234-1234-1234-1234" -> id
+    "Name" -> username
     "xbl" -> platform
   ]
 */
@@ -390,7 +390,6 @@ type StatsType<T> =
 /** Parameters for the createEmbed method */
 interface EmbedParameters<T> {
   embedType: T
-  id: string
   msg: Message
   platform: Platform
   playType?: playType
@@ -398,6 +397,7 @@ interface EmbedParameters<T> {
   raw?: Stats
   /** The processed stats object */
   stats?: StatsType<T>
+  username: string
 }
 
 /** Checks wheter the argument is a platform */
@@ -483,8 +483,8 @@ function statFormat(value: number, append?: string) {
 }
 
 /** Returns an ID to use for caching */
-function cacheID(id: string, platform: Platform) {
-  return id + '|' + platform
+function cacheID(username: string, platform: Platform) {
+  return username + '|' + platform
 }
 
 /** Returns the formatted username of a player */
@@ -545,7 +545,7 @@ export class RainbowAPI extends API {
   }
 
   /** Checks request results to determine whether there was an error and if so, returns an `ErrorEmbed` */
-  errorCheck(stats: Error | Stats, id: string, platform: Platform, msg: Message) {
+  errorCheck(stats: Error | Stats, username: string, platform: Platform, msg: Message) {
     if (stats instanceof Array) throw new Error('Multiple results')
     if (stats === undefined || stats instanceof Error) {
       let err: Error
@@ -553,10 +553,10 @@ export class RainbowAPI extends API {
       else err = new Error('Can\'t get stats.')
       return this.createEmbed({
         embedType: 'error',
-        id,
         msg,
         platform,
-        stats: err
+        stats: err,
+        username
       })
     }
   }
@@ -569,13 +569,12 @@ export class RainbowAPI extends API {
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
-  async createEmbed<T extends embedType_Type>({ id, embedType, msg, platform, playType, raw, stats }: EmbedParameters<T>) {
+  async createEmbed<T extends embedType_Type>({ embedType, msg, platform, playType, raw, stats, username }: EmbedParameters<T>) {
     if (embedType == 'error') {
       if (!enforceType<StatsType<'error'>>(stats)) return
       return new ErrorEmbed(stats instanceof Error ? stats.message : stats, msg)
     }
 
-    const username = ['link', 'unlink'].includes(embedType) ? undefined : await this.getUsername(id, platform)
     let embed: CustomEmbed
 
     // Type guards are necessary, just copy & paste them block-by-block
@@ -611,8 +610,8 @@ export class RainbowAPI extends API {
 
   // #region API wrappers
   /** Returns an ID from the API */
-  async getID(username: string, platform: Platform) {
-    return (ensureOne(await r6api.getId(platform, username)) || {})[platform == 'uplay' ? 'userId' : 'id']
+  async getID(username: string, platform: Platform, type?: 'userId' | 'id') {
+    return (ensureOne(await r6api.getId(platform, username)) || {})[type || platform == 'uplay' ? 'userId' : 'id']
   }
 
   /** Returns the level info for a player from the API */
@@ -669,7 +668,8 @@ export class RainbowAPI extends API {
 
 
   // #region Command methods
-  async general(msg: Message, id: string, platform: Platform, playType: playType) {
+  async general(msg: Message, username: string, platform: Platform, playType: playType) {
+    const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -713,17 +713,18 @@ export class RainbowAPI extends API {
     }
 
     return this.createEmbed({
-      id,
       embedType: 'general',
       msg,
       platform,
       playType,
       raw: rawStats,
-      stats: processedStats
+      stats: processedStats,
+      username
     })
   }
 
-  async modes(msg: Message, id: string, platform: Platform, playType: strictPlayType) {
+  async modes(msg: Message, username: string, platform: Platform, playType: strictPlayType) {
+    const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -732,17 +733,18 @@ export class RainbowAPI extends API {
     const processedStats = rawStats[playType].modes
 
     return this.createEmbed({
-      id,
       embedType: 'modes',
       msg,
       platform,
       playType,
       raw: rawStats,
-      stats: processedStats
+      stats: processedStats,
+      username
     })
   }
 
-  async wp(msg: Message, id: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
+  async wp(msg: Message, username: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
+    const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -764,11 +766,11 @@ export class RainbowAPI extends API {
       }
       return this.createEmbed({
         embedType: 'wp-single',
-        id,
         msg,
         platform,
         stats: processedStats,
-        raw: rawStats
+        raw: rawStats,
+        username
       })
     } else if (isWeaponType(wpOrCat)) {
       processedStats = {
@@ -778,16 +780,17 @@ export class RainbowAPI extends API {
       }
       return this.createEmbed({
         embedType: 'wp-cat',
-        id,
         msg,
         platform,
         stats: processedStats,
-        raw: rawStats
+        raw: rawStats,
+        username
       })
     } else console.log(wpOrCat)
   }
 
-  async op(msg: Message, id: string, platform: Platform, operator: Operator | 'auto') {
+  async op(msg: Message, username: string, platform: Platform, operator: Operator | 'auto') {
+    const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -805,22 +808,24 @@ export class RainbowAPI extends API {
 
     if (!processedStats.pvp && !processedStats.pve) return this.createEmbed({
       embedType: 'error',
-      id,
       msg,
       platform,
-      stats: 'No weapon stats have been found'
+      stats: 'No weapon stats have been found',
+      username
     })
 
     return this.createEmbed({
       embedType: 'op',
-      id,
       msg,
       platform,
-      stats: processedStats
+      stats: processedStats,
+      username
     })
   }
 
-  async types(msg: Message, id: string, platform: Platform) {
+  async types(msg: Message, username: string, platform: Platform) {
+    const id = await this.getID(username, platform)
+
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -830,15 +835,17 @@ export class RainbowAPI extends API {
 
     return this.createEmbed({
       embedType: 'types',
-      id,
       msg,
       platform,
       raw: rawStats,
-      stats: processedStats
+      stats: processedStats,
+      username
     })
   }
 
-  async queue(msg: Message, id: string, platform: Platform) {
+  async queue(msg: Message, username: string, platform: Platform) {
+    const id = await this.getID(username, platform)
+
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
     if (check) return check
@@ -848,66 +855,66 @@ export class RainbowAPI extends API {
 
     return this.createEmbed({
       embedType: 'queue',
-      id,
       msg,
       platform,
       raw: rawStats,
-      stats: processedStats
+      stats: processedStats,
+      username
     })
   }
 
   /** Use the udpated `username` and `platform` */
   async link(msg: Message, username: string, platform: Platform) {
     let mode: 'same' | 'link',
-      id, currStr
+      currStr
 
     const prev = this.checkDatabase(msg)
-    const prevStr = (prev instanceof Array && prev[0] && prev[1]) ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined
+    const prevStr = (prev instanceof Array && prev[0] && prev[1]) ? player(prev[0], prev[1]) : undefined
 
 
     if (username) {
-      id = await this.getID(username, platform)
+      const id = await this.getID(username, platform)
       if (!id) return this.createEmbed({
         embedType: 'error',
-        id: username,
         msg,
         platform,
-        stats: `${player(username, platform)} is not a valid player.`
+        stats: `${player(username, platform)} is not a valid player.`,
+        username
       })
 
       currStr = player(username, platform)
       mode = prevStr == currStr ? 'same' : 'link'
     } else mode = 'same'
 
-    if (mode == 'link') this.set(msg.author.id, [id, platform])
+    if (mode == 'link') this.set(msg.author.id, [username, platform])
     return this.createEmbed({
       embedType: 'link',
-      id: username,
       msg,
       platform,
       stats: {
         previous: prevStr,
         current: currStr,
         mode
-      }
+      },
+      username
     })
   }
 
   async unlink(msg: Message) {
     const prev = this.checkDatabase(msg),
-      prevStr = prev instanceof Array ? player(await this.getUsername(prev[0], prev[1]), prev[1]) : undefined
+      prevStr = prev instanceof Array ? player(prev[0], prev[1]) : undefined
 
     if (prevStr) this.delete(msg.author.id)
 
     return this.createEmbed({
       embedType: 'unlink',
-      id: undefined,
       msg,
       platform: undefined,
       stats: {
         previous: prevStr,
         mode: 'unlink'
-      }
+      },
+      username: undefined
     })
   }
   // #endregion

@@ -121,8 +121,7 @@ export default class RainbowCMD extends Command {
     msg.channel.startTyping()
 
     let err: string,
-      exit = false,
-      id: string
+      exit = false
 
     if (method == 'unlink') exit = true
     else if (!isValidMethod(method)) err = `\`${method}\` is not a valid method. Currently supported methods: ${validMethods.map(str => `\`${str}\``).join(', ')}.`
@@ -151,7 +150,7 @@ export default class RainbowCMD extends Command {
       if (isMention(player)) {
         const stored = API.checkDatabase(mentionToID(player))
         if (stored) {
-          id = stored[0]
+          player = stored[0]
           platform = stored[1]
         } else {
           err = 'This user hasn\'t linked their R6S account yet, please enter their username and platform manually. For more info, please refer to the command\'s `help` page.'
@@ -161,7 +160,7 @@ export default class RainbowCMD extends Command {
         platform = platform.toLowerCase()
         if (isPlatform(platform)) {
           // USERNAME check
-          id = await API.getID(player, platform)
+          const id = await API.getID(player, platform)
           if (!id) err = `No player named \`${player}\` has been found on the \`${platform}\` platform.`
         } else {
           err = `\`${platform}\` is not a valid platform. Currently supported platforms: ${validPlatforms.map(str => `\`${str}\``).join(', ')}.`
@@ -169,7 +168,7 @@ export default class RainbowCMD extends Command {
       } else if (method != 'link') {
         const stored = API.checkDatabase(msg.author)
         if (stored) {
-          id = stored[0]
+          player = stored[0]
           platform = stored[1]
         } else {
           err = 'You didn\'t link any account, please enter a valid username and platform or link one with `r6 link`. For more info, please refer to the command\'s `help` page.'
@@ -179,12 +178,11 @@ export default class RainbowCMD extends Command {
 
     if (err) return msg.reply(err).finally(() => msg.channel.stopTyping())
     else {
-      if (method == 'link') id = player
-      else if (method == 'wp') {
+      if (method == 'wp') {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
         else if (isWeaponType(extra)) extra = getWeaponType(extra)
       } else if (method == 'op') extra = getOperator(extra)
-      return msg.channel.send(await API[method](msg, id, platform, extra)).finally(() => msg.channel.stopTyping())
+      return msg.channel.send(await API[method](msg, player, platform, extra)).finally(() => msg.channel.stopTyping())
     }
   }
 }
