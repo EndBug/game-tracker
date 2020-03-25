@@ -159,13 +159,6 @@ Examples:
 * `r6 link Truman xbl` → Links `Truman` by searching the user in the `xbl` category.
 * `r6 link` → Displays your current linked account.
 
-<details>
-<summary>📷 Image (click here to show)</summary>  
-
-![k](img/r6-link-0.png)
-</details>
-
-
 ### `r6 unlink`
 
 _Deletes your account from the bot's database._  
@@ -174,13 +167,6 @@ _Deletes your account from the bot's database._
 
 Example:  
 * `r6 unlink` → Unlinks your account.
-
-<details>
-<summary>📷 Image (click here to show)</summary>  
-
-![k](img/r6-unlink-0.png)
-</details>
-
 
 ## Any questions?
 
