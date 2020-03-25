@@ -3,7 +3,7 @@ import { stripIndents } from 'common-tags'
 import { isOwner, getDocsLink } from './utils'
 import { owner, supportHardLink, client } from '../core/app'
 
-const ownerOnlyOverride = ['r6']
+const ownerOnlyOverride = []
 
 export class Command {
   // #region Properties
