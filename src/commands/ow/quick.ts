@@ -11,7 +11,7 @@ export default class OWQuickWiki extends Command {
       examples: [
         '`ow quick EeveeA#1716` - Displays quickplay stats for `EeveeA#1716` by searching them in the PC category.',
         '`ow quick FANKDA psn` - Displays quickplay stats for `FANKDA` by searching them in the PlayStation Network.',
-        '`ow quick @YoMama` - Displays quickplay stats for the mentioned user, if their account is linked.',
+        '`ow quick @DiscordUser` - Displays quickplay stats for the mentioned user, if their account is linked.',
         '`ow quick` - If your account is linked, displays your overwatch stats.'
       ],
       guildOnly: true

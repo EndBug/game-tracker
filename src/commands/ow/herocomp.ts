@@ -12,7 +12,7 @@ export default class OWHeroCompWiki extends Command {
       examples: [
         '`ow herocomp EeveeA#1716 genji` - Displays competitive stats for `EeveeA#1716` by searching them in the PC category, shows Genji.',
         '`ow herocomp FANKDA psn monkey` - Displays competitive stats for `FANKDA` by searching them in the PlayStation Network, shows Winston.',
-        '`ow herocomp @YoMama` - Displays competitive stats for the mentioned user, if their account is linked, shows their most played hero.',
+        '`ow herocomp @DiscordUser` - Displays competitive stats for the mentioned user, if their account is linked, shows their most played hero.',
         '`ow herocomp` - If your account is linked, displays your overwatch stats and shows your most played hero.'
       ],
       guildOnly: true

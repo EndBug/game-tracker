@@ -23,9 +23,9 @@ _Displays general stats for the given play types._
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).
 
 Examples:  
-* `r6 general all Snake_Nade` → Displays general PvP and PvE stats for `Snake_Nade` by searching the user in the `uplay` category.
-* `r6 general pvp Saunshi xbl` → Displays general PvP stats for `Saunshi` by searching the user in the `xbl` category.
-* `r6 general all @YoMama` → Displays general PvP and PvE stats for the mentioned user, if they linked their account.
+* `r6 general all BandltlsMyMaln` → Displays general PvP and PvE stats for `BandltlsMyMaln` by searching the user in the `uplay` category.
+* `r6 general pvp Truman xbl` → Displays general PvP stats for `Truman` by searching the user in the `xbl` category.
+* `r6 general all @DiscordUser` → Displays general PvP and PvE stats for the mentioned user, if they linked their account.
 * `r6 general all` → Displays your general PvP and PvE stats, if you linked your account.
 
 <details>
@@ -44,9 +44,9 @@ _Displays modes stats for the given play type._
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).
 
 Examples:  
-* `r6 modes pvp Snake_Nade` → Displays PvP stats for `Snake_Nade` by searching the user in the `uplay` category.
-* `r6 modes pvp Saunshi xbl` → Displays PvE stats for `Saunshi` by searching the user in the `xbl` category.
-* `r6 modes pvp @YoMama` → Displays PvP stats for the mentioned user, if they linked their account.
+* `r6 modes pvp BandltlsMyMaln` → Displays PvP stats for `BandltlsMyMaln` by searching the user in the `uplay` category.
+* `r6 modes pvp Truman xbl` → Displays PvE stats for `Truman` by searching the user in the `xbl` category.
+* `r6 modes pvp @DiscordUser` → Displays PvP stats for the mentioned user, if they linked their account.
 * `r6 modes pve` → Displays your PvE stats, if you linked your account.
 
 <details>
@@ -67,9 +67,9 @@ Specify the weapon to show by writing its name. Every weapon name or category ca
 You can find codes for supported weapons and weapon types [here](/r6/r6_names#weapon-categories).
 
 Examples:  
-* `r6 wp camrs Snake_Nade` → Displays CAMRS stats for `Snake_Nade` by searching the user in the `uplay` category.
-* `r6 wp assault Saunshi xbl` → Displays assault weapons stats for `Saunshi` by searching the user in the `xbl` category.
-* `r6 wp L85A2 @YoMama` → Displays L85A2 stats for the mentioned user, if they linked their account.
+* `r6 wp camrs BandltlsMyMaln` → Displays CAMRS stats for `BandltlsMyMaln` by searching the user in the `uplay` category.
+* `r6 wp assault Truman xbl` → Displays assault weapons stats for `Truman` by searching the user in the `xbl` category.
+* `r6 wp L85A2 @DiscordUser` → Displays L85A2 stats for the mentioned user, if they linked their account.
 * `r6 wp pistol` → Displays your pistol weapons stats, if you linked your account.
 
 <details>
@@ -91,9 +91,9 @@ Specify the operator to show by writing their name. Every operator can be writte
 You can find codes for supported operators [here](/r6/r6_names#operators).
 
 Examples:  
-* `r6 op recruitsas Snake_Nade` → Displays Recruit SAS stats for `Snake_Nade` by searching the user in the `uplay` category.
-* `r6 op gridlock Saunshi xbl` → Displays Gridlock stats for `Saunshi` by searching the user in the `xbl` category.
-* `r6 op nokk @YoMama` → Displays Nøkk stats for the mentioned user, if they linked their account.
+* `r6 op recruitsas BandltlsMyMaln` → Displays Recruit SAS stats for `BandltlsMyMaln` by searching the user in the `uplay` category.
+* `r6 op gridlock Truman xbl` → Displays Gridlock stats for `Truman` by searching the user in the `xbl` category.
+* `r6 op nokk @DiscordUser` → Displays Nøkk stats for the mentioned user, if they linked their account.
 * `r6 op frost` → Displays your Frost stats, if you linked your account.
 
 <details>
@@ -112,9 +112,9 @@ _Displays types stats for the given player._
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).  
 
 Examples:  
-* `r6 types Snake_Nade` → Displays types stats for `Snake_Nade` by searching the user in the `uplay` category.
-* `r6 types Saunshi xbl` → Displays types stats for `Saunshi` by searching the user in the `xbl` category.
-* `r6 types @YoMama` → Displays types stats for the mentioned user, if they linked their account.
+* `r6 types BandltlsMyMaln` → Displays types stats for `BandltlsMyMaln` by searching the user in the `uplay` category.
+* `r6 types Truman xbl` → Displays types stats for `Truman` by searching the user in the `xbl` category.
+* `r6 types @DiscordUser` → Displays types stats for the mentioned user, if they linked their account.
 * `r6 types` → Displays your types stats, if you linked your account.
 
 <details>
@@ -133,9 +133,9 @@ _Displays queue stats for the given player._
 To specify the player, enter their username and platform. You can also mention them and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you [linked](#r6-link) it).  
 
 Examples:  
-* `r6 queue Snake_Nade` → Displays queue stats for `Snake_Nade` by searching the user in the `uplay` category.
-* `r6 queue Saunshi xbl` → Displays queue stats for `Saunshi` by searching the user in the `xbl` category.
-* `r6 queue @YoMama` → Displays queue stats for the mentioned user, if they linked their account.
+* `r6 queue BandltlsMyMaln` → Displays queue stats for `BandltlsMyMaln` by searching the user in the `uplay` category.
+* `r6 queue Truman xbl` → Displays queue stats for `Truman` by searching the user in the `xbl` category.
+* `r6 queue @DiscordUser` → Displays queue stats for the mentioned user, if they linked their account.
 * `r6 queue` → Displays your queue stats, if you linked your account.
 
 <details>
@@ -155,8 +155,8 @@ _Saves your account in the bot's database._
 You just need to enter your username; if you are playing on Xbox or PlayStation, add the platform after it (the default one is `uplay`)
 
 Examples:  
-* `r6 link Snake_Nade` → Links `Snake_Nade` by searching the user in the `uplay` category.
-* `r6 link Saunshi xbl` → Links `Saunshi` by searching the user in the `xbl` category.
+* `r6 link BandltlsMyMaln` → Links `BandltlsMyMaln` by searching the user in the `uplay` category.
+* `r6 link Truman xbl` → Links `Truman` by searching the user in the `xbl` category.
 * `r6 link` → Displays your current linked account.
 
 <details>

@@ -6,9 +6,9 @@ export default class R6TypesWiki extends Command {
     super(getConfig('types', {
       description: 'Displays types stats for the given player.',
       examples: {
-        'Snake_Nade': 'Displays types stats for `Snake_Nade` by searching the user in the `uplay` category.',
-        'Saunshi xbl': 'Displays types stats for `Saunshi` by searching the user in the `xbl` category.',
-        '@YoMama': 'Displays types stats for the mentioned user, if they linked their account.',
+        'BandltlsMyMaln': 'Displays types stats for `BandltlsMyMaln` by searching the user in the `uplay` category.',
+        'Truman xbl': 'Displays types stats for `Truman` by searching the user in the `xbl` category.',
+        '@DiscordUser': 'Displays types stats for the mentioned user, if they linked their account.',
         '': 'Displays your types stats, if you linked your account.'
       }
     }))

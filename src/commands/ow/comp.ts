@@ -11,7 +11,7 @@ export default class OWCompWiki extends Command {
       examples: [
         '`ow comp EeveeA#1716` - Displays competitive stats for `EeveeA#1716` by searching them in the PC category.',
         '`ow comp FANKDA psn` - Displays competitive stats for `FANKDA` by searching them in the PlayStation Network.',
-        '`ow comp @YoMama` - Displays competitive stats for the mentioned user, if their account is linked.',
+        '`ow comp @DiscordUser` - Displays competitive stats for the mentioned user, if their account is linked.',
         '`ow comp` - If your account is linked, displays your overwatch stats.'
       ],
       guildOnly: true
