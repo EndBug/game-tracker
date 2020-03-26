@@ -14,7 +14,7 @@ function isPlatform(value): value is platform {
 type embedType = 'quick' | 'comp' | 'hero' | 'herocomp' | 'link' | 'unlink' | 'warn' | 'error'
 
 const cache = new Cache('Overwatch')
-const githubRef: string = getSha() ?? 'master'
+const githubRef: string = getSha() || 'master'
 
 // #region Embeds
 type StatsType<T> =
@@ -286,7 +286,7 @@ class HeroEmbed extends CustomEmbed {
     let str = ''
     for (const key in specific)
       str += `${humanize(key).replace('avg per 10 min', '(avg 10m)')}: **${specific[key]}**\n`
-    return this.addField('Hero statistics', str)
+    return str ? this.addField('Hero statistics', str) : this
   }
 
 
