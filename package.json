@@ -30,6 +30,7 @@
     "dbots": "^2.0.3",
     "discord.js": "^12.0.2",
     "dotenv": "^8.1.0",
+    "git-rev-sync": "^2.0.0",
     "nodemon": "^1.19.3",
     "overwatch-stats-api": "^2.0.6",
     "r6api.js": "^1.3.0",

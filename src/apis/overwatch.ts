@@ -1,6 +1,7 @@
 /* eslint-disable no-dupe-class-members */
 import { User, GuildMember, Message, MessageEmbed } from 'discord.js'
 import * as owapi from 'overwatch-stats-api'
+import { long as getSha } from 'git-rev-sync'
 
 import { API } from '../utils/api'
 import { Cache, getShortName, readHours, readNumber, readMinutes, humanize, capitalize, equals, enforceType, stringToSeconds } from '../utils/utils'
@@ -12,42 +13,8 @@ function isPlatform(value): value is platform {
 }
 type embedType = 'quick' | 'comp' | 'hero' | 'herocomp' | 'link' | 'unlink' | 'warn' | 'error'
 
-// Imgur album link: https://imgur.com/a/Ljsllvo
-const img_links: Record<SupportedHero, string> = {
-  'ana': 'https://imgur.com/vtXTLNX.png',
-  'ashe': 'https://imgur.com/6rChZQt.png',
-  'baptiste': 'https://d1u1mce87gyfbn.cloudfront.net/hero/baptiste/hero-select-portrait.png',
-  'bastion': 'https://imgur.com/IIJxgBC.png',
-  'brigitte': 'https://imgur.com/vFi8alu.png',
-  'doomfist': 'https://imgur.com/4tIcURJ.png',
-  'dva': 'https://imgur.com/n0jfTlb.png',
-  'genji': 'https://imgur.com/H08dQDo.png',
-  'hanzo': 'https://imgur.com/6k5H1uT.png',
-  'junkrat': 'https://imgur.com/v6y7aWZ.png',
-  'lucio': 'https://imgur.com/zJZPKqA.png',
-  'mccree': 'https://imgur.com/dH3vjO5.png',
-  'mei': 'https://imgur.com/4cRvD4R.png',
-  'mercy': 'https://imgur.com/dJYHnUe.png',
-  'moira': 'https://imgur.com/l66IbCJ.png',
-  'orisa': 'https://imgur.com/YPD9WxL.png',
-  'phara': 'https://imgur.com/ldLgKYw.png',
-  'reaper': 'https://imgur.com/XvxlxG2.png',
-  'reinhardt': 'https://imgur.com/DkZrniz.png',
-  'roadhog': 'https://imgur.com/OgCpcOe.png',
-  'sigma': 'https://d1u1mce87gyfbn.cloudfront.net/hero/sigma/hero-select-portrait.png',
-  'soldier': 'https://imgur.com/K5IpnT0.png',
-  'sombra': 'https://imgur.com/aKkKZUg.png',
-  'symmetra': 'https://imgur.com/SS9LWPZ.png',
-  'torbjorn': 'https://imgur.com/XHoVgy9.png',
-  'tracer': 'https://imgur.com/iQ6SPlB.png',
-  'widowmaker': 'https://imgur.com/zFXCIpD.png',
-  'winston': 'https://imgur.com/4CRA83D.png',
-  'hammond': 'https://imgur.com/NpuqfRB.png',
-  'zarya': 'https://imgur.com/lKgrayy.png',
-  'zenyatta': 'https://imgur.com/yN2EJGI.png'
-}
-
 const cache = new Cache('Overwatch')
+const githubRef: string = getSha() ?? 'master'
 
 // #region Embeds
 type StatsType<T> =
@@ -310,7 +277,8 @@ class HeroEmbed extends CustomEmbed {
 
   /** Sets the thumbanail with the image of the hero */
   addImage({ hero }: HeroStats) {
-    return this.setThumbnail(img_links[hero])
+    const link = `https://github.com/EndBug/game-tracker/raw/${githubRef}/static/ow/${hero}.png`
+    return this.setThumbnail(link)
   }
 
   /** Adds a field with hero-specific stats */
