@@ -122,7 +122,7 @@ function checkRank(rank: RegularStats['account']['rank']) {
   return typeof rank == 'object' && Object.values(rank).reduce((prev = 0, curr) => curr ? prev + 1 : prev, 0) > 0
 }
 
-/** Gets you a link to the PLayOverwatch website */
+/** Gets you a link to the PlayOverwatch website */
 function getLink(battletag: string, platform: platform) {
   return `https://playoverwatch.com/en-us/career/${platform || 'pc'}/${battletag.replace('#', '-')}`
 }
@@ -455,7 +455,7 @@ export class OverwatchAPI extends API {
     const actionDict: Record<Exclude<embedType, 'error' | 'warn'>, string> = {
       quick: 'quickplay stats',
       comp: 'competitive stats',
-      hero: 'quicplay hero stats',
+      hero: 'quickplay hero stats',
       herocomp: 'competitive hero stats',
       link: 'to link',
       unlink: 'to unlink'
