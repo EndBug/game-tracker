@@ -9,7 +9,7 @@ The bot can store two types of data about you: temporary [game data](#game-data)
 Web APIs and/or web scrapers can sometimes be kind of slow.  
 If that's the case with the API for the game you're seeing, the bot could cache your search results for a few minutes: this makes it possible to have quick replies after the first search on a profile while keeping the number of requests low, reducing the chances of being ratelimited.
 
-When API responses get cached they don't get saved in any file, so they disappear as long as their timer runs out. After that, any new request for the same account will require a new request (and likely slight longer waiting times).
+When API responses get cached they don't get saved in any file, so they disappear as long as their timer runs out. After that, any new request for the same account will require a new request (and likely slightly longer waiting times).
 
 ### Linked accounts
 
