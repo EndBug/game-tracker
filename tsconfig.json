@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "lib": ["es2015", "es2017", "es6", "es2015",
+    "lib": [
+      "es2015",
+      "es2017",
+      "es6",
+      "es2015",
       "dom"
     ],
     "allowJs": true,
@@ -15,5 +19,9 @@
     "rootDir": "./src/",
     "sourceMap": true
   },
-  "exclude": ["build", "**/sample.ts", "start.js"]
+  "exclude": [
+    "build",
+    "**/sample.ts",
+    "start.js"
+  ]
 }
