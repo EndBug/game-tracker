@@ -5,23 +5,25 @@ import { writeFileSync } from 'fs'
 import { join as path } from 'path'
 
 // Restart the bot every day at 04:30
-export const job = new CronJob('55 15 * * *', () => {
-  client.emit('warn', 'The bot will restart in 5 minutes.')
+export const job = new CronJob('25 4 * * *', () => {
+  client.emit('warn', '[rs] The bot will restart in 5 minutes.')
 
   setTimeout(async () => {
     if (!job.running) {
-      const msg = 'Client stopped from rebooting.'
-      client.emit('warn', msg)
+      const msg = 'Client stopped from restarting.'
+      client.emit('warn', `[rs] ${msg}`)
       owner.send(msg)
     }
 
     let ok = true
+    client.emit('debug', '[rs] Scheduled restart triggered.')
     try {
       if (backupAvailable)
         await upload('Restart')
     } catch (error) {
       ok = false
-      owner.send(`There has been an error during the backup for a scheduled reboot.\n\`\`\`\n${error}\n\`\`\`\nThe bot is not being rebooted.`, { split: true })
+      client.emit('error', '[rs] Backup unsuccessful, bot not restarted.')
+      owner.send(`There has been an error during the backup for a scheduled restart.\n\`\`\`\n${error}\n\`\`\`\nThe bot is not being rebooted.`, { split: true })
     }
 
     if (ok)
