@@ -1,5 +1,5 @@
 require('dotenv').config()
-var nodemon = require('nodemon')('--watch src/utils/reloadme.json --exec ts-node src/core/app.ts')
+var nodemon = require('nodemon')('--watch src/utils/reloadme.json --exec "node -r ts-node/register --max-old-space-size=600" src/core/app.ts')
 
 import * as fs from 'fs'
 
