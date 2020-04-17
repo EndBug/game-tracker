@@ -8,6 +8,7 @@
 | Brigitte          | `brigitte`, `brig`                                                           |
 | Doomfist          | `doomfist`, `doom`                                                           |
 | D<span></span>.Va | `dva`, `D.Va`                                                                |
+| Echo              | `echo`                                                                       |
 | Genji             | `genji`, `gengu`                                                             |
 | Hanzo             | `hanzo`, `handsoap`                                                          |
 | Junkrat           | `junkrat`, `junk`, `Chacal`, `Hunkrat`                                       |
