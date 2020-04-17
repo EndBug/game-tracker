@@ -25,7 +25,7 @@ for (const hero in heroes)
 
 writeTable({
   getReadable: heroName,
-  relPath: 'ow/ow_heores.md',
+  relPath: 'ow/ow_heroes.md',
   title: 'Overwatch heroes cheatsheet',
   type: 'Hero',
   values: heroes
