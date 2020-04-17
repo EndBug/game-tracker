@@ -11,6 +11,7 @@ export const heroes = {
   'brigitte': ['brig'],
   'doomfist': ['doom'],
   'dva': ['D.Va'],
+  'echo': [],
   'genji': ['gengu'],
   'hanzo': ['handsoap'],
   'junkrat': ['junk', 'Chacal', 'Hunkrat'],
