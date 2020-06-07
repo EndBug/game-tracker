@@ -7,6 +7,7 @@
   "main": "src/core/start.ts",
   "scripts": {
     "start": "ts-node src/core/start.ts",
+    "beta": "cross-env NODE_ENV=beta && npm start",
     "update": "git pull && npm i",
     "update:force": "git checkout -- package-lock.json && npm run update",
     "dev": "cross-env NODE_ENV=dev nodemon --watch src/**/*.* --ignore src/utils/reloadme.json --exec ts-node src/core/start.ts",

@@ -16,6 +16,7 @@ export const ownerID = '218308478580555777'
 export const supportHardLink = 'https://discord.gg/ZhnWkqc'
 export const baseDocsURL = 'https://game-tracker.js.org/#/'
 export const isDev = process.env.NODE_ENV == 'dev'
+export const isBeta = process.env.NODE_ENV == 'beta'
 
 const deactivatePoster = false || isDev
 

@@ -1,5 +1,5 @@
 import { ActivityType, PresenceStatusData, PresenceData } from 'discord.js'
-import { client, isDev } from '../core/app'
+import { client, isDev, isBeta } from '../core/app'
 
 const interval = 12500
 
@@ -42,7 +42,7 @@ class Presence {
   }
 }
 
-const status = isDev ? [
+const status = isDev || isBeta ? [
   new Presence('BETA', 'PLAYING', 'dnd')
 ] : [
     new Presence('for your requests!', 'WATCHING'),
