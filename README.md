@@ -5,7 +5,7 @@
 [![Discord Bots](https://discordbots.org/api/widget/upvotes/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Discord Bots](https://discordbots.org/api/widget/lib/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Discord Bots](https://discordbots.org/api/widget/owner/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![LGTM code quality](https://img.shields.io/lgtm/grade/javascript/github/EndBug/game-tracker?label=Code%20quality)](https://lgtm.com/projects/g/EndBug/game-tracker/context:javascript)
+[![LGTM code quality](https://img.shields.io/lgtm/grade/javascript/github/dbots-pkg/dbots.js?label=Code%20quality)](https://lgtm.com/projects/g/dbots-pkg/dbots.js/context:javascript)
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat)](#contributors)
 
 
