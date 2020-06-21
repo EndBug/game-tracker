@@ -64,7 +64,6 @@ export function capitalize(str: string) {
  * Enforces a type by returning always `true`; you need to use this with a type guard 
  * @example if (!enforceType<YourType>(parameter)) return;
  */
-/* eslint-disable-next-line no-unused-vars*/
 export function enforceType<T>(_parameter: any): _parameter is T {
   return true
 }

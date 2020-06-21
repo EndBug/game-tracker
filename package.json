@@ -22,8 +22,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintIgnore": [
-    "src/utils/reloadme.json",
-    "src/commands/samples/*.*"
+    "src/utils/reloadme.json"
   ],
   "dependencies": {
     "axios": "^0.19.2",

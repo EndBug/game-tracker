@@ -3,7 +3,7 @@ import { Command } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
 import { client } from '../../core/app'
 
-export default class SampleCMD extends Command {
+export default class EraseDataCMD extends Command {
   constructor() {
     super({
       name: 'erase-data',

@@ -6,7 +6,7 @@ import { Message } from 'discord.js'
 import { provider } from './provider'
 import { isMention, mentionToID, capitalize } from './utils'
 
-const ignoredDirs = ['samples']
+const ignoredDirs = []
 const groupDict: Record<string, string> = {
   'dbl': 'Discord Bots Lists',
   'dev': 'Developer',
