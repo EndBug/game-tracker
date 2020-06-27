@@ -146,9 +146,27 @@ export function isOwner(user: User | GuildMember | string) {
   return (typeof user == 'string' ? user : user.id) == ownerID
 }
 
-/** Checks whether a string is a Discord mention */
-export function isMention(str: string) {
-  return (typeof str == 'string' && str.startsWith('<@') && str.endsWith('>'))
+/** 
+ * Checks whether a string is a Discord user mention 
+ * @param str The string you want to check
+ * @param userOnly Whether to only check for user mentions (instead of roles, channels, here and everyone too); default is `true`
+ * */
+export function isMention(str: string, userOnly = true) {
+  return (
+    typeof str == 'string'
+    && (
+      str.startsWith('<@')
+      || (
+        !userOnly
+          ? str.startsWith('<@&')
+          || str.startsWith('<#')
+          : false
+      )
+    )
+    && str.endsWith('>')
+  ) || !userOnly
+    ? str.trim() == '@here' || str.trim() == '@everyone'
+    : false
 }
 
 export function isPartialMessage(msg: Message | PartialMessage): msg is PartialMessage {

@@ -3,7 +3,7 @@ import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
 import { provider } from '../../utils/provider'
 import { commandPrefix, client } from '../../core/app'
-import { isOwner } from '../../utils/utils'
+import { isOwner, isMention } from '../../utils/utils'
 
 export default class PrefixCommand extends Command {
   constructor() {
@@ -39,10 +39,13 @@ export default class PrefixCommand extends Command {
 			`)
     }
 
+    if (isMention(prefix, false))
+      return msg.reply('You can\'t use a mention as the prefix.')
+
     // Check the user's permission before changing anything
     if (msg.guild) {
-      if (!msg.member.hasPermission('ADMINISTRATOR') && !isOwner(msg.author)) {
-        return msg.reply('Only administrators may change the command prefix.')
+      if (!msg.member.hasPermission('MANAGE_GUILD') && !isOwner(msg.author)) {
+        return msg.reply('Only guild managers may change the command prefix.')
       }
     } else if (!isOwner(msg.author)) {
       return msg.reply('Only the bot owner(s) may change the global command prefix.')
