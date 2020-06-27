@@ -152,21 +152,21 @@ export function isOwner(user: User | GuildMember | string) {
  * @param userOnly Whether to only check for user mentions (instead of roles, channels, here and everyone too); default is `true`
  * */
 export function isMention(str: string, userOnly = true) {
+  str = str.trim()
   return (
     typeof str == 'string'
     && (
       str.startsWith('<@')
       || (
         !userOnly
-          ? str.startsWith('<@&')
-          || str.startsWith('<#')
+          ? str.startsWith('<#')
           : false
       )
     )
     && str.endsWith('>')
-  ) || !userOnly
-    ? str.trim() == '@here' || str.trim() == '@everyone'
-    : false
+  ) || (!userOnly
+    ? str == '@here' || str == '@everyone'
+    : false)
 }
 
 export function isPartialMessage(msg: Message | PartialMessage): msg is PartialMessage {
