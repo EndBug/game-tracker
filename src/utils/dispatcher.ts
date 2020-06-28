@@ -45,7 +45,9 @@ export function loadCommands() {
 
 export async function handleMessage(message: Message) {
   if (message.author.bot) return
-  const { command, fromMention, rawArgs } = parseMessage(message)
+  const { command, fromMention, rawArgs, ignore } = parseMessage(message)
+
+  if (ignore) return
 
   if (command) {
     const responses = await runCommand(command, rawArgs, message)
@@ -72,9 +74,10 @@ export function parseMessage(message: Message) {
     rawArgs[0] = rawArgs[0].substr(prefix.length)
   }
 
+  if (!rawArgs[0]) return { ignore: true }
+
   const command = loadedCommands
-    .find(cmd => [cmd.name, ...cmd.aliases]
-      .some(str => str == rawArgs[0]))
+    .find(cmd => [cmd.name, ...cmd.aliases].some(str => str == rawArgs[0]))
 
   rawArgs.shift()
   return { command, fromMention, rawArgs }
