@@ -129,7 +129,7 @@ async function runCommand(command: Command, rawArgs: string[], message: Message)
   const typingCount = message.channel.typingCount
   try {
     client.emit('debug', `Running command ${command.group}:${command.name}.`)
-    return command.run(message, args)
+    return command.run(message, args, rawArgs)
   } catch (err) {
     if (message.channel.typingCount > typingCount) message.channel.stopTyping()
     return command.onError(err, message)

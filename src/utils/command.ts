@@ -72,7 +72,7 @@ export class Command {
     return true
   }
 
-  async run(message: Message, args: any[]): Promise<Message | Message[]> { // eslint-disable-line
+  async run(message: Message, args: any[], rawArgs: string[]): Promise<Message | Message[]> { // eslint-disable-line
     throw new Error(`${this.constructor.name} doesn't have a \`run()\` method.`)
   }
 
