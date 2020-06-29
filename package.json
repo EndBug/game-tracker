@@ -28,7 +28,7 @@
     "axios": "^0.19.2",
     "common-tags": "^1.8.0",
     "cron": "^1.8.2",
-    "dbots": "^5.0.0",
+    "dbots": "^5.0.1",
     "discord.js": "^12.2.0",
     "dotenv": "^8.1.0",
     "git-rev-sync": "^2.0.0",
