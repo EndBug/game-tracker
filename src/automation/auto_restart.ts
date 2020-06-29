@@ -12,7 +12,7 @@ export const job = new CronJob('25 4 * * *', () => {
     if (!job.running) {
       const msg = 'Client stopped from restarting.'
       client.emit('warn', `[rs] ${msg}`)
-      owner.send(msg)
+      return owner.send(msg)
     }
 
     let ok = true
@@ -22,8 +22,8 @@ export const job = new CronJob('25 4 * * *', () => {
         await upload('Restart')
     } catch (error) {
       ok = false
-      client.emit('error', '[rs] Backup unsuccessful, bot not restarted.')
-      owner.send(`There has been an error during the backup for a scheduled restart.\n\`\`\`\n${error}\n\`\`\`\nThe bot is not being rebooted.`, { split: true })
+      client.emit('error', new Error('[rs] Backup unsuccessful, bot not restarted.'))
+      await owner.send(`There has been an error during the backup for a scheduled restart.\n\`\`\`\n${error}\n\`\`\`\nThe bot is not being rebooted.`, { split: true })
     }
 
     if (ok)
