@@ -32,7 +32,7 @@
     "discord.js": "^12.2.0",
     "dotenv": "^8.1.0",
     "git-rev-sync": "^2.0.0",
-    "nodemon": "^1.19.3",
+    "nodemon": "^2.0.4",
     "overwatch-stats-api": "^2.1.0",
     "r6api.js": "^1.4.1",
     "ts-node": "8.10.2",
