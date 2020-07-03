@@ -28,7 +28,7 @@ jobs:
       - name: Commit README changes
         uses: EndBug/add-and-commit@v4
         with:
-          message: "[auto] Update contributors table"
+          message: "[auto] docs: update contributors table"
           add: "./README.md"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,7 +39,7 @@ jobs:
       - name: Commit documentation changes
         uses: EndBug/add-and-commit@v4
         with:
-          message: "[auto] Update docs"
+          message: "[auto] docs: update docs"
           add: docs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
