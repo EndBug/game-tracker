@@ -44,12 +44,14 @@ interface configParams {
   examples: Record<string, string>
   /** The identifier for the extra, if any */
   extra?: string
+  /** Whether this command should not be displayed in the help menu */
+  hidden?: boolean
 }
 
 /** Generates a config for a Rainbow 6 Siege sub-command
  * @param options The parameters to build the config
  */
-export function getConfig(method: string, { description, details, examples, extra }: configParams): CommandInfo {
+export function getConfig(method: string, { description, details, examples, extra, hidden }: configParams): CommandInfo {
   const format = `${extra ? (requiresExtra(method) ? `<${extra}>` : `[${extra}]`) : ''} { username | @mention } [platform: (${validPlatforms.join(' | ')})]`
 
   return {
@@ -59,7 +61,8 @@ export function getConfig(method: string, { description, details, examples, extr
     details: (details || '').trim() + '\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
     format,
     examples: getExamples(method, examples),
-    guildOnly: true
+    guildOnly: true,
+    hidden: hidden || false
   }
 }
 // #endregion

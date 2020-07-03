@@ -58,7 +58,8 @@ export default class OverwatchCMD extends Command {
         prompt: 'The hero you want stats for.',
         default: ''
       }],
-      guildOnly: true
+      guildOnly: true,
+      hidden: true
     })
   }
 
