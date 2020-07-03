@@ -58,7 +58,7 @@ export function getConfig(method: string, { description, details, examples, extr
     name: `r6 ${method}`,
     aliases: getAliases(method),
     description,
-    details: (details || '').trim() + '\nTo specify the player, enter their username and platform. You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
+    details: (details || '').trim() + '\nTo specify the player, enter their username and platform; if the username has any space, replace them with a percent sign (%). You can also mention a Discord user and, if they linked their account to this bot, it will display their stats. If left blank, the bot will try to show your profile (if you `r6 link`ed it).',
     format,
     examples: getExamples(method, examples),
     guildOnly: true,
@@ -185,7 +185,7 @@ export default class RainbowCMD extends Command {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
         else if (isWeaponType(extra)) extra = getWeaponType(extra)
       } else if (method == 'op') extra = getOperator(extra)
-      return msg.channel.send(await API[method](msg, player, platform, extra)).finally(() => msg.channel.stopTyping())
+      return msg.channel.send(await API[method](msg, player.replace(/%/g, '%20'), platform, extra)).finally(() => msg.channel.stopTyping())
     }
   }
 }

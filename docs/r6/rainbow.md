@@ -5,7 +5,7 @@ The Rainbow Six Siege commands let you look up players from every platform and g
 `<>` is for mandatory, `[]` is for optional, `{}` is for mandatory if not linked.
 
 ### Custom definitions
-* `username` → the username of the player you're looking up. If the user you want to look up has [linked](#r6-link) their account you can replace this with a Discord `@mention`. If you [linked](#r6-link) your account and you want to see your stats leave this blank, the bot will automatically use your linked account.
+* `username` → the username of the player you're looking up (if the username has any space, replace them with a percent sign (%)). If the user you want to look up has [linked](#r6-link) their account you can replace this with a Discord `@mention`. If you [linked](#r6-link) your account and you want to see your stats leave this blank, the bot will automatically use your linked account.
 * `platform` → the platform the account belongs to; it could be either `uplay` (for pc), `xbl` or `psn`. If you leave this blank, the bot will automatically use `uplay` as the default. If you use a linked profile, whether for another user or yourself, you can leave this blank.
 * `weaponName`, `weaponType` and `operator` → these are names of weapons, weapon categories and operators: you can find a the acceptable names in this [cheat sheet](/r6/r6_names).
 * `playType`: either `pvp` or `pve`. If you see `playType | all` that means that you can also use `all`, and it will show stats for both play types.
