@@ -116,7 +116,8 @@ export default class RainbowCMD extends Command {
         prompt: `The platform the user plays on.If none is entered, it will use \`uplay\` as default. Currently supported platforms: ${validPlatforms.map(str => `\`${str}\``).join(', ')}.`,
         default: ''
       }],
-      guildOnly: true
+      guildOnly: true,
+      hidden: true
     })
   }
 
