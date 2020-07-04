@@ -89,6 +89,11 @@ function isValidExtra(method: string, extra: string) {
           false
 }
 
+/** Replaces the spacers with actual spaces */
+function parseUsername(username: string) {
+  return username.replace(/%/g, ' ')
+}
+
 // #endregion
 
 export default class RainbowCMD extends Command {
@@ -164,6 +169,7 @@ export default class RainbowCMD extends Command {
         platform = platform.toLowerCase()
         if (isPlatform(platform)) {
           // USERNAME check
+          player = parseUsername(player)
           const id = await API.getID(player, platform)
           if (!id) err = `No player named \`${player}\` has been found on the \`${platform}\` platform.`
         } else {
@@ -186,7 +192,7 @@ export default class RainbowCMD extends Command {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
         else if (isWeaponType(extra)) extra = getWeaponType(extra)
       } else if (method == 'op') extra = getOperator(extra)
-      return msg.channel.send(await API[method](msg, player.replace(/%/g, '%20'), platform, extra)).finally(() => msg.channel.stopTyping())
+      return msg.channel.send(await API[method](msg, player, platform, extra)).finally(() => msg.channel.stopTyping())
     }
   }
 }
