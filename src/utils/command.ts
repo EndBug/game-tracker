@@ -198,7 +198,7 @@ interface ThrottlingOptions {
 interface Throttle {
   start: number
   usages: number
-  timeout: NodeJS.Timeout
+  timeout: NodeJS.Timeout | number
 }
 
 type blockReason = 'guildOnly' | 'permission' | 'throttling' | 'validation'
