@@ -186,7 +186,7 @@ export default class RainbowCMD extends Command {
       }
     }
 
-    if (err) return msg.reply(err, { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping())
+    if (err) return msg.reply(err.replace(/(?<!\\)@(here|everyone)/g, match => '\\'+match), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping())
     else {
       if (method == 'wp') {
         if (isWeaponName(extra)) extra = getWeaponName(extra)

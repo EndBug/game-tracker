@@ -126,7 +126,7 @@ export default class OverwatchCMD extends Command {
       }
     }
 
-    if (err) return msg.reply(err, { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping(true))
+    if (err) return msg.reply(err.replace(/(?<!\\)@(here|everyone)/g, match => '\\' + match), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping(true))
     else return msg.channel.send(await API[mode](player, platform, msg, hero))
       .finally(() => msg.channel.stopTyping(true))
   }
