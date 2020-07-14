@@ -37,11 +37,21 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "DuckMasterAl",
+      "name": "Duck Master",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/43557963?v=4",
+      "profile": "https://duck.js.org",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "projectName": "game-tracker",
   "projectOwner": "EndBug",
   "repoType": "github",
-  "repoHost": "https://github.com"
+  "repoHost": "https://github.com",
+  "skipCi": true
 }
