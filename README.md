@@ -48,9 +48,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/EndBug"><img src="https://avatars1.githubusercontent.com/u/26386270?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Federico Grandi</b></sub></a><br /><a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Code">💻</a> <a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Documentation">📖</a></td>
-    <td align="center"><img src="https://i.imgur.com/jX5MSNj.png?s=100" width="100px;" alt=""/><br /><sub><b>Genji#9447 (from Discord)</b></sub><br /><a href="https://github.com/EndBug/game-tracker/issues?q=author%3A" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/jpylypiw"><img src="https://avatars3.githubusercontent.com/u/12394156?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jochen</b></sub></a><br /><a href="#ideas-jpylypiw" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/EndBug"><img src="https://avatars1.githubusercontent.com/u/26386270?v=4" width="100px;" alt=""/><br /><sub><b>Federico Grandi</b></sub></a><br /><a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Code">💻</a> <a href="https://github.com/EndBug/game-tracker/commits?author=EndBug" title="Documentation">📖</a></td>
+    <td align="center"><img src="https://i.imgur.com/jX5MSNj.png" width="100px;" alt=""/><br /><sub><b>Genji#9447</b></sub><br /><a href="https://github.com/EndBug/game-tracker/issues?q=author%3A" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/jpylypiw"><img src="https://avatars3.githubusercontent.com/u/12394156?v=4" width="100px;" alt=""/><br /><sub><b>Jochen</b></sub></a><br /><a href="#ideas-jpylypiw" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/693443942183600190/ed1162a00e5cb7bf157c68e034bb756c.png" width="100px;" alt=""/><br /><sub><b>kepperr#9306</b></sub><br /><a href="https://github.com/EndBug/game-tracker/issues?q=author%3A" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 

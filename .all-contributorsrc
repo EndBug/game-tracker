@@ -16,7 +16,7 @@
       ]
     },
     {
-      "name": "Genji#9447 (from Discord)",
+      "name": "Genji#9447",
       "avatar_url": "https://i.imgur.com/jX5MSNj.png",
       "contributions": [
         "bug"
@@ -29,6 +29,13 @@
       "profile": "https://github.com/jpylypiw",
       "contributions": [
         "ideas"
+      ]
+    },
+    {
+      "name": "kepperr#9306",
+      "avatar_url": "https://cdn.discordapp.com/avatars/693443942183600190/ed1162a00e5cb7bf157c68e034bb756c.png",
+      "contributions": [
+        "bug"
       ]
     }
   ],
