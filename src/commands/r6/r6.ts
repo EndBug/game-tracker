@@ -1,5 +1,5 @@
 import { RainbowAPI, isPlatform, isWeaponName, isWeaponType, isOperator, getWeaponName, getWeaponType, getOperator } from '../../apis/rainbow'
-import { isMention, mentionToID } from '../../utils/utils'
+import { isMention, mentionToID, escapeMentions } from '../../utils/utils'
 import { Command, CommandInfo } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
 import { Message } from 'discord.js'
@@ -186,7 +186,7 @@ export default class RainbowCMD extends Command {
       }
     }
 
-    if (err) return msg.reply(err.replace(/(?<!\\)@(here|everyone)/g, match => '\\'+match), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping())
+    if (err) return msg.reply(escapeMentions(err), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping())
     else {
       if (method == 'wp') {
         if (isWeaponName(extra)) extra = getWeaponName(extra)

@@ -95,6 +95,23 @@ export function equals(...items: any[]) {
   return true
 }
 
+/** Escapes mentions from a string
+ * @param str The string to escape mentions from
+ * @param toEscape The type of mentions you want to escape. Default is all of them
+ */
+export function escapeMentions(str: string, toEscape?: ('@here' | '@everyone' | 'roles' | 'users')[]) {
+  if (!toEscape) toEscape = ['@here', '@everyone', 'roles', 'users']
+
+  const f = (match: string) => '\\' + match
+
+  if (toEscape.includes('@everyone')) str = str.replace(/(?<!\\)@(everyone)/g, f)
+  if (toEscape.includes('@here')) str = str.replace(/(?<!\\)@(here)/g, f)
+  if (toEscape.includes('roles')) str = str.replace(/<@&!?(\d+)>/g, f)
+  if (toEscape.includes('users')) str = str.replace(/<@!?(\d+)>/g, f)
+
+  return str
+}
+
 /**
  * Returns a link to the online docs
  * @param path the relative path to the section

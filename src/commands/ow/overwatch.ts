@@ -1,4 +1,4 @@
-import { isMention } from '../../utils/utils'
+import { isMention, escapeMentions } from '../../utils/utils'
 import { OverwatchAPI } from '../../apis/overwatch'
 import { heroes } from '../../utils/ow_hero_names'
 import { APIUtil } from '../../utils/api'
@@ -126,7 +126,7 @@ export default class OverwatchCMD extends Command {
       }
     }
 
-    if (err) return msg.reply(err.replace(/(?<!\\)@(here|everyone)/g, match => '\\' + match), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping(true))
+    if (err) return msg.reply(escapeMentions(err), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping(true))
     else return msg.channel.send(await API[mode](player, platform, msg, hero))
       .finally(() => msg.channel.stopTyping(true))
   }
