@@ -46,7 +46,7 @@
     "@types/nodemon": "^1.19.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
-    "all-contributors-cli": "^6.16.1",
+    "all-contributors-cli": "^6.17.0",
     "cross-env": "^7.0.2",
     "docsify-cli": "^4.4.1",
     "eslint": "^6.5.1",
