@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs'
 import { join as path } from 'path'
 
 // Restart the bot every day at 04:30
-export const job = new CronJob('25 4 * * *', () => {
+export const job = new CronJob('25 4,10,16,22 * * *', () => {
   client.emit('warn', '[rs] The bot will restart in 5 minutes.')
 
   setTimeout(async () => {
