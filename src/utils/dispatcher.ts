@@ -45,15 +45,13 @@ export function loadCommands() {
 
 export async function handleMessage(message: Message) {
   if (message.author.bot) return
-  const { command, fromMention, rawArgs, ignore } = parseMessage(message)
+  const { command, rawArgs, ignore } = parseMessage(message)
 
   if (ignore) return
 
   if (command) {
     const responses = await runCommand(command, rawArgs, message)
     if (Array.isArray(responses)) await Promise.all(responses)
-  } else if (fromMention) {
-    await message.reply('Unknown command. Use the `help` command to see a list of available commands')
   }
 }
 
