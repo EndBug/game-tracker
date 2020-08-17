@@ -29,7 +29,7 @@
     "common-tags": "^1.8.0",
     "cron": "^1.8.2",
     "dbots": "^5.0.4",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.3.1",
     "dotenv": "^8.1.0",
     "git-rev-sync": "^2.0.0",
     "nodemon": "^2.0.4",
