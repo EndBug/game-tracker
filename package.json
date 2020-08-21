@@ -25,7 +25,7 @@
     "src/utils/reloadme.json"
   ],
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.20.0",
     "common-tags": "^1.8.0",
     "cron": "^1.8.2",
     "dbots": "^5.0.4",
