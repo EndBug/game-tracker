@@ -45,7 +45,7 @@
     "@types/node": "^12.12.47",
     "@types/nodemon": "^1.19.0",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
-    "@typescript-eslint/parser": "^4.0.1",
+    "@typescript-eslint/parser": "^4.1.0",
     "all-contributors-cli": "^6.17.2",
     "cross-env": "^7.0.2",
     "docsify-cli": "^4.4.1",
