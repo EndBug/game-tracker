@@ -6,8 +6,8 @@
 | Baptiste          | `baptiste`, `Jean-Baptiste`                                                  |
 | Bastion           | `bastion`                                                                    |
 | Brigitte          | `brigitte`, `brig`                                                           |
-| Doomfist          | `doomfist`, `doom`                                                           |
 | D<span></span>.Va | `dva`, `D.Va`                                                                |
+| Doomfist          | `doomfist`, `doom`                                                           |
 | Echo              | `echo`                                                                       |
 | Genji             | `genji`, `gengu`                                                             |
 | Hanzo             | `hanzo`, `handsoap`                                                          |
