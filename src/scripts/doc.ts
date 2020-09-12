@@ -86,9 +86,7 @@ writeToFile('r6/r6_names.md', last)
 // #region Utils
 /** Creates an alias table */
 function getNameTable(opt: TableOptions) {
-  const contents = [
-    [opt.type, 'Aliases']
-  ]
+  const contents = []
 
   if (!opt.getReadable) opt.getReadable = (s) => s
 
@@ -98,7 +96,7 @@ function getNameTable(opt: TableOptions) {
     contents.push([opt.getReadable(name).replace('.', '<span></span>.'), nameStr])
   }
 
-  const tableStr = table(contents)
+  const tableStr = table([[opt.type, 'Aliases'], ...contents.sort()])
   return (opt.title ? `# ${opt.title}\n` : '') + (opt.subtitle ? `### ${opt.subtitle}\n` : '') + tableStr
 }
 interface TableOptions {
