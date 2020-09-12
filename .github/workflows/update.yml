@@ -2,8 +2,10 @@ name: Update repository
 on:
   push:
     paths:
-      - "src/**"
-      - "README.md"
+      - 'src/**'
+      - 'README.md'
+      - 'package.json'
+  workflow_dispatch:
 
 jobs:
   update-repo:
@@ -29,7 +31,7 @@ jobs:
         uses: EndBug/add-and-commit@v4
         with:
           add: docs
-          message: "[auto] docs: update docs"
+          message: '[auto] docs: update docs'
           force: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -41,6 +43,6 @@ jobs:
         uses: EndBug/add-and-commit@v4
         with:
           add: src
-          message: "[auto] chore: lint source code"
+          message: '[auto] chore: lint source code'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
