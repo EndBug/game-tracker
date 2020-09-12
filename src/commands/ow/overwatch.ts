@@ -5,7 +5,7 @@ import { APIUtil } from '../../utils/api'
 import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
 
-// @ts-ignore
+// @ts-expect-error
 const API: OverwatchAPI = APIUtil.APIs['ow']
 
 const platforms = ['pc', 'xbl', 'psn'],

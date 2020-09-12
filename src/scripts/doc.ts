@@ -49,7 +49,7 @@ for (const weapon of constants.WEAPONS) {
 const wtValues: Record<string, string[]> = {}
 for (const key in constants.WEAPONTYPES) {
   const name = constants.WEAPONTYPES[key]
-  // @ts-ignore
+  // @ts-expect-error
   wtValues[capitalize(name)] = [name]
 }
 

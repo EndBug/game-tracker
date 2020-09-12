@@ -28,14 +28,7 @@
       2,
       "except-parens"
     ],
-    "no-use-before-define": [
-      2,
-      {
-        "functions": false,
-        "classes": false,
-        "variables": false
-      }
-    ],
+    "no-use-before-define": "off",
     "new-cap": 0,
     "no-caller": 2,
     "no-undef": 2,
@@ -63,6 +56,9 @@
       "never"
     ],
     "spaced-comment": "warn",
-    "comma-dangle": "warn"
+    "comma-dangle": "warn",
+    "no-redeclare": "off",
+    "@typescript-eslint/no-redeclare": "error",
+    "@typescript-eslint/prefer-ts-expect-error": "warn"
   }
 }

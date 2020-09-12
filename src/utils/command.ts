@@ -198,7 +198,7 @@ interface ThrottlingOptions {
 interface Throttle {
   start: number
   usages: number
-  timeout: NodeJS.Timeout | number
+  timeout: NodeJS.Timeout | number // eslint-disable-line no-undef
 }
 
 type blockReason = 'guildOnly' | 'permission' | 'throttling' | 'validation'

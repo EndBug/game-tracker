@@ -149,7 +149,7 @@ class ModesEmbed extends CustomEmbed {
     } else title = camelToReadable(key)
 
     for (const statKey in mode) {
-      // @ts-ignore
+      // @ts-expect-error
       if (statKey != 'name') body += keyValue(statKey, mode[statKey]) + '\n'
     }
 
@@ -240,7 +240,7 @@ class OperatorEmbed extends CustomEmbed {
     super(msg, ...args)
     this.type = 'op'
 
-    // @ts-ignore
+    // @ts-expect-error
     const types: strictPlayType[] = Object.keys(stats).filter(m => !!stats[m])
     if (types.length == 0) return
 
@@ -414,7 +414,7 @@ export function isWeaponName(str: string) {
 
 /** Returns the exact weapon name from an argument-form name */
 export function getWeaponName(str: string): WeaponName {
-  // @ts-ignore
+  // @ts-expect-error
   return constants.WEAPONS.map(wp => wpTrans(wp.name))
     .find(name => wpTrans(name) == wpTrans(str))
 }
@@ -433,7 +433,7 @@ export function isWeaponType(str: string) {
 
 /** Returns the exact weapon category from an argument-form name */
 export function getWeaponType(str: string): WeaponType {
-  // @ts-ignore
+  // @ts-expect-error
   return Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
     .find(name => name == str.toLowerCase().split(' ').join('-'))
 }
@@ -447,7 +447,7 @@ export function isOperator(str: string) {
 
 /** Returns the exact operator name from an argument-form name */
 export function getOperator(str: string): Operator {
-  // @ts-ignore
+  // @ts-expect-error
   return typeof str == 'string'
     && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join())
       .find(name => name == str.toLowerCase().split(' ').join())

@@ -424,7 +424,7 @@ export class OverwatchAPI extends API {
       embed = new ErrorEmbed(msg, error)
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     return embed
   }
 
@@ -594,7 +594,7 @@ export class OverwatchAPI extends API {
       const heroPool = Object.keys(stats.mostPlayed.quickplay)
       let mostPlayedIndex = 0
       do {
-        // @ts-ignore
+        // @ts-expect-error
         hero = heroPool[mostPlayedIndex]
         mostPlayedIndex++
       } while (!isSupported(hero) && mostPlayedIndex < heroPool.length)
@@ -646,7 +646,7 @@ export class OverwatchAPI extends API {
       const heroPool = Object.keys(stats.mostPlayed.competitive)
       let mostPlayedIndex = 0
       do {
-        // @ts-ignore
+        // @ts-expect-error
         hero = heroPool[mostPlayedIndex]
         mostPlayedIndex++
       } while (!isSupported(hero) && mostPlayedIndex < heroPool.length)

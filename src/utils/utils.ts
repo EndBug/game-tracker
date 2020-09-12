@@ -212,7 +212,7 @@ export function mergeAndSum<T>(...objects: T[]): T {
 
     const result = obj1
     for (const key in obj2) {
-      // @ts-ignore
+      // @ts-expect-error
       if (typeof result[key] == 'number') result[key] += obj2[key]
       else result[key] = obj2[key]
     }

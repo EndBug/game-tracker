@@ -4,7 +4,7 @@ import { Command, CommandInfo } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
 import { Message } from 'discord.js'
 
-// @ts-ignore
+// @ts-expect-error
 const API: RainbowAPI = APIUtil.APIs['r6']
 
 // #region Utility
