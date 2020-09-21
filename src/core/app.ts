@@ -2,7 +2,7 @@ require('dotenv').config()
 
 import { join as path } from 'path'
 import * as fs from 'fs'
-import { Client, Guild, User, Role } from 'discord.js'
+import { Client, Guild, User, Role } from 'discord.js-light'
 
 import { isPartialMessage } from '../utils/utils'
 import * as stats_poster from '../utils/stats_poster'
@@ -41,10 +41,10 @@ function initClient() {
   client.on('message', msg => !isPartialMessage(msg) && handleMessage(msg).catch(err => client.emit('error', err)))
 
   client.on('ready', async () => {
-    homeguild = client.guilds.cache.get('475792603867119626')
-    owner = homeguild.members.cache.get(ownerID).user
+    homeguild = await client.guilds.fetch('475792603867119626')
+    owner = (await homeguild.members.fetch(ownerID)).user
     roles = {
-      dev: homeguild.roles.cache.get('498225931299848193')
+      dev: await homeguild.roles.fetch('498225931299848193')
     }
     links = {
       invite: `<https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=93248>`,
