@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-repo:
-    name: Update repository
+  docs:
+    name: Update documentation
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +36,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update source code
+  lint:
+    name: Lint source code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linter
         run: npm run lint
 
       - name: Commit source changes
