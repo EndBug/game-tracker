@@ -5,9 +5,10 @@ import { commandPrefix, client } from '../core/app'
 import { Message } from 'discord.js'
 import { provider } from './provider'
 import { isMention, mentionToID, capitalize } from './utils'
+import { statcord } from './statcord'
 
 const ignoredDirs = []
-const groupDict: Record<string, string> = {
+const groupDict = {
   'dbl': 'Discord Bots Lists',
   'dev': 'Developer',
   'ow': 'Overwatch',
@@ -18,6 +19,8 @@ const groupDict: Record<string, string> = {
 export const loadedCommands: Command[] = []
 
 export const groups: string[] = []
+
+const statcordIgnoreGroups = ['ow', 'r6']
 
 export function loadCommands() {
   const commandsPath = path(__dirname, '../commands')
@@ -127,6 +130,8 @@ async function runCommand(command: Command, rawArgs: string[], message: Message)
   const typingCount = message.channel.typingCount
   try {
     client.emit('debug', `Running command ${command.group}:${command.name}.`)
+    if (!statcordIgnoreGroups.includes(command.group))
+      statcord.postCommand(command.name, message.author.id)
     return command.run(message, args, rawArgs)
   } catch (err) {
     if (message.channel.typingCount > typingCount) message.channel.stopTyping()

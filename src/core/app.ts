@@ -8,6 +8,7 @@ import { isPartialMessage } from '../utils/utils'
 import * as stats_poster from '../utils/stats_poster'
 import { loadCommands, handleMessage } from '../utils/dispatcher'
 import { APIUtil } from '../utils/api'
+import { statcord } from '../utils/statcord'
 
 const { TOKEN } = process.env
 
@@ -61,6 +62,8 @@ function initClient() {
   })
 
   client.login(TOKEN)
+
+  statcord.autopost().catch(console.error)
 
   APIUtil.loadAPIs()
 
