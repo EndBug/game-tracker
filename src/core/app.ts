@@ -59,13 +59,14 @@ function initClient() {
     } catch (e) { console.error(e) }
     else client.emit('debug', deactivatePoster ? '[dbots] dbots not loaded.' : '[dbots] No optional DBL token found.')
 
+    statcordInit(client)
+    statcord.autopost().catch(console.error)
+
     loadModules()
   })
 
   client.login(TOKEN)
 
-  statcordInit()
-  statcord.autopost().catch(console.error)
 
   APIUtil.loadAPIs()
 
