@@ -60,6 +60,7 @@ function initClient() {
 
     // Starts the stat poster interval
     if (!deactivatePoster && stats_poster.available) try {
+      client.emit('debug', '[dbots] Starting dbots...')
       await stats_poster.start()
     } catch (e) { console.error(e) }
     else client.emit('debug', deactivatePoster ? '[dbots] dbots not loaded.' : '[dbots] No optional DBL token found.')
