@@ -53,16 +53,16 @@ function initClient() {
       support: 'https://discord.gg/ZhnWkqc'
     }
 
+    statcordInit(client)
+    statcord.autopost().catch(console.error)
+
+    loadModules()
+
     // Starts the stat poster interval
     if (!deactivatePoster && stats_poster.available) try {
       await stats_poster.start()
     } catch (e) { console.error(e) }
     else client.emit('debug', deactivatePoster ? '[dbots] dbots not loaded.' : '[dbots] No optional DBL token found.')
-
-    statcordInit(client)
-    statcord.autopost().catch(console.error)
-
-    loadModules()
   })
 
   client.login(TOKEN)
