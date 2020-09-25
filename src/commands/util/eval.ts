@@ -2,7 +2,8 @@ import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
 import { inspect } from 'util'
 
-import * as utils from '../../utils/utils' // eslint-disable-line @typescript-eslint/no-unused-vars-experimental
+// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+import * as utils from '../../utils/utils' // lgtm [js/unused-local-variable]
 
 function clean(text: string) {
   if (typeof (text) === 'string')
