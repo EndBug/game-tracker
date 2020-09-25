@@ -4,6 +4,7 @@ import { heroes } from '../../utils/ow_hero_names'
 import { APIUtil } from '../../utils/api'
 import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
+import { statcord } from '../../utils/statcord'
 
 // @ts-expect-error
 const API: OverwatchAPI = APIUtil.APIs['ow']
@@ -78,9 +79,15 @@ export default class OverwatchCMD extends Command {
           mode = 'quick';
           [player, platform] = res
           exit = true
-        } else err = 'Please enter a valid mode.'
+        } else {
+          mode = null
+          err = 'Please enter a valid mode.'
+        }
       }
-      if (!modes.includes(mode)) err = 'Please enter a valid mode.'
+      if (!modes.includes(mode)) {
+        mode = null
+        err = 'Please enter a valid mode.'
+      }
     }
 
     if (!exit && !err) {
@@ -126,6 +133,7 @@ export default class OverwatchCMD extends Command {
       }
     }
 
+    statcord.postCommand(`${this.name} ${mode || '???'}`, msg.author.id)
     if (err) return msg.reply(escapeMentions(err), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping(true))
     else return msg.channel.send(await API[mode](player, platform, msg, hero))
       .finally(() => msg.channel.stopTyping(true))

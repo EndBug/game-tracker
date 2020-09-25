@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs'
 import { join as path } from 'path'
 
 // Restart the bot every day at 04:30
-export const job = new CronJob('25 4,10,16,22 * * *', () => {
+export const job = new CronJob('25 4 * * *', () => {
   client.emit('warn', '[rs] The bot will restart in 5 minutes.')
 
   setTimeout(async () => {
@@ -31,4 +31,6 @@ export const job = new CronJob('25 4,10,16,22 * * *', () => {
   }, 5 * 60 * 1000)
 })
 
-job.start()
+// THIS MODULE IS TEMPORARILY DISABLED
+// This is to test the performance improvements from discord.js-light, which should reduce the need for reloads.
+// job.start()

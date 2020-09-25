@@ -3,6 +3,7 @@ import { isMention, mentionToID, escapeMentions } from '../../utils/utils'
 import { Command, CommandInfo } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
 import { Message } from 'discord.js'
+import { statcord } from '../../utils/statcord'
 
 // @ts-expect-error
 const API: RainbowAPI = APIUtil.APIs['r6']
@@ -133,7 +134,10 @@ export default class RainbowCMD extends Command {
       exit = false
 
     if (method == 'unlink') exit = true
-    else if (!isValidMethod(method)) err = `\`${method}\` is not a valid method. Currently supported methods: ${validMethods.map(str => `\`${str}\``).join(', ')}.`
+    else if (!isValidMethod(method)) {
+      method = null
+      err = `\`${method}\` is not a valid method. Currently supported methods: ${validMethods.map(str => `\`${str}\``).join(', ')}.`
+    }
 
     // EXTRA check
     if (!exit && !err) { // method is valid
@@ -186,6 +190,7 @@ export default class RainbowCMD extends Command {
       }
     }
 
+    statcord.postCommand(`${this.name} ${method || '???'}`, msg.author.id)
     if (err) return msg.reply(escapeMentions(err), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping())
     else {
       if (method == 'wp') {

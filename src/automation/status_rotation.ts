@@ -46,8 +46,8 @@ const status = isDev || isBeta ? [
   new Presence('BETA', 'PLAYING', 'dnd')
 ] : [
     new Presence('for your requests!', 'WATCHING'),
-    new Presence('/guildCount/ servers.', 'WATCHING'),
-    new Presence('/userCount/ users.', 'LISTENING')
+    new Presence('/guildCount/ servers.', 'WATCHING')
+    // new Presence('/userCount/ users.', 'LISTENING') // User count is now disable in favor of the caching improvements
   ]
 
 var index = 0

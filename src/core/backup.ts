@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-import { Client, Guild, TextChannel } from 'discord.js'
+import { Client, Guild, TextChannel } from 'discord.js-light'
 import { accessSync, createWriteStream } from 'fs'
 import axios from 'axios'
 import { join as path } from 'path'
@@ -47,11 +47,11 @@ const channels: { [key: string]: TextChannel } = {}
  * Loads 'channels'
  * @param check Whether to check if the channels exist (default is true)
  */
-function loadChannels(check = true) {
+async function loadChannels(check = true) {
   for (const key in IDs) {
     const channel = IDs[key]
-    const tempC = guild.channels.cache.get(channel)
-    if (!((tempC): tempC is TextChannel => tempC.type === 'text')(tempC)) return
+    const tempC = await guild.channels.fetch(channel)
+    if (!((tempC): tempC is TextChannel => tempC && tempC.type === 'text')(tempC)) return
     channels[key] = tempC
   }
 
@@ -73,10 +73,10 @@ export function init(doRestore = true) {
     client.on('error', reject)
     client.login(process.env.BACKUP).catch(reject)
     client.on('ready', async () => {
-      guild = client.guilds.cache.get(guildID)
+      guild = await client.guilds.fetch(guildID)
       if (!guild || !guild.available)
         return reject(`Guild '${guildID}' is ${guild ? 'unavailable' : 'undefined'}`)
-      loadChannels()
+      await loadChannels()
       channel = channels.backups
       if (!channel) return reject(`Channel '${IDs.backups}' does not exist in this guild`)
       if (doRestore) await restore()
