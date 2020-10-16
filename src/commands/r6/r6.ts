@@ -135,8 +135,8 @@ export default class RainbowCMD extends Command {
 
     if (method == 'unlink') exit = true
     else if (!isValidMethod(method)) {
-      method = null
       err = `\`${method}\` is not a valid method. Currently supported methods: ${validMethods.map(str => `\`${str}\``).join(', ')}.`
+      method = null
     }
 
     // EXTRA check
