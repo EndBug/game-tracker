@@ -35,7 +35,7 @@
     "git-rev-sync": "^3.0.1",
     "nodemon": "^2.0.4",
     "overwatch-stats-api": "^2.1.0",
-    "pretty-error": "^2.1.1",
+    "pretty-error": "^2.1.2",
     "r6api.js": "^1.5.0",
     "statcord.js": "^3.1.1",
     "ts-node": "9.0.0",
