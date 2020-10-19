@@ -10,6 +10,7 @@ updates:
     schedule:
       interval: 'weekly'
     commit-message:
-      prefix: 'chore(bump): '
+      prefix: 'chore'
+      include_scope: true
     default_labels:
       - 'type: dependencies'
