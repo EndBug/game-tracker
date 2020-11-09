@@ -37,7 +37,7 @@
     "overwatch-stats-api": "^2.1.0",
     "pretty-error": "^2.1.2",
     "r6api.js": "^1.5.0",
-    "statcord.js": "^3.1.1",
+    "statcord.js": "^3.1.2",
     "ts-node": "9.0.0",
     "typescript-map": "0.0.7"
   },
