@@ -5,7 +5,7 @@ import { commandPrefix, client } from '../core/app'
 import { Message } from 'discord.js'
 import { provider } from './provider'
 import { isMention, mentionToID, capitalize } from './utils'
-import { statcord } from './statcord'
+import { postCommand } from './statcord'
 
 const ignoredDirs = []
 const groupDict = {
@@ -131,7 +131,7 @@ async function runCommand(command: Command, rawArgs: string[], message: Message)
   try {
     client.emit('debug', `Running command ${command.group}:${command.name}.`)
     if (!statcordIgnoreGroups.includes(command.group))
-      statcord.postCommand(command.name, message.author.id)
+      postCommand(command.name, message.author.id)
     return command.run(message, args, rawArgs)
   } catch (err) {
     if (message.channel.typingCount > typingCount) message.channel.stopTyping()
