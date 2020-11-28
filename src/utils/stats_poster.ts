@@ -1,4 +1,5 @@
-import { Poster, PosterOptions } from 'dbots'
+import { Poster } from 'dbots'
+import { PosterOptions } from 'dbots/lib/Utils/Constants'
 import { client } from '../core/app'
 
 const tokens: PosterOptions['apiKeys'] = {}
@@ -25,14 +26,14 @@ export async function start() {
     apiKeys: tokens
   })
 
-  poster.addHandler('autopost', result => {
+  poster.addHandler('autopostSuccess', result => {
     const n = result instanceof Array ? result.length : 1
     console.log(`[DBOTS] Posted stats to ${n} services`)
   })
 
   poster.startInterval(interval)
   const result = await poster.post()
-  poster.runHandlers('autopost', result)
+  poster.runHandlers('autopostSuccess', result)
   return result
 }
 
