@@ -53,8 +53,12 @@ function initClient() {
       support: 'https://discord.gg/ZhnWkqc'
     }
 
-    statcordInit(client)
-    statcord.autopost().catch(console.error)
+    try {
+      statcordInit(client)
+      statcord.autopost().catch(console.error)
+    } catch (e) {
+      console.error('There has been an issue with StatCord:\n', e)
+    }
 
     loadModules()
 
