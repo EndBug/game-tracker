@@ -81,9 +81,9 @@ export default class HelpCommand extends Command {
         )
       }
     } else {
-      const messages: Message[] = []
+      let messages: Message[] = []
       try {
-        messages.push(await msg.author.send(stripIndents`
+        const sendResult = await msg.author.send(stripIndents`
 					${oneLine`
 						To run a command in ${ msg.guild?.name || 'any server'},
 						use ${usage('command', msg.guild?.id, true)}.
@@ -104,7 +104,8 @@ export default class HelpCommand extends Command {
               }
 						`).join('\n\n')
           }
-				`, { split: true }))
+				`, { split: true })
+        messages = [...messages, ...(sendResult instanceof Array ? sendResult : [sendResult])]
         if (msg.channel.type !== 'dm') messages.push(await msg.reply('Sent you a DM with information.'))
       } catch (err) {
         messages.push(await msg.reply('Unable to send you the help DM. You probably have DMs disabled.'))
