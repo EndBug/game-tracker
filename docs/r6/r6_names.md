@@ -5,6 +5,7 @@
 | Ace              | `ace`             |
 | Alibi            | `alibi`           |
 | Amaru            | `amaru`           |
+| Aruni            | `aruni`           |
 | Ash              | `ash`             |
 | Bandit           | `bandit`          |
 | Blackbeard       | `blackbeard`      |
