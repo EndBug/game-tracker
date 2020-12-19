@@ -15,7 +15,7 @@ const { TOKEN } = process.env
 
 export const commandPrefix = '-'
 export const ownerID = '218308478580555777'
-export const supportHardLink = 'https://discord.gg/ZhnWkqc'
+export const supportHardLink = 'https://discord.gg/5YrhW4NHfY'
 export const baseDocsURL = 'https://game-tracker.js.org/#/'
 export const isDev = process.env.NODE_ENV == 'dev'
 export const isBeta = process.env.NODE_ENV == 'beta'
@@ -55,7 +55,7 @@ function initClient() {
     }
     links = {
       invite: `<https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=93248>`,
-      support: 'https://discord.gg/ZhnWkqc'
+      support: supportHardLink
     }
 
     try {

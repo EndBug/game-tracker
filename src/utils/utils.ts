@@ -2,7 +2,14 @@
 
 import { TSMap as Map } from 'typescript-map'
 import { User, GuildMember, PartialMessage, Message } from 'discord.js'
-import { homeguild, owner, ownerID, baseDocsURL } from '../core/app'
+import {
+  homeguild,
+  owner,
+  ownerID,
+  baseDocsURL,
+  links,
+  client
+} from '../core/app'
 
 // #region Types
 export type PartialRecord<K extends keyof any, T> = {
@@ -146,15 +153,25 @@ export function getShortName(user: User | GuildMember) {
  * @param codeOnly Whether to return only the code of the invite instead of the URL (default is `false`)
  */
 export async function getSupportInvite(codeOnly = false) {
-  const readme =
-    (await homeguild.channels.fetch('505805487166586901')) ||
-    (await homeguild.channels.fetch())?.find((c) => c.name == 'readme')
-  if (!readme) {
-    owner.send("Can't find 'readme' channel, please check the ID.")
-    return
+  try {
+    const rulesChannel =
+      (await homeguild.channels.fetch('570606562880651264').catch(() => {})) ||
+      (await homeguild.channels.fetch())?.find((c) => c.name == 'rules')
+    if (!rulesChannel) throw undefined
+
+    const existingInvite = await client
+      .fetchInvite(links.support)
+      .catch(() => {})
+    if (!existingInvite) owner.send('Hardcoded support invite is outdated!')
+
+    const invite =
+      existingInvite || (await rulesChannel.createInvite({ maxAge: 0 }))
+
+    return codeOnly ? invite.code : `https://discord.gg/${invite.code}`
+  } catch {
+    owner.send("Can't find 'rules' channel, please check the ID.")
+    return links.support
   }
-  const invite = await readme.createInvite({ maxAge: 0 })
-  return codeOnly ? invite.code : `https://discord.gg/${invite.code}`
 }
 
 /** Makes a string readable */
