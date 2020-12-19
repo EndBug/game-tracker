@@ -816,7 +816,10 @@ export class RainbowAPI extends API {
       if (typeof e == 'string') error = new Error(e)
       else if (e instanceof Error) error = e
 
-      if (error.message == 'Stripped in prod' && this.isInvalidId(id, platform))
+      if (
+        error.message == 'Stripped in prod' &&
+        (await this.isInvalidId(id, platform))
+      )
         error = new Error('Invalid id.')
     }
     if (error) {
