@@ -18,9 +18,15 @@ export default class PostStatsCMD extends Command {
 
     try {
       const stats = await poster.post()
-      return rep.edit(`Stats successfully posted to ${stats instanceof Array ? `\`${stats.length}\` service${stats.length == 1 ? '' : 's'}` : '`1` service'} :white_check_mark:`)
+      return rep.edit(
+        `Stats successfully posted to ${
+          stats instanceof Array
+            ? `\`${stats.length}\` service${stats.length == 1 ? '' : 's'}`
+            : '`1` service'
+        } :white_check_mark:`
+      )
     } catch (e) {
-      return rep.edit('Couldn\'t post stats:\n```\n' + e + '\n```')
+      return rep.edit("Couldn't post stats:\n```\n" + e + '\n```')
     }
   }
 }

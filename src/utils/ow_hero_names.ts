@@ -4,51 +4,56 @@ function capitalize(str: string) {
 }
 
 export const heroes = {
-  'ana': [],
-  'ashe': ['Ashe', 'BOB', 'B.O.B.'],
-  'baptiste': ['Jean-Baptiste'],
-  'bastion': [],
-  'brigitte': ['brig'],
-  'doomfist': ['doom'],
-  'dva': ['D.Va'],
-  'echo': [],
-  'genji': ['gengu'],
-  'hanzo': ['handsoap'],
-  'junkrat': ['junk', 'Chacal', 'Hunkrat'],
-  'lucio': ['Lúcio'],
-  'mccree': ['mc'],
-  'mei': ['satan'],
-  'mercy': ['ange', 'angela'],
-  'moira': [],
-  'orisa': ['Oriisa'],
-  'pharah': ['phara', 'fara'],
-  'reaper': ['faucheur'],
-  'reinhardt': ['rein'],
-  'roadhog': ['road', 'Chopper'],
-  'sigma': ['sig'],
+  ana: [],
+  ashe: ['Ashe', 'BOB', 'B.O.B.'],
+  baptiste: ['Jean-Baptiste'],
+  bastion: [],
+  brigitte: ['brig'],
+  doomfist: ['doom'],
+  dva: ['D.Va'],
+  echo: [],
+  genji: ['gengu'],
+  hanzo: ['handsoap'],
+  junkrat: ['junk', 'Chacal', 'Hunkrat'],
+  lucio: ['Lúcio'],
+  mccree: ['mc'],
+  mei: ['satan'],
+  mercy: ['ange', 'angela'],
+  moira: [],
+  orisa: ['Oriisa'],
+  pharah: ['phara', 'fara'],
+  reaper: ['faucheur'],
+  reinhardt: ['rein'],
+  roadhog: ['road', 'Chopper'],
+  sigma: ['sig'],
   'soldier-76': ['76', 'soldier_76', 'soldier76', 'soldier'],
-  'sombra': [],
-  'symmetra': ['symm'],
-  'torbjorn': ['torb'],
-  'tracer': [],
-  'widowmaker': ['widow', 'Fatale'],
-  'winston': ['monkey', 'harambe', 'scientist'],
-  'wrecking-ball': ['wrecking_ball', 'wreckingball', 'wrecking ball', 'hammond'],
-  'zarya': [],
-  'zenyatta': ['zen', 'Zeniyatta']
+  sombra: [],
+  symmetra: ['symm'],
+  torbjorn: ['torb'],
+  tracer: [],
+  widowmaker: ['widow', 'Fatale'],
+  winston: ['monkey', 'harambe', 'scientist'],
+  'wrecking-ball': [
+    'wrecking_ball',
+    'wreckingball',
+    'wrecking ball',
+    'hammond'
+  ],
+  zarya: [],
+  zenyatta: ['zen', 'Zeniyatta']
 }
 
-export type SupportedHero = keyof typeof heroes;
+export type SupportedHero = keyof typeof heroes
 
 /** Converts hero keys into readable names
  * @param str The hero key to convert
  */
 export function heroName(str: string): string {
   const custom = {
-    'dva': 'D.Va',
-    'lucio': 'Lúcio',
-    'mccree': 'McCree',
-    'soldier76': 'Soldier 76'
+    dva: 'D.Va',
+    lucio: 'Lúcio',
+    mccree: 'McCree',
+    soldier76: 'Soldier 76'
   }
   if (custom[str]) return custom[str]
   const arr = str.split('_')

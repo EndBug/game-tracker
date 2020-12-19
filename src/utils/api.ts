@@ -8,8 +8,8 @@ import { client } from '../core/app'
 export type APIKey = 'ow' | 'r6'
 
 export class API {
-  apiKey: APIKey;
-  gameName: string;
+  apiKey: APIKey
+  gameName: string
 
   constructor(key: APIKey, game: string) {
     this.apiKey = key
@@ -33,7 +33,7 @@ export class API {
   }
 }
 
-type Class = { new(...args: any[]): any; };
+type Class = { new (...args: any[]): any }
 
 export class APIUtil {
   /** Where all APIs are stored */
@@ -51,7 +51,8 @@ export class APIUtil {
     const dir = path(__dirname, '../apis')
     const files = readdirSync(dir)
     for (const file of files) {
-      const ClassFromModule: Class = require(path(__dirname, '../apis', file)).ApiLoader
+      const ClassFromModule: Class = require(path(__dirname, '../apis', file))
+        .ApiLoader
       const api: API = new ClassFromModule()
       this.APIs[api.apiKey] = api
 
@@ -62,7 +63,7 @@ export class APIUtil {
   /**
    * Finds user entries in every game's database
    * @param target The user to search
-   * @param [realName] Whether to map 
+   * @param [realName] Whether to map
    * @returns An object with every result mapped by APIKey
    */
   static findAll(target: string | GuildMember | User) {

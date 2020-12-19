@@ -20,8 +20,7 @@ udpateREADME()
 // #region Overwatch
 import { heroes, heroName } from '../utils/ow_hero_names'
 
-for (const hero in heroes)
-  heroes[hero].unshift(hero)
+for (const hero in heroes) heroes[hero].unshift(hero)
 
 writeTable({
   getReadable: heroName,
@@ -63,7 +62,12 @@ const tables = [
     type: 'Operator',
     subtitle: 'Operators',
     values: opValues,
-    getReadable: (name) => constants.OPERATORS.find(op => op.name.toLowerCase().split(' ').join() == name.toLowerCase().split(' ').join()).readableName
+    getReadable: (name) =>
+      constants.OPERATORS.find(
+        (op) =>
+          op.name.toLowerCase().split(' ').join() ==
+          name.toLowerCase().split(' ').join()
+      ).readableName
   }),
   getNameTable({
     type: 'Category',
@@ -79,7 +83,6 @@ const tables = [
 const last = '# Rainbow Six Siege cheatsheet\n' + tables.join('\n\n')
 writeToFile('r6/r6_names.md', last)
 
-
 // #endregion
 
 // #region Utils
@@ -92,11 +95,18 @@ function getNameTable(opt: TableOptions) {
   for (const name in opt.values) {
     const names = [...opt.values[name]],
       nameStr = '`' + names.join('`, `') + '`'
-    contents.push([opt.getReadable(name).replace('.', '<span></span>.'), nameStr])
+    contents.push([
+      opt.getReadable(name).replace('.', '<span></span>.'),
+      nameStr
+    ])
   }
 
   const tableStr = table([[opt.type, 'Aliases'], ...contents.sort()])
-  return (opt.title ? `# ${opt.title}\n` : '') + (opt.subtitle ? `### ${opt.subtitle}\n` : '') + tableStr
+  return (
+    (opt.title ? `# ${opt.title}\n` : '') +
+    (opt.subtitle ? `### ${opt.subtitle}\n` : '') +
+    tableStr
+  )
 }
 interface TableOptions {
   getReadable?: (name: string) => string
@@ -122,6 +132,5 @@ interface WriteTableOptions extends TableOptions {
   /** The path relative to the doc directory */
   relPath: string
 }
-
 
 // #endregion

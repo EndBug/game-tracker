@@ -8,17 +8,25 @@ export default class SupportCMD extends Command {
     super({
       name: 'support',
       aliases: ['supportguild', 'supportserver', 'feedback', 'issue'],
-      description: 'Gives you the invite to enter in the official Game Tracker support server.'
+      description:
+        'Gives you the invite to enter in the official Game Tracker support server.'
     })
   }
 
   async run(msg: Message) {
     let invite = await getSupportInvite()
     if (!invite) {
-      owner.send(`Problem with invite creation: getSupportInvite() == ${invite}`)
+      owner.send(
+        `Problem with invite creation: getSupportInvite() == ${invite}`
+      )
       invite = links.support
-      if (!invite) return msg.channel.send('Sorry, this command is temporarily unavailable, please retry later.\nIronic, huh?')
+      if (!invite)
+        return msg.channel.send(
+          'Sorry, this command is temporarily unavailable, please retry later.\nIronic, huh?'
+        )
     }
-    return msg.channel.send(`Thank you for choosing Game Tracker!\nYou can enter in the support guild through this invite: ${invite}`)
+    return msg.channel.send(
+      `Thank you for choosing Game Tracker!\nYou can enter in the support guild through this invite: ${invite}`
+    )
   }
 }

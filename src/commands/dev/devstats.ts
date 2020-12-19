@@ -19,11 +19,15 @@ export default class DevStatsCMD extends Command {
       name: 'devstats',
       description: 'Gives some usefult stats about the bot.',
       aliases: ['info'],
-      args: [{
-        key: 'mode',
-        prompt: `One of: ${Object.keys(modes).map(key => `\`${key}\``).join(', ')}`,
-        validate: str => !!checkMode(str)
-      }],
+      args: [
+        {
+          key: 'mode',
+          prompt: `One of: ${Object.keys(modes)
+            .map((key) => `\`${key}\``)
+            .join(', ')}`,
+          validate: (str) => !!checkMode(str)
+        }
+      ],
       ownerOnly: true
     })
   }
@@ -32,14 +36,15 @@ export default class DevStatsCMD extends Command {
     const m = checkMode(mode)
     switch (m) {
       case 'g': {
-        let text = `The bot is now in ${client.guilds.cache.size} guilds:\n`
-          + '```\n'
-          + client.guilds.cache.array()
+        let text =
+          `The bot is now in ${client.guilds.cache.size} guilds:\n` +
+          '```\n' +
+          client.guilds.cache
+            .array()
             .sort((a, b) => b.joinedAt.getTime() - a.joinedAt.getTime())
-            .join(', ')
-          + '\n```'
-        if (text.length > 2000)
-          text = text.substr(0, 2000 - 7) + '...\n```'
+            .join(', ') +
+          '\n```'
+        if (text.length > 2000) text = text.substr(0, 2000 - 7) + '...\n```'
 
         return msg.channel.send(text)
       }
@@ -58,7 +63,7 @@ export default class DevStatsCMD extends Command {
 
       case 'rs': {
         const dateStr = require('../../utils/reloadme.json')?.date,
-          result = dateStr ? (new Date(dateStr)).toString() : '???'
+          result = dateStr ? new Date(dateStr).toString() : '???'
         return msg.channel.send(`Last reload: ${result}`)
       }
     }
@@ -66,6 +71,8 @@ export default class DevStatsCMD extends Command {
 }
 
 function checkMode(value: string) {
-  const res = Object.keys(modes).find(m => m == value || modes[m].includes(value))
+  const res = Object.keys(modes).find(
+    (m) => m == value || modes[m].includes(value)
+  )
   if (enforceType<keyof typeof modes>(res)) return res
 }

@@ -4,23 +4,43 @@ import * as owapi from 'overwatch-stats-api'
 import { long as getSha } from 'git-rev-sync'
 
 import { API } from '../utils/api'
-import { Cache, getShortName, readHours, readNumber, readMinutes, humanize, capitalize, equals, enforceType, stringToSeconds } from '../utils/utils'
+import {
+  Cache,
+  getShortName,
+  readHours,
+  readNumber,
+  readMinutes,
+  humanize,
+  capitalize,
+  equals,
+  enforceType,
+  stringToSeconds
+} from '../utils/utils'
 import { heroName, SupportedHero, isSupported } from '../utils/ow_hero_names'
 
 type platform = 'pc' | 'xbl' | 'psn'
 function isPlatform(value): value is platform {
   return ['pc', 'xbl', 'psn'].includes(value)
 }
-type embedType = 'quick' | 'comp' | 'hero' | 'herocomp' | 'link' | 'unlink' | 'warn' | 'error'
+type embedType =
+  | 'quick'
+  | 'comp'
+  | 'hero'
+  | 'herocomp'
+  | 'link'
+  | 'unlink'
+  | 'warn'
+  | 'error'
 
 const cache = new Cache('Overwatch')
 const githubRef: string = getSha() || 'master'
 
 // #region Embeds
-type StatsType<T> =
-  T extends 'quick' | 'comp' ? RegularStats :
-  T extends 'hero' | 'herocomp' ? HeroStats :
-  undefined;
+type StatsType<T> = T extends 'quick' | 'comp'
+  ? RegularStats
+  : T extends 'hero' | 'herocomp'
+  ? HeroStats
+  : undefined
 
 // #region Stat Interfaces
 
@@ -53,7 +73,7 @@ interface RegularStats {
   }
 
   mostPlayed: {
-    name: string,
+    name: string
     hrsPlayed: number
   }[]
 }
@@ -83,10 +103,11 @@ interface HeroStats {
 
 // #endregion
 
-type EmbedOptions<T> =
-  T extends 'link' | 'unlink' ? LinkOptions<T> :
-  T extends 'error' | 'warn' ? ErrorOptions<T> :
-  StatsEmbedOptions<T>
+type EmbedOptions<T> = T extends 'link' | 'unlink'
+  ? LinkOptions<T>
+  : T extends 'error' | 'warn'
+  ? ErrorOptions<T>
+  : StatsEmbedOptions<T>
 
 interface StatsEmbedOptions<T> {
   battletag: string
@@ -98,10 +119,12 @@ interface StatsEmbedOptions<T> {
 
 type playerEntry = [string, platform]
 function isPlayerEntry(value): value is playerEntry {
-  return value instanceof Array
-    && value.length == 2
-    && typeof value[0] == 'string'
-    && isPlatform(value[1])
+  return (
+    value instanceof Array &&
+    value.length == 2 &&
+    typeof value[0] == 'string' &&
+    isPlatform(value[1])
+  )
 }
 
 interface LinkOptions<T> {
@@ -119,12 +142,20 @@ interface ErrorOptions<T> {
 
 /** Returns whether the supplied rank object has a valid score */
 function checkRank(rank: RegularStats['account']['rank']) {
-  return typeof rank == 'object' && Object.values(rank).reduce((prev = 0, curr) => curr ? prev + 1 : prev, 0) > 0
+  return (
+    typeof rank == 'object' &&
+    Object.values(rank).reduce(
+      (prev = 0, curr) => (curr ? prev + 1 : prev),
+      0
+    ) > 0
+  )
 }
 
 /** Gets you a link to the PlayOverwatch website */
 function getLink(battletag: string, platform: platform) {
-  return `https://playoverwatch.com/en-us/career/${platform || 'pc'}/${battletag.replace('#', '-')}`
+  return `https://playoverwatch.com/en-us/career/${
+    platform || 'pc'
+  }/${battletag.replace('#', '-')}`
 }
 
 /** Removes decimals from a number */
@@ -140,12 +171,17 @@ function player(battletag: string, platform: platform, bold = true) {
   return b + battletag + b + ' - ' + b + platform.toUpperCase() + b
 }
 
-type EmbedSwitch<T> =
-  T extends 'quick' | 'comp' ? StatsEmbed :
-  T extends 'hero' | 'herocomp' ? HeroEmbed :
-  T extends 'link' | 'unlink' ? LinkEmbed :
-  T extends 'error' ? ErrorEmbed :
-  T extends 'warn' ? WarnEmbed : CustomEmbed
+type EmbedSwitch<T> = T extends 'quick' | 'comp'
+  ? StatsEmbed
+  : T extends 'hero' | 'herocomp'
+  ? HeroEmbed
+  : T extends 'link' | 'unlink'
+  ? LinkEmbed
+  : T extends 'error'
+  ? ErrorEmbed
+  : T extends 'warn'
+  ? WarnEmbed
+  : CustomEmbed
 
 class CustomEmbed extends MessageEmbed {
   mode: embedType
@@ -159,17 +195,26 @@ class CustomEmbed extends MessageEmbed {
 
   /** Adds the name of the user that requested the data as in the footer. */
   via(author: User) {
-    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL())
+    return this.setFooter(
+      `Requested by ${getShortName(author)}`,
+      author.displayAvatarURL()
+    )
   }
 
   /** Adds the website link of the targeted profile to the embed description */
   private addLink(battletag: string, platform: platform) {
-    return this.setDescription(`View this profile on the Overwatch [website](${getLink(battletag, platform)})`)
+    return this.setDescription(
+      `View this profile on the Overwatch [website](${getLink(
+        battletag,
+        platform
+      )})`
+    )
   }
 
   /** Adds a warning for non-currently-ranked players */
   notRanked() {
-    this.description += '\n:warning: This account is not currently ranked: this data comes exclusively from off-season & placement matches.'
+    this.description +=
+      '\n:warning: This account is not currently ranked: this data comes exclusively from off-season & placement matches.'
     return this
   }
 
@@ -177,15 +222,25 @@ class CustomEmbed extends MessageEmbed {
    * @param type The first word of the title, representing the type of the embed
    */
   setHeader(type: string, battletag: string, platform: platform) {
-    return this.setTitle(`${capitalize(type)} stats for ${battletag.replace('-', '#')} - ${platform.toUpperCase()}`)
-      .addLink(battletag, platform)
+    return this.setTitle(
+      `${capitalize(type)} stats for ${battletag.replace(
+        '-',
+        '#'
+      )} - ${platform.toUpperCase()}`
+    ).addLink(battletag, platform)
   }
 }
 
 class StatsEmbed extends CustomEmbed {
   mode: 'comp' | 'quick'
 
-  constructor(msg: Message, battletag: string, platform: platform, stats: RegularStats, ...args) {
+  constructor(
+    msg: Message,
+    battletag: string,
+    platform: platform,
+    stats: RegularStats,
+    ...args
+  ) {
     super(msg, ...args)
 
     this.mode = stats.type == 'competitive' ? 'comp' : 'quick'
@@ -212,20 +267,24 @@ class StatsEmbed extends CustomEmbed {
       if (rank.tank) arr.push('🛡️' + rank.tank)
 
       // Rank: 1234⚔️ | 1237⛑️ | 1234🛡️
-      rankStr = `Rank: ${arr.map(i => `**${i || '----'}**`).join(' | ')}`
+      rankStr = `Rank: ${arr.map((i) => `**${i || '----'}**`).join(' | ')}`
     } else rankStr = 'Rank: **----**'
 
-    this.addField('Account stats', `Level: **${account.level}**
+    this.addField(
+      'Account stats',
+      `Level: **${account.level}**
     Endorsement: **${account.endorsement}**
-    ${rankStr}`, true)
-      .setThumbnail(account.avatar)
+    ${rankStr}`,
+      true
+    ).setThumbnail(account.avatar)
     return this
   }
 
   /** Adds most played heroes to the embed */
   addMostPlayed({ mostPlayed }: RegularStats) {
     let text = ''
-    for (const { name, hrsPlayed } of mostPlayed) text += `\n${name}: **${readHours(hrsPlayed)}**`
+    for (const { name, hrsPlayed } of mostPlayed)
+      text += `\n${name}: **${readHours(hrsPlayed)}**`
     this.addField('Most played heroes', text.trim(), true)
     return this
   }
@@ -237,20 +296,28 @@ class StatsEmbed extends CustomEmbed {
 
     if (!losses) win = `Games won: **${wins}**`
     else win = `Win rate: **${noDec(wins / losses)}%** (${wins}/${losses})`
-    this.addField('General', `
+    this.addField(
+      'General',
+      `
     Kills/deaths: **${readNumber(general.kdr)}**
     ${win}
-    Longest on fire: **${readMinutes(general.minOnFire)}**`, true)
+    Longest on fire: **${readMinutes(general.minOnFire)}**`,
+      true
+    )
 
     return this
   }
 
   /** Adds record stats to the embed */
   addBestPerformance({ bestPerformance }: RegularStats) {
-    this.addField('Performance', `
+    this.addField(
+      'Performance',
+      `
     Highest damage: **${noDec(bestPerformance.damage) || '----'}**
     Highest healing: **${noDec(bestPerformance.healing) || '----'}**
-    Best kill streak: **${noDec(bestPerformance.killStreak) || '----'}**`, true)
+    Best kill streak: **${noDec(bestPerformance.killStreak) || '----'}**`,
+      true
+    )
     return this
   }
 }
@@ -258,7 +325,13 @@ class StatsEmbed extends CustomEmbed {
 class HeroEmbed extends CustomEmbed {
   mode: 'herocomp' | 'hero'
 
-  constructor(msg: Message, battletag: string, platform: platform, stats: HeroStats, ...args) {
+  constructor(
+    msg: Message,
+    battletag: string,
+    platform: platform,
+    stats: HeroStats,
+    ...args
+  ) {
     super(msg, ...args)
 
     this.mode = stats.type == 'competitive' ? 'herocomp' : 'hero'
@@ -267,10 +340,11 @@ class HeroEmbed extends CustomEmbed {
       .setColor('GREEN')
       .addImage(stats)
 
-    !stats.played ? this.setDescription('You haven\'t played this hero in this mode yet :confused:').setColor('GOLD')
-      : this.addHeroData(stats)
-        .addGeneric(stats)
-        .addMedals(stats)
+    !stats.played
+      ? this.setDescription(
+          "You haven't played this hero in this mode yet :confused:"
+        ).setColor('GOLD')
+      : this.addHeroData(stats).addGeneric(stats).addMedals(stats)
 
     if (stats.type == 'competitive' && !stats.currentlyRanked) this.notRanked()
   }
@@ -285,37 +359,50 @@ class HeroEmbed extends CustomEmbed {
   addHeroData({ specific }: HeroStats) {
     let str = ''
     for (const key in specific)
-      str += `${humanize(key).replace('avg per 10 min', '(avg 10m)')}: **${specific[key]}**\n`
+      str += `${humanize(key).replace('avg per 10 min', '(avg 10m)')}: **${
+        specific[key]
+      }**\n`
     return str ? this.addField('Hero statistics', str) : this
   }
-
 
   /** Adds a field with generic stats */
   addGeneric({ generic }: HeroStats) {
     const { kills, deaths } = generic
 
-    return this.addField('General stats', `
+    return this.addField(
+      'General stats',
+      `
     Time played: **${readHours(generic.hrsPlayed)}**
-    Kills/deaths: **${readNumber(kills / deaths)}** (**${[kills, deaths].map(noDec).join('**/**')}**)
-    Games won: **${noDec(generic.wins)}**`, true)
+    Kills/deaths: **${readNumber(kills / deaths)}** (**${[kills, deaths]
+        .map(noDec)
+        .join('**/**')}**)
+    Games won: **${noDec(generic.wins)}**`,
+      true
+    )
   }
-
 
   /** Adds a field with medal stats */
   addMedals({ medals }: HeroStats) {
     const { bronze, silver, gold } = medals
 
-    return this.addField('Medals', `
+    return this.addField(
+      'Medals',
+      `
     Gold: **${gold}**
     Silver: **${silver}**
-    Bronze: **${bronze}**`, true)
+    Bronze: **${bronze}**`,
+      true
+    )
   }
 }
 
 class LinkEmbed extends CustomEmbed {
   mode: 'link' | 'unlink'
 
-  constructor({ mode, msg, previous, current }: LinkOptions<'link' | 'unlink'>, ...args) {
+  constructor(
+    { mode, msg, previous, current }: LinkOptions<'link' | 'unlink'>,
+    ...args
+  ) {
     super(msg, ...args)
     this.mode = mode
     if (equals(previous, current)) this.same(current)
@@ -336,8 +423,7 @@ class LinkEmbed extends CustomEmbed {
    * @param prev The previous [battletag, platform]
    */
   unlink(prev: [string, platform]) {
-    return this.setTitle('Blizzard profile unlinked')
-      .setD(undefined, prev)
+    return this.setTitle('Blizzard profile unlinked').setD(undefined, prev)
   }
 
   /** Changes the color, adds title and description to the embed
@@ -354,7 +440,12 @@ class LinkEmbed extends CustomEmbed {
    * @param prev The previous [battletag, platform]
    */
   private setD(desc = '', prev: [string, platform]) {
-    return this.setDescription(desc + (prev ? `\nYour previous linked profile was ${player(prev[0], prev[1])}.` : '\nYou had no previous linked profile.'))
+    return this.setDescription(
+      desc +
+        (prev
+          ? `\nYour previous linked profile was ${player(prev[0], prev[1])}.`
+          : '\nYou had no previous linked profile.')
+    )
   }
 }
 
@@ -364,9 +455,7 @@ class WarnEmbed extends CustomEmbed {
   constructor(msg: Message, error: string, ...args: any[]) {
     super(msg, ...args)
     this.mode = 'warn'
-    return this.setColor('GOLD')
-      .setTitle('Sorry...')
-      .setDescription(error)
+    return this.setColor('GOLD').setTitle('Sorry...').setDescription(error)
   }
 }
 
@@ -381,7 +470,6 @@ class ErrorEmbed extends CustomEmbed {
       .setDescription(error)
   }
 }
-
 
 // #endregion
 
@@ -399,7 +487,9 @@ export class OverwatchAPI extends API {
     return !reverse ? this.get(id) : this.getKey(id.replace('#', '-'))
   }
 
-  private createEmbed<T extends embedType>(options: EmbedOptions<T>): EmbedSwitch<T> {
+  private createEmbed<T extends embedType>(
+    options: EmbedOptions<T>
+  ): EmbedSwitch<T> {
     let embed: CustomEmbed
     const { mode } = options
 
@@ -429,7 +519,10 @@ export class OverwatchAPI extends API {
   }
 
   /** Fecthes data about the target from the API */
-  async getStats(battletag: string, platform: platform): Promise<owapi.AllStats> {
+  async getStats(
+    battletag: string,
+    platform: platform
+  ): Promise<owapi.AllStats> {
     battletag = battletag.replace('#', '-')
 
     const cached = cache.get(battletag + platform)
@@ -439,9 +532,8 @@ export class OverwatchAPI extends API {
     try {
       stats = await owapi.getAllStats(battletag, platform)
     } catch (e) {
-      error = e instanceof Error ? e
-        : typeof e == 'string' ? new Error(e)
-          : undefined
+      error =
+        e instanceof Error ? e : typeof e == 'string' ? new Error(e) : undefined
     }
 
     if (stats) {
@@ -451,7 +543,13 @@ export class OverwatchAPI extends API {
   }
 
   /** Converts a getStats rejection into a error/warn embed */
-  buildRejection(error: Error, msg: Message, action: Exclude<embedType, 'error' | 'warn'>, battletag: string, platform: platform) {
+  buildRejection(
+    error: Error,
+    msg: Message,
+    action: Exclude<embedType, 'error' | 'warn'>,
+    battletag: string,
+    platform: platform
+  ) {
     const actionDict: Record<Exclude<embedType, 'error' | 'warn'>, string> = {
       quick: 'quickplay stats',
       comp: 'competitive stats',
@@ -460,16 +558,23 @@ export class OverwatchAPI extends API {
       link: 'to link',
       unlink: 'to unlink'
     }
-    const errorBase = `\nYou requested ${actionDict[action]} for ${player(battletag, platform)}`
+    const errorBase = `\nYou requested ${actionDict[action]} for ${player(
+      battletag,
+      platform
+    )}`
 
-    if (error.message == 'PROFILE_PRIVATE') return this.createEmbed({
-      mode: 'warn',
-      error: 'This profile is private.',
-      msg
-    })
+    if (error.message == 'PROFILE_PRIVATE')
+      return this.createEmbed({
+        mode: 'warn',
+        error: 'This profile is private.',
+        msg
+      })
     return this.createEmbed({
       mode: 'error',
-      error: (error.message == 'PROFILE_NOT_FOUND' ? 'Profile not found.' : '```\n' + error.message + '\n```') + errorBase,
+      error:
+        (error.message == 'PROFILE_NOT_FOUND'
+          ? 'Profile not found.'
+          : '```\n' + error.message + '\n```') + errorBase,
       msg
     })
   }
@@ -478,14 +583,16 @@ export class OverwatchAPI extends API {
 
   private formatRank(rank: owapi.Rank): RegularStats['account']['rank'] {
     if (typeof rank != 'object') return
-    return Object.entries(rank).map(([key, value]) => {
-      if (!enforceType<owapi.RankRole>(value)) return
-      const srOnly = parseInt(value.sr)
-      return [key, srOnly]
-    }).reduce((accum, [k, v]) => {
-      accum[k] = v
-      return accum
-    }, {})
+    return Object.entries(rank)
+      .map(([key, value]) => {
+        if (!enforceType<owapi.RankRole>(value)) return
+        const srOnly = parseInt(value.sr)
+        return [key, srOnly]
+      })
+      .reduce((accum, [k, v]) => {
+        accum[k] = v
+        return accum
+      }, {})
   }
 
   /** Returns the account for comp/quick stats */
@@ -501,7 +608,9 @@ export class OverwatchAPI extends API {
   }
 
   async quick(battletag: string, platform: platform, msg: Message) {
-    const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'quick', battletag, platform))
+    const stats = await this.getStats(battletag, platform).catch((e) =>
+      this.buildRejection(e, msg, 'quick', battletag, platform)
+    )
     if (stats instanceof CustomEmbed) return stats
 
     const { best, combat } = stats.heroStats.quickplay.overall,
@@ -527,7 +636,7 @@ export class OverwatchAPI extends API {
         killStreak: parseInt(best.kill_streak_best) || 0
       },
       general: {
-        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths) || 0.00,
+        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths) || 0.0,
         minOnFire: stringToSeconds(combat.time_spent_on_fire) / 60 || 0,
         wins: parseInt(stats.heroStats.quickplay.overall.game.games_won) || 0
       },
@@ -544,7 +653,9 @@ export class OverwatchAPI extends API {
   }
 
   async comp(battletag: string, platform: platform, msg: Message) {
-    const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'comp', battletag, platform))
+    const stats = await this.getStats(battletag, platform).catch((e) =>
+      this.buildRejection(e, msg, 'comp', battletag, platform)
+    )
     if (stats instanceof CustomEmbed) return stats
 
     const { best, combat } = stats.heroStats.competitive.overall,
@@ -570,7 +681,7 @@ export class OverwatchAPI extends API {
         killStreak: parseInt(best.kill_streak_best) || 0
       },
       general: {
-        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths) || 0.00,
+        kdr: parseInt(combat.eliminations) / parseInt(combat.deaths) || 0.0,
         minOnFire: stringToSeconds(combat.time_spent_on_fire) / 60 || 0,
         wins: parseInt(stats.heroStats.competitive.overall.game.games_won) || 0
       },
@@ -586,8 +697,15 @@ export class OverwatchAPI extends API {
     })
   }
 
-  async hero(battletag: string, platform: platform, msg: Message, hero: SupportedHero | 'auto') {
-    const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'hero', battletag, platform))
+  async hero(
+    battletag: string,
+    platform: platform,
+    msg: Message,
+    hero: SupportedHero | 'auto'
+  ) {
+    const stats = await this.getStats(battletag, platform).catch((e) =>
+      this.buildRejection(e, msg, 'hero', battletag, platform)
+    )
     if (stats instanceof CustomEmbed) return stats
 
     if (hero == 'auto') {
@@ -599,11 +717,12 @@ export class OverwatchAPI extends API {
         mostPlayedIndex++
       } while (!isSupported(hero) && mostPlayedIndex < heroPool.length)
     } else if (!isSupported(hero)) throw new Error('Unsupported hero provided.')
-    if (!isSupported(hero)) return this.createEmbed({
-      mode: 'warn',
-      error: 'You haven\'t played any hero yet :confused:',
-      msg
-    })
+    if (!isSupported(hero))
+      return this.createEmbed({
+        mode: 'warn',
+        error: "You haven't played any hero yet :confused:",
+        msg
+      })
 
     const heroNode = stats.heroStats.quickplay[hero]
 
@@ -638,8 +757,15 @@ export class OverwatchAPI extends API {
     })
   }
 
-  async herocomp(battletag: string, platform: platform, msg: Message, hero: SupportedHero | 'auto') {
-    const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'herocomp', battletag, platform))
+  async herocomp(
+    battletag: string,
+    platform: platform,
+    msg: Message,
+    hero: SupportedHero | 'auto'
+  ) {
+    const stats = await this.getStats(battletag, platform).catch((e) =>
+      this.buildRejection(e, msg, 'herocomp', battletag, platform)
+    )
     if (stats instanceof CustomEmbed) return stats
 
     if (hero == 'auto') {
@@ -651,11 +777,12 @@ export class OverwatchAPI extends API {
         mostPlayedIndex++
       } while (!isSupported(hero) && mostPlayedIndex < heroPool.length)
     } else if (!isSupported(hero)) throw new Error('Unsupported hero provided.')
-    if (!isSupported(hero)) return this.createEmbed({
-      mode: 'warn',
-      error: 'You haven\'t played any hero yet :confused:',
-      msg
-    })
+    if (!isSupported(hero))
+      return this.createEmbed({
+        mode: 'warn',
+        error: "You haven't played any hero yet :confused:",
+        msg
+      })
 
     const heroNode = stats.heroStats.competitive[hero]
 
@@ -691,13 +818,16 @@ export class OverwatchAPI extends API {
   }
 
   async link(battletag: string, platform: platform, msg: Message) {
-    const stats = await this.getStats(battletag, platform).catch(e => this.buildRejection(e, msg, 'link', battletag, platform))
+    const stats = await this.getStats(battletag, platform).catch((e) =>
+      this.buildRejection(e, msg, 'link', battletag, platform)
+    )
     if (stats instanceof CustomEmbed) return stats
 
     const prev = this.checkDatabase(msg.author),
       next: playerEntry = [battletag, platform]
 
-    if (!isPlayerEntry(prev) || !equals(prev, next)) this.set(msg.author.id, next)
+    if (!isPlayerEntry(prev) || !equals(prev, next))
+      this.set(msg.author.id, next)
 
     return this.createEmbed({
       mode: 'link',

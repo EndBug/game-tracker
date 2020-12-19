@@ -19,7 +19,7 @@ const platforms = ['pc', 'xbl', 'psn'],
 /** Checks whether a string is a valid battletag */
 function isBattletag(str: string) {
   const arr = str.split('#')
-  return (arr.length == 2 && !isNaN(parseInt(arr[1])))
+  return arr.length == 2 && !isNaN(parseInt(arr[1]))
 }
 
 /** Checks whether a string corresponds to a hero name, if so, returns the name */
@@ -42,23 +42,31 @@ export default class OverwatchCMD extends Command {
       description: 'Overwatch API interface',
       details: 'The main command to access the Overwatch API.',
       onlineDocs: 'base',
-      args: [{
-        key: 'mode',
-        prompt: 'The action you want to perform. If left blank, will redirect to `ow quick`.',
-        default: ''
-      }, {
-        key: 'player',
-        prompt: 'The player you want the stats for. If you have already linked your account in this guild, you can leave this blank, otherwise you need to write your Battletag (e.g. `Name#1234`). You can also mention another user: if they linked their account, it will display their stats.',
-        default: ''
-      }, {
-        key: 'platform',
-        prompt: 'The platform you want stats for. If none is entered, it will display stats for `pc`.',
-        default: ''
-      }, {
-        key: 'hero',
-        prompt: 'The hero you want stats for.',
-        default: ''
-      }],
+      args: [
+        {
+          key: 'mode',
+          prompt:
+            'The action you want to perform. If left blank, will redirect to `ow quick`.',
+          default: ''
+        },
+        {
+          key: 'player',
+          prompt:
+            'The player you want the stats for. If you have already linked your account in this guild, you can leave this blank, otherwise you need to write your Battletag (e.g. `Name#1234`). You can also mention another user: if they linked their account, it will display their stats.',
+          default: ''
+        },
+        {
+          key: 'platform',
+          prompt:
+            'The platform you want stats for. If none is entered, it will display stats for `pc`.',
+          default: ''
+        },
+        {
+          key: 'hero',
+          prompt: 'The hero you want stats for.',
+          default: ''
+        }
+      ],
       guildOnly: true,
       hidden: true
     })
@@ -76,8 +84,8 @@ export default class OverwatchCMD extends Command {
       if (!mode) {
         const res = API.checkDatabase(msg.author)
         if (res) {
-          mode = 'quick';
-          [player, platform] = res
+          mode = 'quick'
+          ;[player, platform] = res
           exit = true
         } else {
           mode = null
@@ -96,7 +104,9 @@ export default class OverwatchCMD extends Command {
         if (res) [player, platform] = res
         else {
           err = 'Please enter a battletag.'
-          if (!linkmodes.includes(mode)) err += ' If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.'
+          if (!linkmodes.includes(mode))
+            err +=
+              " If you don't want to enter your battletag every time, use `ow link` to link it to your Discord profile."
         }
       } else if (isBattletag(player) || otherplatforms.includes(platform)) {
         if (!platform) platform = 'pc'
@@ -110,18 +120,26 @@ export default class OverwatchCMD extends Command {
         if (res) [player, platform] = res
         else {
           err = 'Please enter a battletag.'
-          if (!linkmodes.includes(mode)) err += ' If you don\'t want to enter your battletag every time, use `ow link` to link it to your Discord profile.'
+          if (!linkmodes.includes(mode))
+            err +=
+              " If you don't want to enter your battletag every time, use `ow link` to link it to your Discord profile."
         }
-      }
-      else if (!platform) err = 'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`'
+      } else if (!platform)
+        err =
+          'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`'
       else if (!otherplatforms.includes(platform)) {
         if (isMention(player)) {
           const res = API.checkDatabase(msg.author)
           if (res) {
-            if (platform) hero = platform; // lgtm [js/trivial-conditional]
-            [player, platform] = res
-          } else err = 'This user is not registered, please enter its battletag and platform manually.'
-        } else err = 'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`'
+            if (platform)
+              hero = platform // lgtm [js/trivial-conditional]
+            ;[player, platform] = res
+          } else
+            err =
+              'This user is not registered, please enter its battletag and platform manually.'
+        } else
+          err =
+            'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`'
       }
 
       if (!err) {
@@ -134,8 +152,13 @@ export default class OverwatchCMD extends Command {
     }
 
     postCommand(`${this.name} ${mode || '???'}`, msg.author.id)
-    if (err) return msg.reply(escapeMentions(err), { allowedMentions: { parse: [] } }).finally(() => msg.channel.stopTyping(true))
-    else return msg.channel.send(await API[mode](player, platform, msg, hero))
-      .finally(() => msg.channel.stopTyping(true))
+    if (err)
+      return msg
+        .reply(escapeMentions(err), { allowedMentions: { parse: [] } })
+        .finally(() => msg.channel.stopTyping(true))
+    else
+      return msg.channel
+        .send(await API[mode](player, platform, msg, hero))
+        .finally(() => msg.channel.stopTyping(true))
   }
 }

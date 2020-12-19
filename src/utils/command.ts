@@ -47,7 +47,8 @@ export class Command {
   }
 
   get docsLink() {
-    if (typeof this.onlineDocs == 'string' && this.onlineDocs != 'base') return this.onlineDocs
+    if (typeof this.onlineDocs == 'string' && this.onlineDocs != 'base')
+      return this.onlineDocs
 
     const id = this.onlineDocs == 'base' ? '' : this.name.replace(/ /g, '-')
 
@@ -66,7 +67,10 @@ export class Command {
   hasPermission(message: Message, ownerOverride = true): boolean | string {
     if (ownerOverride && isOwner(message.author)) return true
 
-    if ((this.ownerOnly || ownerOnlyOverride.includes(this.group)) && !isOwner(message.author))
+    if (
+      (this.ownerOnly || ownerOnlyOverride.includes(this.group)) &&
+      !isOwner(message.author)
+    )
       return `The \`${this.name}\` command can only be used by the bot owner.`
 
     return true
@@ -86,18 +90,27 @@ export class Command {
   onBlock(message: Message, reason: blockReason, data?: blockData) {
     switch (reason) {
       case 'guildOnly':
-        return message.reply(`The \`${this.name}\` command must be used in a server channel.`)
+        return message.reply(
+          `The \`${this.name}\` command must be used in a server channel.`
+        )
       case 'permission': {
         if (data.response) return message.reply(data.response)
-        return message.reply(`You do not have permission to use the \`${this.name}\` command.`)
+        return message.reply(
+          `You do not have permission to use the \`${this.name}\` command.`
+        )
       }
       case 'throttling': {
         return message.reply(
-          `You may not use the \`${this.name}\` command again for another ${data?.remaining.toFixed(1)} seconds.`
+          `You may not use the \`${
+            this.name
+          }\` command again for another ${data?.remaining.toFixed(1)} seconds.`
         )
       }
       case 'validation': {
-        return message.reply(data.response || 'One of your arguments has failed the validation, but there\'s no further info.')
+        return message.reply(
+          data.response ||
+            "One of your arguments has failed the validation, but there's no further info."
+        )
       }
       default:
         return null
@@ -131,38 +144,69 @@ export class Command {
   }
 
   genFormat() {
-    return this.name + ' ' + this.args.map(arg => typeof arg.default == 'string' ? `[${arg.key}]` : `<${arg.key}>`)
-      .join(' ')
+    return (
+      this.name +
+      ' ' +
+      this.args
+        .map((arg) =>
+          typeof arg.default == 'string' ? `[${arg.key}]` : `<${arg.key}>`
+        )
+        .join(' ')
+    )
   }
 
   validateInfo(info: CommandInfo) {
-    if (typeof info !== 'object') throw new TypeError('Command info must be an Object.')
-    if (typeof info.name !== 'string') throw new TypeError('Command name must be a string.')
-    if (info.name !== info.name.toLowerCase()) throw new Error('Command name must be lowercase.')
-    if (info.aliases && (!Array.isArray(info.aliases) || info.aliases.some(ali => typeof ali !== 'string'))) {
+    if (typeof info !== 'object')
+      throw new TypeError('Command info must be an Object.')
+    if (typeof info.name !== 'string')
+      throw new TypeError('Command name must be a string.')
+    if (info.name !== info.name.toLowerCase())
+      throw new Error('Command name must be lowercase.')
+    if (
+      info.aliases &&
+      (!Array.isArray(info.aliases) ||
+        info.aliases.some((ali) => typeof ali !== 'string'))
+    ) {
       throw new TypeError('Command aliases must be an Array of strings.')
     }
-    if (info.aliases && info.aliases.some(ali => ali !== ali.toLowerCase())) {
+    if (info.aliases && info.aliases.some((ali) => ali !== ali.toLowerCase())) {
       throw new RangeError('Command aliases must be lowercase.')
     }
-    if (typeof info.description !== 'string') throw new TypeError('Command description must be a string.')
-    if ('format' in info && typeof info.format !== 'string') throw new TypeError('Command format must be a string.')
-    if ('details' in info && typeof info.details !== 'string') throw new TypeError('Command details must be a string.')
-    if (info.examples && (!Array.isArray(info.examples) || info.examples.some(ex => typeof ex !== 'string'))) {
+    if (typeof info.description !== 'string')
+      throw new TypeError('Command description must be a string.')
+    if ('format' in info && typeof info.format !== 'string')
+      throw new TypeError('Command format must be a string.')
+    if ('details' in info && typeof info.details !== 'string')
+      throw new TypeError('Command details must be a string.')
+    if (
+      info.examples &&
+      (!Array.isArray(info.examples) ||
+        info.examples.some((ex) => typeof ex !== 'string'))
+    ) {
       throw new TypeError('Command examples must be an Array of strings.')
     }
     if (info.throttling) {
-      if (typeof info.throttling !== 'object') throw new TypeError('Command throttling must be an Object.')
-      if (typeof info.throttling.usages !== 'number' || isNaN(info.throttling.usages)) {
+      if (typeof info.throttling !== 'object')
+        throw new TypeError('Command throttling must be an Object.')
+      if (
+        typeof info.throttling.usages !== 'number' ||
+        isNaN(info.throttling.usages)
+      ) {
         throw new TypeError('Command throttling usages must be a number.')
       }
-      if (info.throttling.usages < 1) throw new RangeError('Command throttling usages must be at least 1.')
-      if (typeof info.throttling.duration !== 'number' || isNaN(info.throttling.duration)) {
+      if (info.throttling.usages < 1)
+        throw new RangeError('Command throttling usages must be at least 1.')
+      if (
+        typeof info.throttling.duration !== 'number' ||
+        isNaN(info.throttling.duration)
+      ) {
         throw new TypeError('Command throttling duration must be a number.')
       }
-      if (info.throttling.duration < 1) throw new RangeError('Command throttling duration must be at least 1.')
+      if (info.throttling.duration < 1)
+        throw new RangeError('Command throttling duration must be at least 1.')
     }
-    if (info.args && !Array.isArray(info.args)) throw new TypeError('Command args must be an Array.')
+    if (info.args && !Array.isArray(info.args))
+      throw new TypeError('Command args must be an Array.')
   }
 }
 
@@ -204,7 +248,7 @@ interface Throttle {
 type blockReason = 'guildOnly' | 'permission' | 'throttling' | 'validation'
 
 interface blockData {
-  throttle?: Throttle,
+  throttle?: Throttle
   remaining?: number
   response?: string
 }

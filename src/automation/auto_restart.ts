@@ -18,16 +18,24 @@ export const job = new CronJob('25 4 * * *', () => {
     let ok = true
     client.emit('debug', '[rs] Scheduled restart triggered.')
     try {
-      if (backupAvailable)
-        await upload('Restart')
+      if (backupAvailable) await upload('Restart')
     } catch (error) {
       ok = false
-      client.emit('error', new Error('[rs] Backup unsuccessful, bot not restarted.'))
-      await owner.send(`There has been an error during the backup for a scheduled restart.\n\`\`\`\n${error}\n\`\`\`\nThe bot is not being rebooted.`, { split: true })
+      client.emit(
+        'error',
+        new Error('[rs] Backup unsuccessful, bot not restarted.')
+      )
+      await owner.send(
+        `There has been an error during the backup for a scheduled restart.\n\`\`\`\n${error}\n\`\`\`\nThe bot is not being rebooted.`,
+        { split: true }
+      )
     }
 
     if (ok)
-      writeFileSync(path(__dirname, '../utils/reloadme.json'), JSON.stringify({ date: new Date() }))
+      writeFileSync(
+        path(__dirname, '../utils/reloadme.json'),
+        JSON.stringify({ date: new Date() })
+      )
   }, 5 * 60 * 1000)
 })
 

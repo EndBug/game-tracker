@@ -12,6 +12,8 @@ export default class InviteCMD extends Command {
   }
 
   run(msg: Message) {
-    return msg.channel.send(`Thank you for choosing Game Tracker!\nPlease note that the permissions required in the invite are important, and that without them the bot could not work properly.\nClick here to invite the bot: ${links.invite}`)
+    return msg.channel.send(
+      `Thank you for choosing Game Tracker!\nPlease note that the permissions required in the invite are important, and that without them the bot could not work properly.\nClick here to invite the bot: ${links.invite}`
+    )
   }
 }

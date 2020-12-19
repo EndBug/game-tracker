@@ -1,7 +1,7 @@
 import { client, owner, commandPrefix } from '../core/app'
 import { getSupportInvite } from '../utils/utils'
 
-client.on('guildCreate', async guild => {
+client.on('guildCreate', async (guild) => {
   const invite = await getSupportInvite()
   if (!invite) return owner.send(`Problem with invite creation: ${invite}`)
 

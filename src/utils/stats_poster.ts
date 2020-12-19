@@ -4,10 +4,11 @@ import { client } from '../core/app'
 const tokens: PosterOptions['apiKeys'] = {}
 
 for (const key in process.env) {
-  if (key.startsWith('BOTLIST_')) tokens[key.replace('BOTLIST_', '')] = process.env[key]
+  if (key.startsWith('BOTLIST_'))
+    tokens[key.replace('BOTLIST_', '')] = process.env[key]
 }
 
-export var available: boolean = !!Object.values(tokens).find(e => !!e)
+export var available: boolean = !!Object.values(tokens).find((e) => !!e)
 export var interval: number = 1800000 // ms
 
 export var poster: Poster
@@ -17,7 +18,7 @@ export var poster: Poster
  * @throws An error when when no service is available
  */
 export async function start() {
-  if (!available) throw new Error('Can\'t start poster without any API token!')
+  if (!available) throw new Error("Can't start poster without any API token!")
 
   poster = new Poster({
     client: client,
@@ -25,7 +26,7 @@ export async function start() {
     apiKeys: tokens
   })
 
-  poster.addHandler('autopost', result => {
+  poster.addHandler('autopost', (result) => {
     const n = result instanceof Array ? result.length : 1
     console.log(`[DBOTS] Posted stats to ${n} services`)
   })

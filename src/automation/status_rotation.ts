@@ -13,7 +13,12 @@ class Presence {
     url?: string
   }
 
-  constructor(name: string, type?: ActivityType, status?: PresenceStatusData, stream?: string) {
+  constructor(
+    name: string,
+    type?: ActivityType,
+    status?: PresenceStatusData,
+    stream?: string
+  ) {
     this.status = status || 'online'
     this.afk = false
     this.activity = {
@@ -26,8 +31,14 @@ class Presence {
   /** Replaces the dynamic variables inside the presence name */
   getName() {
     return this.activity.name
-      .replace(new RegExp('/guildCount/', 'g'), client.guilds.cache.size.toString())
-      .replace(new RegExp('/userCount/', 'g'), client.users.cache.size.toString())
+      .replace(
+        new RegExp('/guildCount/', 'g'),
+        client.guilds.cache.size.toString()
+      )
+      .replace(
+        new RegExp('/userCount/', 'g'),
+        client.users.cache.size.toString()
+      )
   }
 
   get obj(): PresenceData {
@@ -42,13 +53,14 @@ class Presence {
   }
 }
 
-const status = isDev || isBeta ? [
-  new Presence('BETA', 'PLAYING', 'dnd')
-] : [
-    new Presence('for your requests!', 'WATCHING'),
-    new Presence('/guildCount/ servers.', 'WATCHING')
-    // new Presence('/userCount/ users.', 'LISTENING') // User count is now disable in favor of the caching improvements
-  ]
+const status =
+  isDev || isBeta
+    ? [new Presence('BETA', 'PLAYING', 'dnd')]
+    : [
+        new Presence('for your requests!', 'WATCHING'),
+        new Presence('/guildCount/ servers.', 'WATCHING')
+        // new Presence('/userCount/ users.', 'LISTENING') // User count is now disable in favor of the caching improvements
+      ]
 
 var index = 0
 
@@ -61,7 +73,6 @@ function setPresence(indexOverride?: number) {
   index %= status.length
   client.user.setPresence(pres.obj)
 }
-
 
 if (status.length > 0) setPresence()
 if (status.length > 1) setInterval(setPresence, interval)

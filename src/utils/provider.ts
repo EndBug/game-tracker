@@ -9,7 +9,7 @@ const filePath = '../../data/settings.json'
 
 export interface Settings
   extends Record<SettingsKey, Record<Snowflake, string>>,
-  Record<APIKey, Record<Snowflake, string[]>> { }
+    Record<APIKey, Record<Snowflake, string[]>> {}
 
 export type ProviderKey = keyof Settings
 export type SettingsKey = 'p'
@@ -38,7 +38,11 @@ class Provider {
     }
   }
 
-  set<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T], value: Settings[T][keyof Settings[T]]) {
+  set<T extends ProviderKey>(
+    settingsKey: T,
+    recordKey: keyof Settings[T],
+    value: Settings[T][keyof Settings[T]]
+  ) {
     this.settings[settingsKey][recordKey] = value
     this.save()
   }
@@ -48,8 +52,7 @@ class Provider {
     for (const key in APIUtil.APIs) {
       res[key] = Object.keys(this.settings[key]).length
     }
-    if (enforceType<Record<APIKey, number>>(res))
-      return res
+    if (enforceType<Record<APIKey, number>>(res)) return res
   }
 
   private readData(): Settings {

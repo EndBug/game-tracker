@@ -31,7 +31,7 @@ export let roles: Record<string, Role> = {}
 import * as backup from './backup'
 
 /**
- * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs 
+ * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs
  */
 function initClient() {
   client = new Client()
@@ -40,7 +40,12 @@ function initClient() {
   client.on('warn', console.warn)
   client.on('debug', console.log)
 
-  client.on('message', msg => !isPartialMessage(msg) && handleMessage(msg).catch(err => client.emit('error', err)))
+  client.on(
+    'message',
+    (msg) =>
+      !isPartialMessage(msg) &&
+      handleMessage(msg).catch((err) => client.emit('error', err))
+  )
 
   client.on('ready', async () => {
     homeguild = await client.guilds.fetch('475792603867119626')
@@ -63,15 +68,23 @@ function initClient() {
     loadModules()
 
     // Starts the stat poster interval
-    if (!deactivatePoster && stats_poster.available) try {
-      client.emit('debug', '[dbots] Starting dbots...')
-      await stats_poster.start()
-    } catch (e) { console.error(e) }
-    else client.emit('debug', deactivatePoster ? '[dbots] dbots not loaded.' : '[dbots] No optional DBL token found.')
+    if (!deactivatePoster && stats_poster.available)
+      try {
+        client.emit('debug', '[dbots] Starting dbots...')
+        await stats_poster.start()
+      } catch (e) {
+        console.error(e)
+      }
+    else
+      client.emit(
+        'debug',
+        deactivatePoster
+          ? '[dbots] dbots not loaded.'
+          : '[dbots] No optional DBL token found.'
+      )
   })
 
   client.login(TOKEN)
-
 
   APIUtil.loadAPIs()
 
@@ -82,7 +95,7 @@ function initClient() {
 
 /**
  * Logs a load statement
- * @param name 
+ * @param name
  */
 export function loader(name: string) {
   client.emit('debug', `Loaded '${name}' API.`)
@@ -90,7 +103,7 @@ export function loader(name: string) {
 
 const custom_modules = ['automation']
 /**
- * Loads every module group from the `custom_modules` array 
+ * Loads every module group from the `custom_modules` array
  */
 function loadModules() {
   for (const groupName of custom_modules) {
@@ -103,7 +116,7 @@ function loadModules() {
   }
 }
 
-(async () => {
+;(async () => {
   if (backup.available) await backup.init().catch(console.error)
   else console.log('No backup token found.')
   initClient()

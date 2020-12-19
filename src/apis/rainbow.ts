@@ -1,5 +1,29 @@
-import R6API, { Stats, Operator, OperatorStats, Platform, PvPMode, PvEMode, WeaponType, WeaponCategory, WeaponName, RankSeason, StatsType as TypesObject, StatsQueue } from 'r6api.js'
-import { getShortName, ensureOne, mergeAndSum, readHours, readNumber, enforceType, camelToReadable, capitalize, PartialRecord, Cache } from '../utils/utils'
+import R6API, {
+  Stats,
+  Operator,
+  OperatorStats,
+  Platform,
+  PvPMode,
+  PvEMode,
+  WeaponType,
+  WeaponCategory,
+  WeaponName,
+  RankSeason,
+  StatsType as TypesObject,
+  StatsQueue
+} from 'r6api.js'
+import {
+  getShortName,
+  ensureOne,
+  mergeAndSum,
+  readHours,
+  readNumber,
+  enforceType,
+  camelToReadable,
+  capitalize,
+  PartialRecord,
+  Cache
+} from '../utils/utils'
 import { Message, MessageEmbed, User, UserResolvable } from 'discord.js'
 import { API } from '../utils/api'
 import { client } from '../core/app'
@@ -20,7 +44,17 @@ var cache = new Cache('Rainbow 6 Siege')
 
 // #region Embeds
 /** Ok, I know this is stupid, but it's kind of necessary */
-type embedType_Type = 'error' | 'general' | 'modes' | 'wp-single' | 'wp-cat' | 'op' | 'types' | 'queue' | 'link' | 'unlink'
+type embedType_Type =
+  | 'error'
+  | 'general'
+  | 'modes'
+  | 'wp-single'
+  | 'wp-cat'
+  | 'op'
+  | 'types'
+  | 'queue'
+  | 'link'
+  | 'unlink'
 
 /** Custom embed class that acts as base for other embeds */
 class CustomEmbed extends MessageEmbed {
@@ -44,15 +78,20 @@ class CustomEmbed extends MessageEmbed {
   }
 
   /** Adds a title to the embed with the following format:
-   * 
+   *
    * _`str` stats for `username` - `PLATFORM`_ */
   setHeader(str: string, username: string, platform: Platform) {
-    return this.setTitle(str.trim() + ` stats for ${username} - ${platform.toUpperCase()}`)
+    return this.setTitle(
+      str.trim() + ` stats for ${username} - ${platform.toUpperCase()}`
+    )
   }
 
   /** Adds the name of the user that requested the data as in the footer */
   via(author: User) {
-    return this.setFooter(`Requested by ${getShortName(author)}`, author.displayAvatarURL())
+    return this.setFooter(
+      `Requested by ${getShortName(author)}`,
+      author.displayAvatarURL()
+    )
   }
 }
 
@@ -69,15 +108,28 @@ class ErrorEmbed extends CustomEmbed {
   }
 }
 
-
 /** Embed class for the 'general' command */
 class GeneralEmbed extends CustomEmbed {
   type: 'general'
 
-  constructor(msg: Message, username: string, platform: Platform, playType: playType, stats: StatsType<'general'>, raw: Stats, ...args) {
+  constructor(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    playType: playType,
+    stats: StatsType<'general'>,
+    raw: Stats,
+    ...args
+  ) {
     super(msg, ...args)
     this.type = 'general'
-    return this.setHeader(`General ${playType == 'all' ? '' : readablePlayType(playType, true)}stats`, username, platform)
+    return this.setHeader(
+      `General ${
+        playType == 'all' ? '' : readablePlayType(playType, true)
+      }stats`,
+      username,
+      platform
+    )
       .addOpImage(raw, playType == 'all' ? 'pvp' : playType)
       .addAccount(stats)
       .addMatches(stats)
@@ -88,8 +140,12 @@ class GeneralEmbed extends CustomEmbed {
   addAccount({ account }: GeneralStats) {
     const str = `Level: ${statFormat(account.level)}
     XP: ${statFormat(account.xp)}
-    Current Rank: **${account.currentRank.tier == 'Unranked' ? '----' : account.currentRank.mmr} (${account.currentRank.tier})**
-    Max Rank: **${account.maxRank.tier == 'Unranked' ? '----' : account.maxRank.mmr} (${account.maxRank.tier})**`
+    Current Rank: **${
+      account.currentRank.tier == 'Unranked' ? '----' : account.currentRank.mmr
+    } (${account.currentRank.tier})**
+    Max Rank: **${
+      account.maxRank.tier == 'Unranked' ? '----' : account.maxRank.mmr
+    } (${account.maxRank.tier})**`
 
     return this.addField('Account stats', str, false)
   }
@@ -101,7 +157,7 @@ class GeneralEmbed extends CustomEmbed {
     const str = `
     Total matches: ${statFormat(total)}
     Total playtime: **${matches.playtime}**
-    Wins/Losses: ${[wins, losses].map(e => statFormat(e)).join('/')}
+    Wins/Losses: ${[wins, losses].map((e) => statFormat(e)).join('/')}
     Win rate: ${statFormat((wins / total) * 100, '%')}
     `.trim()
 
@@ -112,7 +168,9 @@ class GeneralEmbed extends CustomEmbed {
   addPerformance({ performance }: GeneralStats) {
     const { kills, deaths, assists } = performance
 
-    const str = `K/D/A: ${[kills, deaths, assists].map(n => statFormat(n)).join('/')}
+    const str = `K/D/A: ${[kills, deaths, assists]
+      .map((n) => statFormat(n))
+      .join('/')}
     K/D ratio: ${statFormat(kills / deaths)}
     DBNOs: ${statFormat(performance.dbnos)}
     Revives: ${statFormat(performance.revives)}`
@@ -125,7 +183,15 @@ class GeneralEmbed extends CustomEmbed {
 class ModesEmbed extends CustomEmbed {
   type: 'modes'
 
-  constructor(msg: Message, username: string, platform: Platform, playType: strictPlayType, stats: StatsType<'modes'>, raw: Stats, ...args) {
+  constructor(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    playType: strictPlayType,
+    stats: StatsType<'modes'>,
+    raw: Stats,
+    ...args
+  ) {
     super(msg, ...args)
     this.type = 'modes'
     return this.setHeader(`${readablePlayType(playType)}`, username, platform)
@@ -140,7 +206,11 @@ class ModesEmbed extends CustomEmbed {
   }
 
   /** Adds a mode to the embed */
-  addMode<T extends PvEMode | PvPMode>(mode: T, key: string, playType: strictPlayType) {
+  addMode<T extends PvEMode | PvPMode>(
+    mode: T,
+    key: string,
+    playType: strictPlayType
+  ) {
     let title: string,
       body = ''
     if (playType == 'pvp') {
@@ -167,7 +237,8 @@ class WeaponEmbed extends CustomEmbed {
       if (!playType.includes('name')) {
         if (!enforceType<strictPlayType>(playType)) return
         let str = ''
-        for (const key in category[playType].general) str += keyValue(key, category[playType].general[key]) + '\n'
+        for (const key in category[playType].general)
+          str += keyValue(key, category[playType].general[key]) + '\n'
         this.addField(title + ` (${playType})`, str, true)
       }
     }
@@ -175,17 +246,26 @@ class WeaponEmbed extends CustomEmbed {
   }
 
   /** Adds a weapon to the embed */
-  addWeapon(category: WeaponEmbedStats, wpName: WeaponName, title?: string, only?: strictPlayType, name?: boolean) {
+  addWeapon(
+    category: WeaponEmbedStats,
+    wpName: WeaponName,
+    title?: string,
+    only?: strictPlayType,
+    name?: boolean
+  ) {
     if (!title) title = 'Weapon'
     for (const playType in category) {
       if (!playType.includes('name') && !(only && playType != only)) {
         if (!enforceType<strictPlayType>(playType)) return
         let str = ''
-        const wp = category[playType].list.find(wp => wpTrans(wp.name) == wpTrans(wpName))
+        const wp = category[playType].list.find(
+          (wp) => wpTrans(wp.name) == wpTrans(wpName)
+        )
         if (name) str += `Name: **${wp.name}**\n`
-        if (wp) for (const key in wp) {
-          if (key != 'name') str += keyValue(key, wp[key]) + '\n'
-        }
+        if (wp)
+          for (const key in wp) {
+            if (key != 'name') str += keyValue(key, wp[key]) + '\n'
+          }
         if (str) this.addField(title + ` (${playType})`, str, true)
       }
     }
@@ -202,11 +282,25 @@ class WeaponEmbed extends CustomEmbed {
 class WeaponSingleEmbed extends WeaponEmbed {
   type: 'wp-single'
 
-  constructor(msg: Message, username: string, platform: Platform, category: StatsType<'wp-single'>, raw: Stats, ...args) {
+  constructor(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    category: StatsType<'wp-single'>,
+    raw: Stats,
+    ...args
+  ) {
     super(msg, ...args)
     this.type = 'wp-single'
     const weapon = category.WPname
-    return this.setHeader(`${category['pvp'].list.find(wp => wpTrans(wp.name) == wpTrans(weapon)).name} weapon`, username, platform)
+    return this.setHeader(
+      `${
+        category['pvp'].list.find((wp) => wpTrans(wp.name) == wpTrans(weapon))
+          .name
+      } weapon`,
+      username,
+      platform
+    )
       .addWeapon(category, weapon)
       .addOpImage(raw, 'all')
       .addCategory(category, `${capitalize(category.CATname)} category`)
@@ -217,18 +311,31 @@ class WeaponSingleEmbed extends WeaponEmbed {
 class WeaponCategoryEmbed extends WeaponEmbed {
   type: 'wp-cat'
 
-  constructor(msg: Message, username: string, platform: Platform, category: StatsType<'wp-cat'>, raw: Stats, ...args) {
+  constructor(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    category: StatsType<'wp-cat'>,
+    raw: Stats,
+    ...args
+  ) {
     super(msg, ...args)
     this.type = 'wp-cat'
     const wpPvP = this.mostChosenWeapon(category.pvp.list),
       wpPvE = this.mostChosenWeapon(category.pve.list)
 
-    this.setHeader(`${capitalize(category.CATname)} weapons`, username, platform)
+    this.setHeader(
+      `${capitalize(category.CATname)} weapons`,
+      username,
+      platform
+    )
       .addOpImage(raw, 'all')
       .addCategory(category, 'Category overall')
 
-    if (wpPvP.timesChosen > 0) this.addWeapon(category, wpPvP.name, 'Most chosen weapon', 'pvp', true)
-    if (wpPvE.timesChosen > 0) this.addWeapon(category, wpPvE.name, 'Most chosen weapon', 'pve', true)
+    if (wpPvP.timesChosen > 0)
+      this.addWeapon(category, wpPvP.name, 'Most chosen weapon', 'pvp', true)
+    if (wpPvE.timesChosen > 0)
+      this.addWeapon(category, wpPvE.name, 'Most chosen weapon', 'pve', true)
   }
 }
 
@@ -236,16 +343,25 @@ class WeaponCategoryEmbed extends WeaponEmbed {
 class OperatorEmbed extends CustomEmbed {
   type: 'op'
 
-  constructor(msg: Message, username: string, platform: Platform, stats: StatsType<'op'>, ...args) {
+  constructor(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    stats: StatsType<'op'>,
+    ...args
+  ) {
     super(msg, ...args)
     this.type = 'op'
 
     // @ts-expect-error
-    const types: strictPlayType[] = Object.keys(stats).filter(m => !!stats[m])
+    const types: strictPlayType[] = Object.keys(stats).filter((m) => !!stats[m])
     if (types.length == 0) return
 
-    this.setHeader(`${capitalize(stats[types[0]].name)} operator`, username, platform)
-      .setThumbnail(stats[types[0]].badge)
+    this.setHeader(
+      `${capitalize(stats[types[0]].name)} operator`,
+      username,
+      platform
+    ).setThumbnail(stats[types[0]].badge)
     for (const playType of types) this.addPlayType(playType, stats[playType])
     return this
   }
@@ -255,11 +371,15 @@ class OperatorEmbed extends CustomEmbed {
     const { kills, deaths, wins, losses } = stats
 
     const title = readablePlayType(playType)
-    const other = (stats.gadget || []).map(g => keyValue(g.name, g.value)).join('\n- ')
+    const other = (stats.gadget || [])
+      .map((g) => keyValue(g.name, g.value))
+      .join('\n- ')
     const str = `
-    Kills/Deaths: ${statFormat((kills / deaths))} (${[deaths, kills].map(e => statFormat(e)).join(' / ')})
+    Kills/Deaths: ${statFormat(kills / deaths)} (${[deaths, kills]
+      .map((e) => statFormat(e))
+      .join(' / ')})
     Win rate: ${statFormat((wins / (wins + losses)) * 100, '%')}
-    Wins/Losses: ${[wins, losses].map(e => statFormat(e)).join(' / ')}
+    Wins/Losses: ${[wins, losses].map((e) => statFormat(e)).join(' / ')}
     Headshots: ${statFormat(stats.headshots)}
     Melee kills: ${statFormat(stats.meleeKills)}
     DBNOs: ${statFormat(stats.dbno)}
@@ -276,12 +396,18 @@ class OperatorEmbed extends CustomEmbed {
 class TypesEmbed extends CustomEmbed {
   type: 'types'
 
-  constructor(msg: Message, username: string, platform: Platform, stats: StatsType<'types'>, raw: Stats, ...args) {
+  constructor(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    stats: StatsType<'types'>,
+    raw: Stats,
+    ...args
+  ) {
     super(msg, ...args)
     this.type = 'types'
 
-    this.setHeader('PvE types', username, platform)
-      .addOpImage(raw, 'pve')
+    this.setHeader('PvE types', username, platform).addOpImage(raw, 'pve')
     for (const key in stats) this.addType(key, stats[key])
     return this
   }
@@ -289,8 +415,7 @@ class TypesEmbed extends CustomEmbed {
   /** Adds a type to the embed */
   addType(name: string, value: TypesObject) {
     let str = ''
-    for (const key in value)
-      str += keyValue(key, value[key]) + '\n'
+    for (const key in value) str += keyValue(key, value[key]) + '\n'
     return this.addField(camelToReadable(name), str.trim(), true)
   }
 }
@@ -299,12 +424,18 @@ class TypesEmbed extends CustomEmbed {
 class QueueEmbed extends CustomEmbed {
   type: 'queue'
 
-  constructor(msg: Message, username: string, platform: Platform, stats: StatsType<'queue'>, raw: Stats, ...args) {
+  constructor(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    stats: StatsType<'queue'>,
+    raw: Stats,
+    ...args
+  ) {
     super(msg, ...args)
     this.type = 'queue'
 
-    this.setHeader('PvP queue', username, platform)
-      .addOpImage(raw, 'pvp')
+    this.setHeader('PvP queue', username, platform).addOpImage(raw, 'pvp')
     for (const q of stats) this.addQueue(q)
     return this
   }
@@ -314,9 +445,11 @@ class QueueEmbed extends CustomEmbed {
     const { wins, losses, matches, kills, deaths } = queue
     const str = `
     Total matches: ${statFormat(matches)}
-    Win rate: ${statFormat(wins / matches * 100, '%')}
-    Wins/Losses: ${[wins, losses].map(e => statFormat(e)).join(' / ')}
-    Kills/Deaths: ${statFormat((kills / deaths))} (${[deaths, kills].map(e => statFormat(e)).join(' / ')})
+    Win rate: ${statFormat((wins / matches) * 100, '%')}
+    Wins/Losses: ${[wins, losses].map((e) => statFormat(e)).join(' / ')}
+    Kills/Deaths: ${statFormat(kills / deaths)} (${[deaths, kills]
+      .map((e) => statFormat(e))
+      .join(' / ')})
     Playtime: **${readHours(queue.playtime / 60 / 60)}**
     `.trim()
 
@@ -343,11 +476,10 @@ class LinkEmbed extends CustomEmbed {
   }
 
   /** Adds title and descirption to the embed
-   * @param curr Unnecessary parameter, keep it `undefined` 
+   * @param curr Unnecessary parameter, keep it `undefined`
    */
   unlink(_ignore: any, prev: string) {
-    return this.setTitle('R6S profile unlinked')
-      .setD(undefined, prev)
+    return this.setTitle('R6S profile unlinked').setD(undefined, prev)
   }
 
   /** Changes the color, adds title and description to the embed */
@@ -359,7 +491,12 @@ class LinkEmbed extends CustomEmbed {
 
   /** Adds a custom description */
   private setD(desc = '', prev: string) {
-    return this.setDescription(desc + (prev ? `\nYour previous linked profile was ${prev}.` : '\nYou had no previous linked profile.'))
+    return this.setDescription(
+      desc +
+        (prev
+          ? `\nYour previous linked profile was ${prev}.`
+          : '\nYou had no previous linked profile.')
+    )
   }
 }
 // #endregion
@@ -376,16 +513,23 @@ function readablePlayType(str: strictPlayType, trailingSpace = false) {
 }
 
 /** Switch for all the different expected kinds of processed stats to put in EmbedParameters */
-type StatsType<T> =
-  T extends 'error' ? Error | string :
-  T extends 'general' ? GeneralStats :
-  T extends 'modes' ? Stats['pvp']['modes'] | Stats['pve']['modes'] :
-  T extends 'wp-single' | 'wp-cat' ? WeaponEmbedStats :
-  T extends 'op' ? OperatorEmbedStats :
-  T extends 'types' ? Stats['pve']['types'] :
-  T extends 'queue' ? StatsQueue[] :
-  T extends 'link' | 'unlink' ? LinkData :
-  false;
+type StatsType<T> = T extends 'error'
+  ? Error | string
+  : T extends 'general'
+  ? GeneralStats
+  : T extends 'modes'
+  ? Stats['pvp']['modes'] | Stats['pve']['modes']
+  : T extends 'wp-single' | 'wp-cat'
+  ? WeaponEmbedStats
+  : T extends 'op'
+  ? OperatorEmbedStats
+  : T extends 'types'
+  ? Stats['pve']['types']
+  : T extends 'queue'
+  ? StatsQueue[]
+  : T extends 'link' | 'unlink'
+  ? LinkData
+  : false
 
 /** Parameters for the createEmbed method */
 interface EmbedParameters<T> {
@@ -407,18 +551,19 @@ export function isPlatform(str: string): str is Platform {
 
 /** Checks whether the argument is a weapon */
 export function isWeaponName(str: string) {
-  return typeof str == 'string'
-    && constants.WEAPONS.map(wp => wpTrans(wp.name))
-      .includes(wpTrans(str))
+  return (
+    typeof str == 'string' &&
+    constants.WEAPONS.map((wp) => wpTrans(wp.name)).includes(wpTrans(str))
+  )
 }
 
 /** Returns the exact weapon name from an argument-form name */
 export function getWeaponName(str: string): WeaponName {
   // @ts-expect-error
-  return constants.WEAPONS.map(wp => wpTrans(wp.name))
-    .find(name => wpTrans(name) == wpTrans(str))
+  return constants.WEAPONS.map((wp) => wpTrans(wp.name)).find(
+    (name) => wpTrans(name) == wpTrans(str)
+  )
 }
-
 
 function wpTrans(str: string) {
   return str.toLowerCase().split(' ').join('-')
@@ -426,49 +571,61 @@ function wpTrans(str: string) {
 
 /** Checks whether the argument is a weapon category */
 export function isWeaponType(str: string) {
-  return typeof str == 'string'
-    && Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
+  return (
+    typeof str == 'string' &&
+    Object.values(constants.WEAPONTYPES)
+      .map((wt) => wt.toLowerCase().split(' ').join('-'))
       .includes(str.toLowerCase().split(' ').join('-'))
+  )
 }
 
 /** Returns the exact weapon category from an argument-form name */
 export function getWeaponType(str: string): WeaponType {
   // @ts-expect-error
-  return Object.values(constants.WEAPONTYPES).map(wt => wt.toLowerCase().split(' ').join('-'))
-    .find(name => name == str.toLowerCase().split(' ').join('-'))
+  return Object.values(constants.WEAPONTYPES)
+    .map((wt) => wt.toLowerCase().split(' ').join('-'))
+    .find((name) => name == str.toLowerCase().split(' ').join('-'))
 }
 
 /** Checks whether the argument is an operator */
 export function isOperator(str: string) {
-  return typeof str == 'string'
-    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join(''))
-      .includes(str.toLowerCase().split(' ').join(''))
+  return (
+    typeof str == 'string' &&
+    constants.OPERATORS.map((op) =>
+      op.name.toLowerCase().split(' ').join('')
+    ).includes(str.toLowerCase().split(' ').join(''))
+  )
 }
 
 /** Returns the exact operator name from an argument-form name */
 export function getOperator(str: string): Operator {
   // @ts-expect-error
-  return typeof str == 'string'
-    && constants.OPERATORS.map(op => op.name.toLowerCase().split(' ').join())
-      .find(name => name == str.toLowerCase().split(' ').join())
+  return (
+    typeof str == 'string' &&
+    constants.OPERATORS.map((op) =>
+      op.name.toLowerCase().split(' ').join()
+    ).find((name) => name == str.toLowerCase().split(' ').join())
+  )
 }
 
 /** Compares play regions to determine which is the most recent
  * @param regions The regions to compare
  */
 function getBestRegion(regions: RankSeason['regions']) {
-  return Object.values(regions)
-    .sort((a, b) => b.current.mmr - a.current.mmr)[0]
+  return Object.values(regions).sort((a, b) => b.current.mmr - a.current.mmr)[0]
 }
 
-/** Returns the stats of the most played operator. 
+/** Returns the stats of the most played operator.
  * Stats may not be reliable if `'all'` is used as `type`, it might be better to only get the name and re-parse the stats */
 function getMostPlayedOperator(rawStats: Stats, type?: playType) {
   let operators: Record<Operator, OperatorStats>
-  if (!type || type == 'all') operators = mergeAndSum(rawStats.pve.operators, rawStats.pvp.operators)
+  if (!type || type == 'all')
+    operators = mergeAndSum(rawStats.pve.operators, rawStats.pvp.operators)
   else operators = rawStats[type].operators
 
-  const mostUsedOp = Object.values(operators).sort((a, b) => -(a.playtime - b.playtime))[0]
+  const mostUsedOp = Object.values(operators).sort(
+    (a, b) => -(a.playtime - b.playtime)
+  )[0]
   return mostUsedOp
 }
 
@@ -530,7 +687,8 @@ interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
   CATname: WeaponType
 }
 
-interface OperatorEmbedStats extends PartialRecord<strictPlayType, OperatorStats> { }
+interface OperatorEmbedStats
+  extends PartialRecord<strictPlayType, OperatorStats> {}
 
 interface LinkData {
   previous?: string
@@ -545,12 +703,17 @@ export class RainbowAPI extends API {
   }
 
   /** Checks request results to determine whether there was an error and if so, returns an `ErrorEmbed` */
-  errorCheck(stats: Error | Stats, username: string, platform: Platform, msg: Message) {
+  errorCheck(
+    stats: Error | Stats,
+    username: string,
+    platform: Platform,
+    msg: Message
+  ) {
     if (stats instanceof Array) throw new Error('Multiple results')
     if (stats === undefined || stats instanceof Error) {
       let err: Error
       if (stats instanceof Error) err = stats
-      else err = new Error('Can\'t get stats.')
+      else err = new Error("Can't get stats.")
       return this.createEmbed({
         embedType: 'error',
         msg,
@@ -569,7 +732,15 @@ export class RainbowAPI extends API {
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
-  async createEmbed<T extends embedType_Type>({ embedType, msg, platform, playType, raw, stats, username }: EmbedParameters<T>) {
+  async createEmbed<T extends embedType_Type>({
+    embedType,
+    msg,
+    platform,
+    playType,
+    raw,
+    stats,
+    username
+  }: EmbedParameters<T>) {
     if (embedType == 'error') {
       if (!enforceType<StatsType<'error'>>(stats)) return
       return new ErrorEmbed(stats instanceof Error ? stats.message : stats, msg)
@@ -611,7 +782,9 @@ export class RainbowAPI extends API {
   // #region API wrappers
   /** Returns an ID from the API */
   async getID(username: string, platform: Platform, type?: 'userId' | 'id') {
-    return (ensureOne(await r6api.getId(platform, username)) || {})[type || platform == 'uplay' ? 'userId' : 'id']
+    return (ensureOne(await r6api.getId(platform, username)) || {})[
+      type || platform == 'uplay' ? 'userId' : 'id'
+    ]
   }
 
   /** Returns the level info for a player from the API */
@@ -631,11 +804,13 @@ export class RainbowAPI extends API {
 
   /** Returns all the stats for a player from the API*/
   async getStats(id: string, platform: Platform, useCache = true) {
-    let res: Stats,
-      error: Error
+    let res: Stats, error: Error
 
     try {
-      if (useCache) res = cache.get(cacheID(id, platform)) || ensureOne(await r6api.getStats(platform, id))
+      if (useCache)
+        res =
+          cache.get(cacheID(id, platform)) ||
+          ensureOne(await r6api.getStats(platform, id))
       else res = ensureOne(await r6api.getStats(platform, id))
     } catch (e) {
       if (typeof e == 'string') error = new Error(e)
@@ -647,8 +822,7 @@ export class RainbowAPI extends API {
     if (error) {
       error.message += `\nParameters:\n- Id: \`${id}\`\n- Platform: \`${platform}\``
       return error
-    }
-    else {
+    } else {
       if (useCache) cache.add(cacheID(id, platform), res)
       return res
     }
@@ -666,9 +840,13 @@ export class RainbowAPI extends API {
   }
   // #endregion
 
-
   // #region Command methods
-  async general(msg: Message, username: string, platform: Platform, playType: playType) {
+  async general(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    playType: playType
+  ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
@@ -677,12 +855,16 @@ export class RainbowAPI extends API {
 
     const processedStats = {} as GeneralStats
     let finalStats: Stats['pvp']['general'] | Stats['pve']['general']
-    if (playType == 'all') finalStats = mergeAndSum(rawStats.pvp.general, rawStats.pve.general)
+    if (playType == 'all')
+      finalStats = mergeAndSum(rawStats.pvp.general, rawStats.pve.general)
     else finalStats = rawStats[playType].general
 
     const levelInfo = await this.getLevelInfo(id, platform)
     const rankInfo = await this.getRank(id, platform)
-    const region = getBestRegion(rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))].regions)
+    const region = getBestRegion(
+      rankInfo.seasons[Math.max(...Object.keys(rankInfo.seasons).map(parseInt))]
+        .regions
+    )
 
     processedStats.account = {
       currentRank: {
@@ -723,7 +905,12 @@ export class RainbowAPI extends API {
     })
   }
 
-  async modes(msg: Message, username: string, platform: Platform, playType: strictPlayType) {
+  async modes(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    playType: strictPlayType
+  ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
@@ -743,7 +930,12 @@ export class RainbowAPI extends API {
     })
   }
 
-  async wp(msg: Message, username: string, platform: Platform, wpOrCat: WeaponName | WeaponType) {
+  async wp(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    wpOrCat: WeaponName | WeaponType
+  ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
@@ -755,7 +947,12 @@ export class RainbowAPI extends API {
       const exactName = getWeaponName(wpOrCat)
       var CATname: WeaponType
       for (const cat in rawStats.pvp.weapons) {
-        if (enforceType<WeaponType>(cat) && rawStats.pvp.weapons[cat].list.some(wp => wpTrans(wp.name) == exactName))
+        if (
+          enforceType<WeaponType>(cat) &&
+          rawStats.pvp.weapons[cat].list.some(
+            (wp) => wpTrans(wp.name) == exactName
+          )
+        )
           CATname = cat
       }
       processedStats = {
@@ -789,7 +986,12 @@ export class RainbowAPI extends API {
     } else console.log(wpOrCat)
   }
 
-  async op(msg: Message, username: string, platform: Platform, operator: Operator | 'auto') {
+  async op(
+    msg: Message,
+    username: string,
+    platform: Platform,
+    operator: Operator | 'auto'
+  ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
@@ -806,13 +1008,14 @@ export class RainbowAPI extends API {
     processedStats.pvp = rawStats.pvp.operators[operator] || undefined
     processedStats.pve = rawStats.pve.operators[operator] || undefined
 
-    if (!processedStats.pvp && !processedStats.pve) return this.createEmbed({
-      embedType: 'error',
-      msg,
-      platform,
-      stats: 'No weapon stats have been found',
-      username
-    })
+    if (!processedStats.pvp && !processedStats.pve)
+      return this.createEmbed({
+        embedType: 'error',
+        msg,
+        platform,
+        stats: 'No weapon stats have been found',
+        username
+      })
 
     return this.createEmbed({
       embedType: 'op',
@@ -851,7 +1054,9 @@ export class RainbowAPI extends API {
     if (check) return check
     if (!enforceType<Stats>(rawStats)) return
 
-    const processedStats = Object.values(rawStats.pvp.queue).sort((a, b) => b.matches - a.matches)
+    const processedStats = Object.values(rawStats.pvp.queue).sort(
+      (a, b) => b.matches - a.matches
+    )
 
     return this.createEmbed({
       embedType: 'queue',
@@ -865,22 +1070,24 @@ export class RainbowAPI extends API {
 
   /** Use the udpated `username` and `platform` */
   async link(msg: Message, username: string, platform: Platform) {
-    let mode: 'same' | 'link',
-      currStr
+    let mode: 'same' | 'link', currStr
 
     const prev = this.checkDatabase(msg)
-    const prevStr = (prev instanceof Array && prev[0] && prev[1]) ? player(prev[0], prev[1]) : undefined
-
+    const prevStr =
+      prev instanceof Array && prev[0] && prev[1]
+        ? player(prev[0], prev[1])
+        : undefined
 
     if (username) {
       const id = await this.getID(username, platform)
-      if (!id) return this.createEmbed({
-        embedType: 'error',
-        msg,
-        platform,
-        stats: `${player(username, platform)} is not a valid player.`,
-        username
-      })
+      if (!id)
+        return this.createEmbed({
+          embedType: 'error',
+          msg,
+          platform,
+          stats: `${player(username, platform)} is not a valid player.`,
+          username
+        })
 
       currStr = player(username, platform)
       mode = prevStr == currStr ? 'same' : 'link'
