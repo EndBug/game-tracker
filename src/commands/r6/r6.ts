@@ -208,7 +208,7 @@ export default class RainbowCMD extends Command {
     }
     // PLAYER check
     if (!exit && !err) {
-      if (isMention(player)) {
+      if (player && isMention(player)) {
         const stored = API.checkDatabase(mentionToID(player))
         if (stored) {
           player = stored[0]
