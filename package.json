@@ -30,7 +30,7 @@
     "cron": "^1.8.2",
     "dbots": "^5.2.0",
     "discord.js": "^12.5.1",
-    "discord.js-light": "^3.4.2",
+    "discord.js-light": "^3.5.0",
     "dotenv": "^8.1.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.0",
