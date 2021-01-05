@@ -1,11 +1,10 @@
 # Game Tracker
 
 [![Support Guild](https://discordapp.com/api/guilds/475792603867119626/embed.png)](https://discord.gg/5YrhW4NHfY)
-[![Discord Bots](https://discordbots.org/api/widget/status/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![Discord Bots](https://discordbots.org/api/widget/servers/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![Discord Bots](https://discordbots.org/api/widget/upvotes/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![Discord Bots](https://discordbots.org/api/widget/lib/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![Discord Bots](https://discordbots.org/api/widget/owner/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Top.gg](https://discordbots.org/api/widget/status/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Top.gg](https://discordbots.org/api/widget/servers/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Top.gg](https://discordbots.org/api/widget/lib/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
+[![Top.gg](https://discordbots.org/api/widget/owner/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![LGTM code quality](https://img.shields.io/lgtm/grade/javascript/github/dbots-pkg/dbots.js?label=Code%20quality)](https://lgtm.com/projects/g/dbots-pkg/dbots.js/context:javascript)
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat)](#contributors)
 
