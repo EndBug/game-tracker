@@ -38,7 +38,7 @@
     "nodemon": "^2.0.4",
     "overwatch-stats-api": "^2.1.0",
     "prettier": "^2.2.1",
-    "pretty-error": "^2.1.2",
+    "pretty-error": "^3.0.3",
     "r6api.js": "^1.6.0",
     "statcord.js": "^3.1.4",
     "ts-node": "9.1.1",
