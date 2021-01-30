@@ -60,7 +60,8 @@ function initClient() {
 
     try {
       statcordInit(client)
-      statcord.autopost().catch(console.error)
+      statcord.autopost()
+      console.log('[statcord] Statcord is running.')
     } catch (e) {
       console.error('There has been an issue with StatCord:\n', e)
     }
