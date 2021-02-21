@@ -131,8 +131,10 @@ export default class OverwatchCMD extends Command {
         if (isMention(player)) {
           const res = API.checkDatabase(msg.author)
           if (res) {
-            if (platform)
+            // prettier-ignore
+            if (platform) // lgtm [js/trivial-conditional]
               hero = platform // lgtm [js/trivial-conditional]
+            ;
             ;[player, platform] = res
           } else
             err =
