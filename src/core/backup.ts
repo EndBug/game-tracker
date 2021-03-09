@@ -72,7 +72,7 @@ async function loadChannels(check = true) {
 export function init(doRestore = true) {
   return new Promise((resolve, reject) => {
     if (!available)
-      reject('There is no backup token, please check your .env file.')
+      return reject('There is no backup token, please check your .env file.')
 
     client.on('error', reject)
     client.login(process.env.BACKUP).catch(reject)
