@@ -20,6 +20,7 @@
 | Echo             | `echo`            |
 | Ela              | `ela`             |
 | Finka            | `finka`           |
+| Flores           | `flores`          |
 | Frost            | `frost`           |
 | Fuze             | `fuze`            |
 | Glaz             | `glaz`            |
