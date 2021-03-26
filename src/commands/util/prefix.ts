@@ -54,9 +54,12 @@ export default class PrefixCommand extends Command {
 
     // Check the user's permission before changing anything
     if (msg.guild) {
+      await msg.guild.roles.fetch()
       if (!msg.member.hasPermission('MANAGE_GUILD') && !isOwner(msg.author)) {
+        msg.guild.roles.cache.clear()
         return msg.reply('Only guild managers may change the command prefix.')
       }
+      msg.guild.roles.cache.clear()
     } else if (!isOwner(msg.author)) {
       return msg.reply(
         'Only the bot owner(s) may change the global command prefix.'
