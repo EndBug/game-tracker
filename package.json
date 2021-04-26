@@ -40,7 +40,7 @@
     "prettier": "^2.2.1",
     "pretty-error": "^3.0.3",
     "r6api.js": "^1.7.0",
-    "statcord.js": "^3.1.7",
+    "statcord.js": "^3.2.0",
     "ts-node": "9.1.1",
     "typescript-map": "0.1.0"
   },
