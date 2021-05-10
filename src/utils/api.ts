@@ -51,8 +51,11 @@ export class APIUtil {
     const dir = path(__dirname, '../apis')
     const files = readdirSync(dir)
     for (const file of files) {
-      const ClassFromModule: Class = require(path(__dirname, '../apis', file))
-        .ApiLoader
+      const ClassFromModule: Class = require(path(
+        __dirname,
+        '../apis',
+        file
+      )).ApiLoader
       const api: API = new ClassFromModule()
       this.APIs[api.apiKey] = api
 
