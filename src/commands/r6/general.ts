@@ -15,8 +15,7 @@ export default class R6GeneralWiki extends Command {
             'Displays general PvP stats for `Truman` by searching the user in the `xbl` category.',
           'all @DiscordUser':
             'Displays general PvP and PvE stats for the mentioned user, if they linked their account.',
-          all:
-            'Displays your general PvP and PvE stats, if you linked your account.'
+          all: 'Displays your general PvP and PvE stats, if you linked your account.'
         },
         extra: 'playType'
       })
