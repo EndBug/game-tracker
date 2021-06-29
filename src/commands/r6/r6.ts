@@ -2,11 +2,11 @@ import {
   RainbowAPI,
   isPlatform,
   isWeaponName,
-  isWeaponType,
-  isOperator,
+  isWeaponTypeId,
+  isOperatorIdLike,
   getWeaponName,
-  getWeaponType,
-  getOperator
+  getWeaponTypeId,
+  getOperatorId
 } from '../../apis/rainbow'
 import { isMention, mentionToID, escapeMentions } from '../../utils/utils'
 import { Command, CommandInfo } from '../../utils/command'
@@ -114,9 +114,9 @@ function isValidExtra(method: string, extra: string) {
     : m == 'modes'
     ? ['pvp', 'pve'].includes(e)
     : m == 'wp'
-    ? isWeaponName(e) || isWeaponType(e)
+    ? isWeaponName(e) || isWeaponTypeId(e)
     : m == 'op'
-    ? e == 'auto' || isOperator(e)
+    ? e == 'auto' || isOperatorIdLike(e)
     : false
 }
 
@@ -251,8 +251,8 @@ export default class RainbowCMD extends Command {
     else {
       if (method == 'wp') {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
-        else if (isWeaponType(extra)) extra = getWeaponType(extra)
-      } else if (method == 'op') extra = getOperator(extra)
+        else if (isWeaponTypeId(extra)) extra = getWeaponTypeId(extra)
+      } else if (method == 'op') extra = getOperatorId(extra)
       return msg.channel
         .send(await API[method](msg, player, platform, extra))
         .finally(() => msg.channel.stopTyping())
