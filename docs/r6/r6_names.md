@@ -1,71 +1,72 @@
 # Rainbow Six Siege cheatsheet
 ### Operators
-| Operator         | Aliases           |
-| ---------------- | ----------------- |
-| Ace              | `ace`             |
-| Alibi            | `alibi`           |
-| Amaru            | `amaru`           |
-| Aruni            | `aruni`           |
-| Ash              | `ash`             |
-| Bandit           | `bandit`          |
-| Blackbeard       | `blackbeard`      |
-| Blitz            | `blitz`           |
-| Buck             | `buck`            |
-| Capitão          | `capitao`         |
-| Castle           | `castle`          |
-| Caveira          | `caveira`         |
-| Clash            | `clash`           |
-| Doc              | `doc`             |
-| Dokkaebi         | `dokkaebi`        |
-| Echo             | `echo`            |
-| Ela              | `ela`             |
-| Finka            | `finka`           |
-| Flores           | `flores`          |
-| Frost            | `frost`           |
-| Fuze             | `fuze`            |
-| Glaz             | `glaz`            |
-| Goyo             | `goyo`            |
-| Gridlock         | `gridlock`        |
-| Hibana           | `hibana`          |
-| IQ               | `iq`              |
-| Iana             | `iana`            |
-| Jackal           | `jackal`          |
-| Jäger            | `jager`           |
-| Kaid             | `kaid`            |
-| Kali             | `kali`            |
-| Kapkan           | `kapkan`          |
-| Lesion           | `lesion`          |
-| Lion             | `lion`            |
-| Maestro          | `maestro`         |
-| Maverick         | `maverick`        |
-| Melusi           | `melusi`          |
-| Mira             | `mira`            |
-| Montagne         | `montagne`        |
-| Mozzie           | `mozzie`          |
-| Mute             | `mute`            |
-| Nomad            | `nomad`           |
-| Nøkk             | `nokk`            |
-| Oryx             | `oryx`            |
-| Pulse            | `pulse`           |
-| Recruit FBI SWAT | `recruitfbi`      |
-| Recruit GIGN     | `recruitgign`     |
-| Recruit GSG 9    | `recruitgsg`      |
-| Recruit SAS      | `recruitsas`      |
-| Recruit Spetsnaz | `recruitspetsnaz` |
-| Rook             | `rook`            |
-| Sledge           | `sledge`          |
-| Smoke            | `smoke`           |
-| Tachanka         | `tachanka`        |
-| Thatcher         | `thatcher`        |
-| Thermite         | `thermite`        |
-| Twitch           | `twitch`          |
-| Valkyrie         | `valkyrie`        |
-| Vigil            | `vigil`           |
-| Wamai            | `wamai`           |
-| Warden           | `warden`          |
-| Ying             | `ying`            |
-| Zero             | `zero`            |
-| Zofia            | `zofia`           |
+| Operator         | Aliases            |
+| ---------------- | ------------------ |
+| Ace              | `ace`              |
+| Alibi            | `alibi`            |
+| Amaru            | `amaru`            |
+| Aruni            | `aruni`            |
+| Ash              | `ash`              |
+| Bandit           | `bandit`           |
+| Blackbeard       | `blackbeard`       |
+| Blitz            | `blitz`            |
+| Buck             | `buck`             |
+| Capitão          | `capitao`          |
+| Castle           | `castle`           |
+| Caveira          | `caveira`          |
+| Clash            | `clash`            |
+| Doc              | `doc`              |
+| Dokkaebi         | `dokkaebi`         |
+| Echo             | `echo`             |
+| Ela              | `ela`              |
+| Finka            | `finka`            |
+| Flores           | `flores`           |
+| Frost            | `frost`            |
+| Fuze             | `fuze`             |
+| Glaz             | `glaz`             |
+| Goyo             | `goyo`             |
+| Gridlock         | `gridlock`         |
+| Hibana           | `hibana`           |
+| IQ               | `iq`               |
+| Iana             | `iana`             |
+| Jackal           | `jackal`           |
+| Jäger            | `jager`            |
+| Kaid             | `kaid`             |
+| Kali             | `kali`             |
+| Kapkan           | `kapkan`           |
+| Lesion           | `lesion`           |
+| Lion             | `lion`             |
+| Maestro          | `maestro`          |
+| Maverick         | `maverick`         |
+| Melusi           | `melusi`           |
+| Mira             | `mira`             |
+| Montagne         | `montagne`         |
+| Mozzie           | `mozzie`           |
+| Mute             | `mute`             |
+| Nomad            | `nomad`            |
+| Nøkk             | `nokk`             |
+| Oryx             | `oryx`             |
+| Pulse            | `pulse`            |
+| Recruit FBI SWAT | `recruit_fbi`      |
+| Recruit GIGN     | `recruit_gign`     |
+| Recruit GSG 9    | `recruit_gsg9`     |
+| Recruit SAS      | `recruit_sas`      |
+| Recruit Spetsnaz | `recruit_spetsnaz` |
+| Rook             | `rook`             |
+| Sledge           | `sledge`           |
+| Smoke            | `smoke`            |
+| Tachanka         | `tachanka`         |
+| Thatcher         | `thatcher`         |
+| Thermite         | `thermite`         |
+| Thunderbird      | `thunderbird`      |
+| Twitch           | `twitch`           |
+| Valkyrie         | `valkyrie`         |
+| Vigil            | `vigil`            |
+| Wamai            | `wamai`            |
+| Warden           | `warden`           |
+| Ying             | `ying`             |
+| Zero             | `zero`             |
+| Zofia            | `zofia`            |
 
 ### Weapon categories
 | Category | Aliases    |

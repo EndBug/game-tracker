@@ -1,17 +1,23 @@
-import R6API, {
-  Stats,
-  Operator,
-  OperatorStats,
+import R6API, { constants } from 'r6api.js'
+import { IGetStats as Stats } from 'r6api.js/dist/methods/getStats'
+import { IGetRanks } from 'r6api.js/dist/methods/getRanks'
+import {
+  OperatorName as OperatorId,
+  OperatorName,
   Platform,
-  PvPMode,
-  PvEMode,
-  WeaponType,
-  WeaponCategory,
   WeaponName,
-  RankSeason,
-  StatsType as TypesObject,
-  StatsQueue
-} from 'r6api.js'
+  WeaponTypeId
+} from 'r6api.js/dist/typings'
+type WeaponCategory = Stats['pvp']['weapons']['assault']
+type WeaponTypeName =
+  typeof constants.WEAPONTYPES[keyof typeof constants.WEAPONTYPES]['name']
+type PvPMode = Stats['pvp']['modes'][keyof Stats['pvp']['modes']]
+type PvEMode = Stats['pve']['modes'][keyof Stats['pve']['modes']]
+type RankSeason = IGetRanks['seasons'][string]
+type OperatorStats = Stats['pvp' | 'pve']['operators'][OperatorName]
+type PveQueue = Stats['pve']['queues']['coop']['hard']
+type PvpQueue = Stats['pvp']['queues']['ranked']
+
 import {
   getShortName,
   ensureOne,
@@ -29,9 +35,12 @@ import { API } from '../utils/api'
 import { client } from '../core/app'
 
 const { UbisoftEmail, UbisoftPassword } = process.env
-const r6api = new R6API(UbisoftEmail, UbisoftPassword)
+const r6api = new R6API({
+  email: UbisoftEmail,
+  password: UbisoftPassword
+})
 
-export const constants = r6api.constants
+export { constants } from 'r6api.js'
 
 var cache = new Cache('Rainbow 6 Siege')
 
@@ -74,7 +83,7 @@ class CustomEmbed extends MessageEmbed {
    */
   addOpImage(rawStats: Stats, type: playType) {
     const mostUsedOp = getMostPlayedOperator(rawStats, type)
-    return this.setThumbnail(mostUsedOp.badge)
+    return this.setThumbnail(mostUsedOp.icon)
   }
 
   /** Adds a title to the embed with the following format:
@@ -248,7 +257,7 @@ class WeaponEmbed extends CustomEmbed {
   /** Adds a weapon to the embed */
   addWeapon(
     category: WeaponEmbedStats,
-    wpName: WeaponName,
+    wpName: string,
     title?: string,
     only?: strictPlayType,
     name?: boolean
@@ -258,7 +267,7 @@ class WeaponEmbed extends CustomEmbed {
       if (!playType.includes('name') && !(only && playType != only)) {
         if (!enforceType<strictPlayType>(playType)) return
         let str = ''
-        const wp = category[playType].list.find(
+        const wp = Object.values(category[playType].list).find(
           (wp) => wpTrans(wp.name) == wpTrans(wpName)
         )
         if (name) str += `Name: **${wp.name}**\n`
@@ -274,7 +283,7 @@ class WeaponEmbed extends CustomEmbed {
 
   /** Gets the most chosen weapon from the provided array */
   mostChosenWeapon(list: WeaponEmbedStats['pve']['list']) {
-    return list.sort((a, b) => a.timesChosen - b.timesChosen)[0]
+    return Object.values(list).sort((a, b) => a.timesChosen - b.timesChosen)[0]
   }
 }
 
@@ -295,8 +304,9 @@ class WeaponSingleEmbed extends WeaponEmbed {
     const weapon = category.WPname
     return this.setHeader(
       `${
-        category['pvp'].list.find((wp) => wpTrans(wp.name) == wpTrans(weapon))
-          .name
+        Object.values(category['pvp'].list).find(
+          (wp) => wpTrans(wp.name) == wpTrans(weapon)
+        ).name
       } weapon`,
       username,
       platform
@@ -361,7 +371,7 @@ class OperatorEmbed extends CustomEmbed {
       `${capitalize(stats[types[0]].name)} operator`,
       username,
       platform
-    ).setThumbnail(stats[types[0]].badge)
+    ).setThumbnail(stats[types[0]].icon)
     for (const playType of types) this.addPlayType(playType, stats[playType])
     return this
   }
@@ -371,7 +381,7 @@ class OperatorEmbed extends CustomEmbed {
     const { kills, deaths, wins, losses } = stats
 
     const title = readablePlayType(playType)
-    const other = (stats.gadget || [])
+    const other = (stats.uniqueAbility.stats || [])
       .map((g) => keyValue(g.name, g.value))
       .join('\n- ')
     const str = `
@@ -382,7 +392,7 @@ class OperatorEmbed extends CustomEmbed {
     Wins/Losses: ${[wins, losses].map((e) => statFormat(e)).join(' / ')}
     Headshots: ${statFormat(stats.headshots)}
     Melee kills: ${statFormat(stats.meleeKills)}
-    DBNOs: ${statFormat(stats.dbno)}
+    DBNOs: ${statFormat('dbno' in stats ? stats.dbno : 0)}
     XP: ${statFormat(stats.xp)}
     Playtime: **${readHours(stats.playtime / 60 / 60)}**
     ${other ? `Other:\n- ${other}` : ''}
@@ -413,7 +423,7 @@ class TypesEmbed extends CustomEmbed {
   }
 
   /** Adds a type to the embed */
-  addType(name: string, value: TypesObject) {
+  addType(name: string, value: PveQueue) {
     let str = ''
     for (const key in value) str += keyValue(key, value[key]) + '\n'
     return this.addField(camelToReadable(name), str.trim(), true)
@@ -441,7 +451,7 @@ class QueueEmbed extends CustomEmbed {
   }
 
   /** Adds a queue type to the embed */
-  addQueue(queue: StatsQueue) {
+  addQueue(queue: PvpQueue) {
     const { wins, losses, matches, kills, deaths } = queue
     const str = `
     Total matches: ${statFormat(matches)}
@@ -524,9 +534,9 @@ type StatsType<T> = T extends 'error'
   : T extends 'op'
   ? OperatorEmbedStats
   : T extends 'types'
-  ? Stats['pve']['types']
+  ? Stats['pve']['queues']
   : T extends 'queue'
-  ? StatsQueue[]
+  ? PvpQueue[]
   : T extends 'link' | 'unlink'
   ? LinkData
   : false
@@ -553,58 +563,75 @@ export function isPlatform(str: string): str is Platform {
 export function isWeaponName(str: string) {
   return (
     typeof str == 'string' &&
-    constants.WEAPONS.map((wp) => wpTrans(wp.name)).includes(wpTrans(str))
+    Object.values(constants.WEAPONS)
+      .map((wp) => wpTrans(wp.name))
+      .includes(wpTrans(str))
   )
 }
 
 /** Returns the exact weapon name from an argument-form name */
 export function getWeaponName(str: string): WeaponName {
-  // @ts-expect-error
-  return constants.WEAPONS.map((wp) => wpTrans(wp.name)).find(
-    (name) => wpTrans(name) == wpTrans(str)
-  )
+  return Object.values(constants.WEAPONS)
+    .map((wp) => wpTrans(wp.name))
+    .find((name) => wpTrans(name) == wpTrans(str)) as WeaponName
 }
 
 function wpTrans(str: string) {
   return str.toLowerCase().split(' ').join('-')
 }
 
-/** Checks whether the argument is a weapon category */
-export function isWeaponType(str: string) {
+/** Checks whether the argument is a weapon category
+ * @example isWeaponTypeIdLike('assault') // true
+ * @example isWeaponTypeIdLike('Assault Rifle') // false
+ */
+export function isWeaponTypeId(str: string): str is WeaponTypeId {
   return (
     typeof str == 'string' &&
     Object.values(constants.WEAPONTYPES)
-      .map((wt) => wt.toLowerCase().split(' ').join('-'))
-      .includes(str.toLowerCase().split(' ').join('-'))
+      .map((weaponTypeObject) => weaponTypeObject.id as string)
+      .includes(str)
   )
 }
 
-/** Returns the exact weapon category from an argument-form name */
-export function getWeaponType(str: string): WeaponType {
-  // @ts-expect-error
-  return Object.values(constants.WEAPONTYPES)
-    .map((wt) => wt.toLowerCase().split(' ').join('-'))
-    .find((name) => name == str.toLowerCase().split(' ').join('-'))
+/** Returns the weapon category id from an argument-like string
+ * @example getWeaponTypeId('Assault') // 'assault'
+ */
+export function getWeaponTypeId(str: string): WeaponTypeId {
+  return Object.values(constants.WEAPONTYPES).find(
+    (wt) => wt.id == wpTrans(str)
+  )?.id
 }
 
-/** Checks whether the argument is an operator */
-export function isOperator(str: string) {
+/** Returns the readable weapon type from a weapon type id
+ * @example getWeaponTypeName('assault') // 'Assault Rifle'
+ */
+export function getWeaponTypeName(id: WeaponTypeId) {
+  return Object.values(constants.WEAPONTYPES).find((wt) => wt.id == id)?.name
+}
+
+/** Checks whether the argument is an operator
+ * @example isOperatorIdLike('Recruit_sas') // true
+ * @example isOperatorIdLike('Recruit SAS') // false
+ */
+export function isOperatorIdLike(str: string) {
   return (
     typeof str == 'string' &&
-    constants.OPERATORS.map((op) =>
-      op.name.toLowerCase().split(' ').join('')
-    ).includes(str.toLowerCase().split(' ').join(''))
+    Object.keys(constants.OPERATORS).includes(
+      str.toLowerCase().split(' ').join('')
+    )
   )
 }
 
-/** Returns the exact operator name from an argument-form name */
-export function getOperator(str: string): Operator {
-  // @ts-expect-error
+/** Returns the operator id from an argument-like string
+ * @example getOperatorId('Recruit_sas') // 'recruit_sas'
+ */
+export function getOperatorId(str: string): OperatorId {
   return (
-    typeof str == 'string' &&
-    constants.OPERATORS.map((op) =>
-      op.name.toLowerCase().split(' ').join()
-    ).find((name) => name == str.toLowerCase().split(' ').join())
+    (typeof str == 'string' &&
+      (Object.keys(constants.OPERATORS) as Array<OperatorId>).find(
+        (name) => name == str.toLowerCase().split(' ').join()
+      )) ||
+    undefined
   )
 }
 
@@ -612,13 +639,15 @@ export function getOperator(str: string): Operator {
  * @param regions The regions to compare
  */
 function getBestRegion(regions: RankSeason['regions']) {
-  return Object.values(regions).sort((a, b) => b.current.mmr - a.current.mmr)[0]
+  return Object.values(regions)
+    .map((r) => r.boards['pvp_ranked'])
+    .sort((a, b) => b.current.mmr - a.current.mmr)[0]
 }
 
 /** Returns the stats of the most played operator.
  * Stats may not be reliable if `'all'` is used as `type`, it might be better to only get the name and re-parse the stats */
 function getMostPlayedOperator(rawStats: Stats, type?: playType) {
-  let operators: Record<Operator, OperatorStats>
+  let operators: Record<OperatorId, OperatorStats>
   if (!type || type == 'all')
     operators = mergeAndSum(rawStats.pve.operators, rawStats.pvp.operators)
   else operators = rawStats[type].operators
@@ -684,7 +713,7 @@ interface GeneralStats {
 
 interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
   WPname?: WeaponName
-  CATname: WeaponType
+  CATname: WeaponTypeName
 }
 
 interface OperatorEmbedStats
@@ -782,24 +811,24 @@ export class RainbowAPI extends API {
   // #region API wrappers
   /** Returns an ID from the API */
   async getID(username: string, platform: Platform, type?: 'userId' | 'id') {
-    return (ensureOne(await r6api.getId(platform, username)) || {})[
+    return (ensureOne(await r6api.findByUsername(platform, username)) || {})[
       type || platform == 'uplay' ? 'userId' : 'id'
     ]
   }
 
   /** Returns the level info for a player from the API */
   async getLevelInfo(id: string, platform: Platform) {
-    return ensureOne(await r6api.getLevel(platform, id))
+    return ensureOne(await r6api.getProgression(platform, id))
   }
 
   /** Returns the rank info for a player from the API */
   async getRank(id: string, platform: Platform) {
-    return ensureOne(await r6api.getRank(platform, id, { seasons: [-1] }))
+    return ensureOne(await r6api.getRanks(platform, id, { seasonIds: [-1] }))
   }
 
   /** Returns a username from the API */
   async getUsername(id: string, platform: Platform) {
-    return (ensureOne(await r6api.getUsername(platform, id)) || {})['username']
+    return (ensureOne(await r6api.findById(platform, id)) || {})['username']
   }
 
   /** Returns all the stats for a player from the API*/
@@ -891,6 +920,7 @@ export class RainbowAPI extends API {
 
     processedStats.performance = {
       assists: finalStats.assists,
+      // @ts-expect-error
       dbnos: finalStats.dbno,
       deaths: finalStats.deaths,
       kills: finalStats.kills,
@@ -937,7 +967,7 @@ export class RainbowAPI extends API {
     msg: Message,
     username: string,
     platform: Platform,
-    wpOrCat: WeaponName | WeaponType
+    wpOrCat: WeaponName | WeaponTypeId
   ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
@@ -948,11 +978,11 @@ export class RainbowAPI extends API {
     var processedStats: WeaponEmbedStats
     if (isWeaponName(wpOrCat)) {
       const exactName = getWeaponName(wpOrCat)
-      var CATname: WeaponType
+      var CATname: WeaponTypeId
       for (const cat in rawStats.pvp.weapons) {
         if (
-          enforceType<WeaponType>(cat) &&
-          rawStats.pvp.weapons[cat].list.some(
+          enforceType<WeaponTypeId>(cat) &&
+          Object.values(rawStats.pvp.weapons[cat].list).some(
             (wp) => wpTrans(wp.name) == exactName
           )
         )
@@ -960,7 +990,7 @@ export class RainbowAPI extends API {
       }
       processedStats = {
         WPname: getWeaponName(exactName),
-        CATname: getWeaponType(CATname),
+        CATname: getWeaponTypeName(CATname),
         pve: rawStats.pve.weapons[CATname],
         pvp: rawStats.pvp.weapons[CATname]
       }
@@ -972,9 +1002,9 @@ export class RainbowAPI extends API {
         raw: rawStats,
         username
       })
-    } else if (isWeaponType(wpOrCat)) {
+    } else if (isWeaponTypeId(wpOrCat)) {
       processedStats = {
-        CATname: getWeaponType(wpOrCat),
+        CATname: getWeaponTypeName(wpOrCat),
         pve: rawStats.pve.weapons[wpOrCat],
         pvp: rawStats.pvp.weapons[wpOrCat]
       }
@@ -993,7 +1023,7 @@ export class RainbowAPI extends API {
     msg: Message,
     username: string,
     platform: Platform,
-    operator: Operator | 'auto'
+    operator: OperatorId | 'auto'
   ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
@@ -1003,7 +1033,7 @@ export class RainbowAPI extends API {
 
     if (operator == 'auto') {
       const str = getMostPlayedOperator(rawStats, 'all').name
-      if (!enforceType<Operator>(str)) return
+      if (!enforceType<OperatorId>(str)) return
       operator = str
     }
 
@@ -1037,7 +1067,7 @@ export class RainbowAPI extends API {
     if (check) return check
     if (!enforceType<Stats>(rawStats)) return
 
-    const processedStats = rawStats.pve.types
+    const processedStats = rawStats.pve.queues
 
     return this.createEmbed({
       embedType: 'types',
@@ -1057,7 +1087,7 @@ export class RainbowAPI extends API {
     if (check) return check
     if (!enforceType<Stats>(rawStats)) return
 
-    const processedStats = Object.values(rawStats.pvp.queue).sort(
+    const processedStats = Object.values(rawStats.pvp.queues).sort(
       (a, b) => b.matches - a.matches
     )
 

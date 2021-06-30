@@ -9,7 +9,7 @@ export default class R6OPWiki extends Command {
         details:
           'Specify the operator to show by writing their name. Every operator can be written in lowercase with no spaces or dots, e.g.: "Recruit SAS" = "recruitsas".\nYou can find codes for supported operators here: <https://game-tracker.js.org/#/r6/r6_names?id=operators>',
         examples: {
-          'recruitsas BandltlsMyMaln':
+          'recruit_sas BandltlsMyMaln':
             'Displays Recruit SAS stats for `BandltlsMyMaln` by searching the user in the `uplay` category.',
           'gridlock Truman xbl':
             'Displays Gridlock stats for `Truman` by searching the user in the `xbl` category.',

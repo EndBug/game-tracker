@@ -32,29 +32,28 @@ writeTable({
 // #endregion
 
 // #region Rainbow 6 Siege
-import R6API from 'r6api.js'
-const { constants } = new R6API('', '')
+import { constants } from 'r6api.js'
 
 function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 const wpValues: Record<string, string[]> = {}
-for (const weapon of constants.WEAPONS) {
+for (const weapon of Object.values(constants.WEAPONS)) {
   const { name } = weapon
   wpValues[name] = [name.toLowerCase().split(' ').join('-')]
 }
 
 const wtValues: Record<string, string[]> = {}
 for (const key in constants.WEAPONTYPES) {
-  const name = constants.WEAPONTYPES[key]
+  const name =
+    constants.WEAPONTYPES[key as keyof typeof constants.WEAPONTYPES].id
   wtValues[capitalize(name)] = [name]
 }
 
 const opValues: Record<string, string[]> = {}
-for (const operator of constants.OPERATORS) {
-  const { name } = operator
-  opValues[name] = [name.toLowerCase().split(' ').join()]
+for (const id in constants.OPERATORS) {
+  opValues[id] = [id.toLowerCase().split(' ').join('')]
 }
 
 const tables = [
@@ -62,12 +61,7 @@ const tables = [
     type: 'Operator',
     subtitle: 'Operators',
     values: opValues,
-    getReadable: (name) =>
-      constants.OPERATORS.find(
-        (op) =>
-          op.name.toLowerCase().split(' ').join() ==
-          name.toLowerCase().split(' ').join()
-      ).readableName
+    getReadable: (id) => constants.OPERATORS[id].name
   }),
   getNameTable({
     type: 'Category',
