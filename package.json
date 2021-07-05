@@ -48,7 +48,7 @@
     "@types/common-tags": "^1.8.0",
     "@types/cron": "^1.7.2",
     "@types/markdown-table": "^2.0.0",
-    "@types/node": "^12.12.62",
+    "@types/node": "^16.0.0",
     "@types/nodemon": "^1.19.0",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.1",
