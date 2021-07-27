@@ -61,7 +61,8 @@ const tables = [
     type: 'Operator',
     subtitle: 'Operators',
     values: opValues,
-    getReadable: (id) => constants.OPERATORS[id].name
+    getReadable: (id) => constants.OPERATORS[id].name,
+    sort: false
   }),
   getNameTable({
     type: 'Category',
@@ -95,7 +96,10 @@ function getNameTable(opt: TableOptions) {
     ])
   }
 
-  const tableStr = table([[opt.type, 'Aliases'], ...contents.sort()])
+  const tableStr = table([
+    [opt.type, 'Aliases'],
+    ...(opt.sort === false ? contents : contents.sort())
+  ])
   return (
     (opt.title ? `# ${opt.title}\n` : '') +
     (opt.subtitle ? `### ${opt.subtitle}\n` : '') +
@@ -107,6 +111,7 @@ interface TableOptions {
   title?: string
   type: string
   subtitle?: string
+  sort?: boolean
   values: Record<string, string[]>
 }
 
