@@ -3,10 +3,8 @@
 [![Support Guild](https://discordapp.com/api/guilds/475792603867119626/embed.png)](https://discord.gg/5YrhW4NHfY)
 [![Top.gg](https://discordbots.org/api/widget/status/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Top.gg](https://discordbots.org/api/widget/servers/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![Top.gg](https://discordbots.org/api/widget/lib/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![Top.gg](https://discordbots.org/api/widget/owner/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![LGTM code quality](https://img.shields.io/lgtm/grade/javascript/github/EndBug/game-tracker?label=Code%20quality)](https://lgtm.com/projects/g/EndBug/game-tracker/context:javascript)
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat)](#contributors)
+[![All Contributors](https://img.shields.io/github/all-contributors/EndBug/game-tracker)](#contributors-)
 
 ### What is Game Tracker?
 
@@ -57,10 +55,11 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/jpylypiw"><img src="https://avatars3.githubusercontent.com/u/12394156?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jochen</b></sub></a><br /><a href="#ideas-jpylypiw" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><img src="https://cdn.discordapp.com/avatars/693443942183600190/ed1162a00e5cb7bf157c68e034bb756c.png?s=100" width="100px;" alt=""/><br /><sub><b>kepperr#9306</b></sub><br /><a href="https://github.com/EndBug/game-tracker/issues?q=author%3A" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://duck.js.org"><img src="https://avatars2.githubusercontent.com/u/43557963?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Duck Master</b></sub></a><br /><a href="https://github.com/EndBug/game-tracker/issues?q=author%3ADuckMasterAl" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/danielwerg"><img src="https://avatars.githubusercontent.com/u/35052399?v=4?s=100" width="100px;" alt=""/><br /><sub><b>danielwerg</b></sub></a><br /><a href="https://github.com/EndBug/game-tracker/commits?author=danielwerg" title="Documentation">📖</a></td>
   </tr>
 </table>
 
-<!-- markdownlint-enable -->
+<!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
