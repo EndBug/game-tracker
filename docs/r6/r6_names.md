@@ -114,6 +114,7 @@
 | CSRX 300                       | `csrx-300`          |
 | Commando 9                     | `commando-9`        |
 | D-50                           | `d-50`              |
+| DP27                           | `dp27`              |
 | F2                             | `f2`                |
 | F90                            | `f90`               |
 | FMG-9                          | `fmg-9`             |
