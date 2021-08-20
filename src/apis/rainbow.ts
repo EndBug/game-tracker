@@ -15,7 +15,6 @@ type PvPMode = Stats['pvp']['modes'][keyof Stats['pvp']['modes']]
 type PvEMode = Stats['pve']['modes'][keyof Stats['pve']['modes']]
 type RankSeason = IGetRanks['seasons'][string]
 type OperatorStats = Stats['pvp' | 'pve']['operators'][OperatorName]
-type PveQueue = Stats['pve']['queues']['coop']['hard']
 type PvpQueue = Stats['pvp']['queues']['ranked']
 
 import {
@@ -167,7 +166,7 @@ class GeneralEmbed extends CustomEmbed {
     Total matches: ${statFormat(total)}
     Total playtime: **${matches.playtime}**
     Wins/Losses: ${[wins, losses].map((e) => statFormat(e)).join('/')}
-    Win rate: ${statFormat((wins / total) * 100, '%')}
+    Win rate: ${statFormat((wins / total) * 100, { append: '%', decimals: 2 })}
     `.trim()
 
     return this.addField('Matches', str, true)
@@ -180,7 +179,7 @@ class GeneralEmbed extends CustomEmbed {
     const str = `K/D/A: ${[kills, deaths, assists]
       .map((n) => statFormat(n))
       .join('/')}
-    K/D ratio: ${statFormat(kills / deaths)}
+    K/D ratio: ${statFormat(kills / deaths, { decimals: 2 })}
     DBNOs: ${statFormat(performance.dbnos)}
     Revives: ${statFormat(performance.revives)}`
 
@@ -385,10 +384,16 @@ class OperatorEmbed extends CustomEmbed {
       .map((g) => keyValue(g.name, g.value))
       .join('\n- ')
     const str = `
-    Kills/Deaths: ${statFormat(kills / deaths)} (${[deaths, kills]
+    Kills/Deaths: ${statFormat(kills / deaths, { decimals: 2 })} (${[
+      deaths,
+      kills
+    ]
       .map((e) => statFormat(e))
       .join(' / ')})
-    Win rate: ${statFormat((wins / (wins + losses)) * 100, '%')}
+    Win rate: ${statFormat((wins / (wins + losses)) * 100, {
+      append: '%',
+      decimals: 2
+    })}
     Wins/Losses: ${[wins, losses].map((e) => statFormat(e)).join(' / ')}
     Headshots: ${statFormat(stats.headshots)}
     Melee kills: ${statFormat(stats.meleeKills)}
@@ -418,14 +423,17 @@ class TypesEmbed extends CustomEmbed {
     this.type = 'types'
 
     this.setHeader('PvE types', username, platform).addOpImage(raw, 'pve')
+
+    // key is "local" or "coop"
     for (const key in stats) this.addType(key, stats[key])
     return this
   }
 
   /** Adds a type to the embed */
-  addType(name: string, value: PveQueue) {
-    let str = ''
-    for (const key in value) str += keyValue(key, value[key]) + '\n'
+  addType(name: string, value: StatsType<'types'>['local' | 'coop']) {
+    const str = Object.values(value)
+      .map((type) => keyValue(type.name, type.bestScore))
+      .join('\n')
     return this.addField(camelToReadable(name), str.trim(), true)
   }
 }
@@ -455,9 +463,15 @@ class QueueEmbed extends CustomEmbed {
     const { wins, losses, matches, kills, deaths } = queue
     const str = `
     Total matches: ${statFormat(matches)}
-    Win rate: ${statFormat((wins / matches) * 100, '%')}
+    Win rate: ${statFormat((wins / matches) * 100, {
+      append: '%',
+      decimals: 2
+    })}
     Wins/Losses: ${[wins, losses].map((e) => statFormat(e)).join(' / ')}
-    Kills/Deaths: ${statFormat(kills / deaths)} (${[deaths, kills]
+    Kills/Deaths: ${statFormat(kills / deaths, { decimals: 2 })} (${[
+      deaths,
+      kills
+    ]
       .map((e) => statFormat(e))
       .join(' / ')})
     Playtime: **${readHours(queue.playtime / 60 / 60)}**
@@ -663,9 +677,16 @@ function keyValue(key: string, value: number) {
   return `${camelToReadable(key)}: ${statFormat(value)}`
 }
 
+interface statOptions {
+  append?: string
+  decimals?: number
+}
 /** Returns a readable version of numbers */
-function statFormat(value: number, append?: string) {
-  return `**${readNumber(value) || value}**` + (append || '')
+function statFormat(value: number, options: statOptions = {}) {
+  return (
+    `**${readNumber(value, options.decimals || 0) || value}**` +
+    (options.append || '')
+  )
 }
 
 /** Returns an ID to use for caching */
