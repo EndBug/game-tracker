@@ -50,7 +50,7 @@
     "@types/markdown-table": "^2.0.0",
     "@types/node": "^12.12.62",
     "@types/nodemon": "^1.19.1",
-    "@typescript-eslint/eslint-plugin": "^4.31.2",
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
     "all-contributors-cli": "^6.20.0",
     "cross-env": "^7.0.3",
