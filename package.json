@@ -41,7 +41,7 @@
     "pretty-error": "^4.0.0",
     "r6api.js": "^2.1.0",
     "statcord.js": "^3.2.1",
-    "ts-node": "10.3.0",
+    "ts-node": "10.4.0",
     "typescript-map": "0.1.0"
   },
   "devDependencies": {
