@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "axios": "^0.24.0",
-    "common-tags": "^1.8.1",
+    "common-tags": "^1.8.2",
     "cron": "^1.8.2",
     "dbots": "^9.0.1",
     "discord.js": "^12.5.3",
