@@ -747,7 +747,7 @@ interface LinkData {
 }
 // #endregion
 
-export class RainbowAPI extends API {
+export class RainbowAPI extends API<'r6'> {
   constructor() {
     super('r6', 'Rainbow 6 Siege')
   }
@@ -775,10 +775,9 @@ export class RainbowAPI extends API {
   }
 
   /** Gets the saved credentials of a user from the database */
-  checkDatabase(discordUser: UserResolvable): [string, Platform] {
+  checkDatabase(discordUser: UserResolvable) {
     const id = client.users.resolveID(discordUser)
-    const res = this.get(id)
-    return enforceType<[string, Platform]>(res) && res
+    return this.get(id)
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
@@ -1126,11 +1125,9 @@ export class RainbowAPI extends API {
   async link(msg: Message, username: string, platform: Platform) {
     let mode: 'same' | 'link', currStr
 
-    const prev = this.checkDatabase(msg)
+    const prev = await this.checkDatabase(msg)
     const prevStr =
-      prev instanceof Array && prev[0] && prev[1]
-        ? player(prev[0], prev[1])
-        : undefined
+      typeof prev == 'object' ? player(prev.username, prev.platform) : undefined
 
     if (username) {
       const id = await this.getID(username, platform)
@@ -1147,7 +1144,13 @@ export class RainbowAPI extends API {
       mode = prevStr == currStr ? 'same' : 'link'
     } else mode = 'same'
 
-    if (mode == 'link') this.set(msg.author.id, [username, platform])
+    if (mode == 'link')
+      await this.set({
+        id: msg.author.id,
+        username,
+        platform,
+        created_at: new Date().toISOString()
+      })
     return this.createEmbed({
       embedType: 'link',
       msg,
@@ -1162,8 +1165,11 @@ export class RainbowAPI extends API {
   }
 
   async unlink(msg: Message) {
-    const prev = this.checkDatabase(msg),
-      prevStr = prev instanceof Array ? player(prev[0], prev[1]) : undefined
+    const prev = await this.checkDatabase(msg),
+      prevStr =
+        typeof prev == 'object'
+          ? player(prev.username, prev.platform)
+          : undefined
 
     if (prevStr) this.delete(msg.author.id)
 

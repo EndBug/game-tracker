@@ -13,7 +13,6 @@ import {
   humanize,
   capitalize,
   equals,
-  enforceType,
   stringToSeconds
 } from '../utils/utils'
 import { heroName, SupportedHero, isSupported } from '../utils/ow_hero_names'
@@ -473,7 +472,7 @@ class ErrorEmbed extends CustomEmbed {
 
 // #endregion
 
-export class OverwatchAPI extends API {
+export class OverwatchAPI extends API<'ow'> {
   constructor() {
     super('ow', 'Overwatch')
   }
@@ -482,9 +481,9 @@ export class OverwatchAPI extends API {
    * @param id The user, guild member or id of the user
    * @param reverse Whether to return keys (default is false)
    */
-  checkDatabase(id: string | User | GuildMember, reverse = false) {
+  checkDatabase(id: string | User | GuildMember) {
     if (id instanceof User || id instanceof GuildMember) id = id.id
-    return !reverse ? this.get(id) : this.getKey(id.replace('#', '-'))
+    return this.get(id)
   }
 
   private createEmbed<T extends embedType>(
@@ -494,23 +493,22 @@ export class OverwatchAPI extends API {
     const { mode } = options
 
     if (['quick', 'comp'].includes(mode)) {
-      if (!enforceType<EmbedOptions<'quick' | 'comp'>>(options)) return
-      const { battletag, msg, platform, stats } = options
+      const { battletag, msg, platform, stats } = options as EmbedOptions<
+        'quick' | 'comp'
+      >
       embed = new StatsEmbed(msg, battletag, platform, stats)
     } else if (['hero', 'herocomp'].includes(mode)) {
-      if (!enforceType<EmbedOptions<'hero' | 'herocomp'>>(options)) return
-      const { battletag, msg, platform, stats } = options
+      const { battletag, msg, platform, stats } = options as EmbedOptions<
+        'hero' | 'herocomp'
+      >
       embed = new HeroEmbed(msg, battletag, platform, stats)
     } else if (['link', 'unlink'].includes(mode)) {
-      if (!enforceType<EmbedOptions<'link' | 'unlink'>>(options)) return
-      embed = new LinkEmbed(options)
+      embed = new LinkEmbed(options as EmbedOptions<'link' | 'unlink'>)
     } else if (mode == 'warn') {
-      if (!enforceType<EmbedOptions<'warn'>>(options)) return
-      const { error, msg } = options
+      const { error, msg } = options as EmbedOptions<'warn'>
       embed = new WarnEmbed(msg, error)
     } else if (mode == 'error') {
-      if (!enforceType<EmbedOptions<'error'>>(options)) return
-      const { error, msg } = options
+      const { error, msg } = options as EmbedOptions<'error'>
       embed = new ErrorEmbed(msg, error)
     }
 
@@ -585,8 +583,7 @@ export class OverwatchAPI extends API {
     if (typeof rank != 'object') return
     return Object.entries(rank)
       .map(([key, value]) => {
-        if (!enforceType<owapi.RankRole>(value)) return
-        const srOnly = parseInt(value.sr)
+        const srOnly = parseInt((value as owapi.RankRole).sr)
         return [key, srOnly]
       })
       .reduce((accum, [k, v]) => {
@@ -827,7 +824,12 @@ export class OverwatchAPI extends API {
       next: playerEntry = [battletag, platform]
 
     if (!isPlayerEntry(prev) || !equals(prev, next))
-      this.set(msg.author.id, next)
+      await this.set({
+        id: msg.author.id,
+        username: next[0],
+        platform: next[1],
+        created_at: new Date().toISOString()
+      })
 
     return this.createEmbed({
       mode: 'link',

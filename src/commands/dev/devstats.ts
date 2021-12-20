@@ -2,7 +2,7 @@ import { client } from '../../core/app'
 import { Command } from '../../utils/command'
 import { Message } from 'discord.js'
 import { provider } from '../../utils/provider'
-import { APIUtil, APIKey } from '../../utils/api'
+import { APIUtil, APITable } from '../../utils/api'
 import { enforceType } from '../../utils/utils'
 
 const modes = {
@@ -54,7 +54,7 @@ export default class DevStatsCMD extends Command {
 
         let str = 'Here is the current database:\n'
         for (const key in stats) {
-          if (enforceType<APIKey>(key))
+          if (enforceType<APITable>(key))
             str += `- ${APIUtil.getAPIName(key)} (${stats[key]}):\n`
         }
 
