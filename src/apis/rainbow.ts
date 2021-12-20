@@ -25,7 +25,6 @@ import {
   readNumber,
   camelToReadable,
   capitalize,
-  PartialRecord,
   Cache
 } from '../utils/utils'
 import { Message, MessageEmbed, User, UserResolvable } from 'discord.js'
@@ -736,7 +735,7 @@ interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
 }
 
 interface OperatorEmbedStats
-  extends PartialRecord<strictPlayType, OperatorStats> {}
+  extends Partial<Record<strictPlayType, OperatorStats>> {}
 
 interface LinkData {
   previous?: string

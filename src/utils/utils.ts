@@ -11,12 +11,6 @@ import {
   client
 } from '../core/app'
 
-// #region Types
-export type PartialRecord<K extends keyof any, T> = {
-  [P in K]?: T
-}
-// #endregion
-
 // #region Classes
 /** Temporarily stores data that gets fecthed through OverwatchAPI.getRaw, in order to avoid too many requests */
 export class Cache {
