@@ -71,14 +71,6 @@ export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-/**
- * Enforces a type by returning always `true`; you need to use this with a type guard
- * @example if (!enforceType<YourType>(parameter)) return;
- */
-export function enforceType<T>(_parameter: any): _parameter is T {
-  return true
-}
-
 /** Makes sure that there is only one value; when an array is passed as argument, return only the firts element */
 export function ensureOne<T>(value: T | T[]): T {
   if (value instanceof Array) return value[0]

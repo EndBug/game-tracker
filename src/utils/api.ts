@@ -2,7 +2,6 @@ import { Database, provider } from './provider'
 import { readdirSync } from 'fs'
 import { join as path } from 'path'
 import { GuildMember, User, Snowflake } from 'discord.js'
-import { enforceType, PartialRecord } from './utils'
 import { client } from '../core/app'
 
 export type APITable = 'ow' | 'r6'
@@ -68,11 +67,9 @@ export class APIUtil {
   static findAll(target: string | GuildMember | User) {
     if (typeof target != 'string') target = target.id
 
-    const result: PartialRecord<APITable, any> = {}
+    const result: Partial<Record<APITable, any>> = {}
     for (const key in this.APIs) {
-      if (!enforceType<APITable>(key)) return
-
-      const searchResult = this.APIs[key].get(target)
+      const searchResult = this.APIs[key as APITable].get(target)
       if (searchResult) result[key] = searchResult
     }
     return result
@@ -88,10 +85,8 @@ export class APIUtil {
 
     const res: APITable[] = []
     for (const key in this.findAll(target)) {
-      if (!enforceType<APITable>(key)) return
-
-      res.push(key)
-      this.APIs[key].delete(target)
+      res.push(key as APITable)
+      this.APIs[key as APITable].delete(target)
     }
     return res
   }
