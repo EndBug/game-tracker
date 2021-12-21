@@ -11,7 +11,7 @@ import {
 import { isMention, mentionToID, escapeMentions } from '../../utils/utils'
 import { Command, CommandInfo } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import { postCommand } from '../../utils/statcord'
 
 // @ts-expect-error

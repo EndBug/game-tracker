@@ -1,6 +1,6 @@
 import { Command } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 
 export default class DataCMD extends Command {
   constructor() {

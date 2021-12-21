@@ -1,4 +1,4 @@
-import { Message, Snowflake, Client } from 'discord.js'
+import { Message, Snowflake, Client } from 'discord.js-light'
 import { stripIndents } from 'common-tags'
 import { isOwner, getDocsLink } from './utils'
 import { owner, supportHardLink, client } from '../core/app'

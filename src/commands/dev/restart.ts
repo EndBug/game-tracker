@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs'
 import { join as path } from 'path'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 
 import { owner } from '../../core/app'
 import * as backup from '../../core/backup'

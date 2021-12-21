@@ -1,5 +1,4 @@
-/* eslint-disable no-dupe-class-members */
-import { User, GuildMember, Message, MessageEmbed } from 'discord.js'
+import { User, GuildMember, Message, MessageEmbed } from 'discord.js-light'
 import * as owapi from 'overwatch-stats-api'
 import { long as getSha } from 'git-rev-sync'
 

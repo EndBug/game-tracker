@@ -1,4 +1,4 @@
-import { MessageEmbed, Message } from 'discord.js'
+import { MessageEmbed, Message } from 'discord.js-light'
 import { Command } from '../../utils/command'
 
 export default class VoteCMD extends Command {

@@ -1,6 +1,6 @@
 import { stripIndents, oneLine } from 'common-tags'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import {
   findCommands,
   groupName,

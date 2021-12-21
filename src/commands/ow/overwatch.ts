@@ -3,7 +3,7 @@ import { OverwatchAPI } from '../../apis/overwatch'
 import { heroes } from '../../utils/ow_hero_names'
 import { APIUtil } from '../../utils/api'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import { postCommand } from '../../utils/statcord'
 
 // @ts-expect-error

@@ -1,7 +1,7 @@
 import { APITable, Database, provider } from './provider'
 import { readdirSync } from 'fs'
 import { join as path } from 'path'
-import { GuildMember, User, Snowflake } from 'discord.js'
+import { GuildMember, User, Snowflake } from 'discord.js-light'
 import { client } from '../core/app'
 
 export class API<T extends APITable> {

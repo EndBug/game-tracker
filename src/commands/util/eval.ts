@@ -1,5 +1,5 @@
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import { inspect } from 'util'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

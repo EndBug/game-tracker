@@ -1,7 +1,7 @@
 /* eslint-disable no-redeclare */
 
 import { TSMap as Map } from 'typescript-map'
-import { User, GuildMember, PartialMessage, Message } from 'discord.js'
+import { User, GuildMember, PartialMessage, Message } from 'discord.js-light'
 import {
   homeguild,
   owner,

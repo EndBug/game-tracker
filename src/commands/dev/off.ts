@@ -1,7 +1,7 @@
 import { owner } from '../../core/app'
 import * as backup from '../../core/backup'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 
 export default class OffCMD extends Command {
   constructor() {

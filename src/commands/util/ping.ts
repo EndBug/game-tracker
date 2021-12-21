@@ -1,6 +1,6 @@
 import { oneLine } from 'common-tags'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 
 export default class PingCommand extends Command {
   constructor() {

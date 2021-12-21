@@ -4,7 +4,7 @@ import {
   MessageReaction,
   User,
   Message
-} from 'discord.js'
+} from 'discord.js-light'
 import { Command } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
 import { client } from '../../core/app'

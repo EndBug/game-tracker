@@ -1,6 +1,6 @@
 import { poster } from '../../utils/stats_poster'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 
 export default class PostStatsCMD extends Command {
   constructor() {

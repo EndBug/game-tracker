@@ -27,7 +27,7 @@ import {
   capitalize,
   Cache
 } from '../utils/utils'
-import { Message, MessageEmbed, User, UserResolvable } from 'discord.js'
+import { Message, MessageEmbed, User, UserResolvable } from 'discord.js-light'
 import { API } from '../utils/api'
 import { client } from '../core/app'
 
