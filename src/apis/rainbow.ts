@@ -773,7 +773,7 @@ export class RainbowAPI extends API<'r6'> {
 
   /** Gets the saved credentials of a user from the database */
   checkDatabase(discordUser: UserResolvable) {
-    const id = client.users.resolveID(discordUser)
+    const id = client.users.resolveId(discordUser)
     return this.get(id)
   }
 

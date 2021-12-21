@@ -1,6 +1,6 @@
 import { stripIndents, oneLine } from 'common-tags'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import { provider } from '../../utils/provider'
 import { commandPrefix, client } from '../../core/app'
 import { isOwner, isMention } from '../../utils/utils'
@@ -55,7 +55,7 @@ export default class PrefixCommand extends Command {
     // Check the user's permission before changing anything
     if (msg.guild) {
       await msg.guild.roles.fetch()
-      if (!msg.member.hasPermission('MANAGE_GUILD') && !isOwner(msg.author)) {
+      if (!msg.member.permissions.has('MANAGE_GUILD') && !isOwner(msg.author)) {
         msg.guild.roles.cache.clear()
         return msg.reply('Only guild managers may change the command prefix.')
       }
@@ -69,13 +69,18 @@ export default class PrefixCommand extends Command {
     // Save the prefix
     const lowercase = prefix.toLowerCase()
     let pref = lowercase === 'none' ? '' : prefix
-    let response
+    let response: string
     if (lowercase === 'default') {
       if (msg.guild) provider.delete('p', msg.guild.id)
       response = `Reset the command prefix to the default (currently \`${commandPrefix}\`).`
       pref = commandPrefix
     } else {
-      if (msg.guild) provider.set('p', msg.guild.id, pref)
+      if (msg.guild)
+        provider.set('p', {
+          id: msg.guildId,
+          prefix: pref,
+          created_at: new Date().toISOString()
+        })
       response = pref
         ? `Set the command prefix to \`\`${prefix}\`\`.`
         : 'Removed the command prefix entirely.'

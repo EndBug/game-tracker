@@ -1,7 +1,7 @@
 import {
-  ActivityType,
   PresenceStatusData,
-  PresenceData
+  PresenceData,
+  ActivitiesOptions
 } from 'discord.js-light'
 import { client, isDev, isBeta } from '../core/app'
 
@@ -11,15 +11,11 @@ const interval = 12500
 class Presence {
   status: PresenceStatusData
   afk: boolean
-  activity: {
-    name: string
-    type: ActivityType
-    url?: string
-  }
+  activity: ActivitiesOptions
 
   constructor(
     name: string,
-    type?: ActivityType,
+    type?: ActivitiesOptions['type'],
     status?: PresenceStatusData,
     stream?: string
   ) {
@@ -47,10 +43,12 @@ class Presence {
 
   get obj(): PresenceData {
     return {
-      activity: {
-        ...this.activity,
-        name: this.getName()
-      },
+      activities: [
+        {
+          ...this.activity,
+          name: this.getName()
+        }
+      ],
       afk: this.afk,
       status: this.status
     }

@@ -73,7 +73,7 @@ export default class OverwatchCMD extends Command {
   }
 
   async run(msg: Message, [mode, player, platform, hero]: string[]) {
-    msg.channel.startTyping()
+    msg.channel.sendTyping()
 
     let err: string,
       exit = false
@@ -161,12 +161,13 @@ export default class OverwatchCMD extends Command {
 
     postCommand(`${this.name} ${mode || '???'}`, msg.author.id)
     if (err)
-      return msg
-        .reply(escapeMentions(err), { allowedMentions: { parse: [] } })
-        .finally(() => msg.channel.stopTyping(true))
+      return msg.reply({
+        content: escapeMentions(err),
+        allowedMentions: { parse: [] }
+      })
     else
-      return msg.channel
-        .send(await API[mode](player, platform, msg, hero))
-        .finally(() => msg.channel.stopTyping(true))
+      return msg.channel.send({
+        embeds: [await API[mode](player, platform, msg, hero)]
+      })
   }
 }

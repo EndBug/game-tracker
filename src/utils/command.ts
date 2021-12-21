@@ -76,7 +76,13 @@ export class Command {
     return true
   }
 
-  async run(message: Message, args: any[], rawArgs: string[]): Promise<Message | Message[]> { // eslint-disable-line
+  async run(
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    message: Message,
+    args: any[],
+    rawArgs: string[]
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+  ): Promise<Message | Message[]> {
     throw new Error(`${this.constructor.name} doesn't have a \`run()\` method.`)
   }
 

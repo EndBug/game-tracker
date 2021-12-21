@@ -30,6 +30,6 @@ export default class VoteCMD extends Command {
       )
       .setTimestamp()
 
-    return msg.channel.send({ embed })
+    return msg.channel.send({ embeds: [embed] })
   }
 }

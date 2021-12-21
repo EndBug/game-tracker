@@ -25,9 +25,7 @@ export default class EraseDataCMD extends Command {
       return msg.reply("There's no stored data about you.")
 
     const { channel } = msg
-    const perm1 =
-      channel instanceof DMChannel ||
-      channel.permissionsFor(client.user).has('ADD_REACTIONS')
+    const perm1 = channel instanceof DMChannel
     const perm2 =
       channel instanceof TextChannel &&
       channel.permissionsFor(client.user).has('MANAGE_MESSAGES')
@@ -47,7 +45,7 @@ export default class EraseDataCMD extends Command {
       }
       return user.id == msg.author.id
     }
-    const coll = await main.awaitReactions(filter, { max: 1, time: 30000 })
+    const coll = await main.awaitReactions({ max: 1, time: 30000, filter })
     if (perm2) main.reactions.removeAll()
     else
       main.reactions.cache.forEach((r) => {

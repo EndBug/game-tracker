@@ -143,7 +143,7 @@ export async function getSupportInvite(codeOnly = false) {
     const rulesChannel =
       (await homeguild.channels.fetch('570606562880651264').catch(() => {})) ||
       (await homeguild.channels.fetch())?.find((c) => c.name == 'rules')
-    if (!rulesChannel) throw undefined
+    if (!rulesChannel || rulesChannel.type == 'GUILD_CATEGORY') throw undefined
 
     const existingInvite = await client
       .fetchInvite(links.support)

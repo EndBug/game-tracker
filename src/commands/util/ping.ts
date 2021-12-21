@@ -14,7 +14,7 @@ export default class PingCommand extends Command {
   async run(msg: Message) {
     const pingMsg = await msg.reply('Pinging...')
     return pingMsg.edit(oneLine`
-			${msg.channel.type !== 'dm' ? `${msg.author},` : ''}
+			${msg.channel.type !== 'DM' ? `${msg.author},` : ''}
 			Pong! The message round-trip took ${
         (pingMsg.editedTimestamp || pingMsg.createdTimestamp) -
         (msg.editedTimestamp || msg.createdTimestamp)

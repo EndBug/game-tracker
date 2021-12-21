@@ -1,6 +1,6 @@
 import { stripIndents, oneLine } from 'common-tags'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js-light'
+import { Message, Util } from 'discord.js-light'
 import {
   findCommands,
   groupName,
@@ -53,7 +53,7 @@ export default class HelpCommand extends Command {
   }
 
   async run(msg: Message) {
-    const { rawArgs } = parseMessage(msg)
+    const { rawArgs } = await parseMessage(msg)
     const command = rawArgs.join(' ')
 
     const commands = findCommands(command, false, msg)
@@ -82,7 +82,7 @@ export default class HelpCommand extends Command {
         const messages: Message[] = []
         try {
           messages.push(await msg.author.send(help))
-          if (msg.channel.type !== 'dm')
+          if (msg.channel.type !== 'DM')
             messages.push(await msg.reply('Sent you a DM with information.'))
         } catch (err) {
           messages.push(
@@ -102,10 +102,9 @@ export default class HelpCommand extends Command {
         )
       }
     } else {
-      let messages: Message[] = []
+      const messages: Message[] = []
       try {
-        const sendResult = await msg.author.send(
-          stripIndents`
+        const parts = Util.splitMessage(stripIndents`
 					${oneLine`
 						To run a command in ${msg.guild?.name || 'any server'},
 						use ${usage('command', msg.guild?.id, true)}.
@@ -147,14 +146,12 @@ export default class HelpCommand extends Command {
 						`
             )
             .join('\n\n')}
-				`,
-          { split: true }
-        )
-        messages = [
-          ...messages,
-          ...(sendResult instanceof Array ? sendResult : [sendResult])
-        ]
-        if (msg.channel.type !== 'dm')
+				`)
+        for (const part of parts) {
+          const res = await msg.author.send(part)
+          messages.push(res)
+        }
+        if (msg.channel.type !== 'DM')
           messages.push(await msg.reply('Sent you a DM with information.'))
       } catch (err) {
         messages.push(

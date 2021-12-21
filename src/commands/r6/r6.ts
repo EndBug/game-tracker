@@ -166,7 +166,7 @@ export default class RainbowCMD extends Command {
   }
 
   async run(msg: Message, [method, extra, player, platform]: string[]) {
-    msg.channel.startTyping()
+    msg.channel.sendTyping()
 
     let err: string,
       exit = false
@@ -245,17 +245,18 @@ export default class RainbowCMD extends Command {
 
     postCommand(`${this.name} ${method || '???'}`, msg.author.id)
     if (err)
-      return msg
-        .reply(escapeMentions(err), { allowedMentions: { parse: [] } })
-        .finally(() => msg.channel.stopTyping())
+      return msg.reply({
+        content: escapeMentions(err),
+        allowedMentions: { parse: [] }
+      })
     else {
       if (method == 'wp') {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
         else if (isWeaponTypeId(extra)) extra = getWeaponTypeId(extra)
       } else if (method == 'op') extra = getOperatorId(extra)
-      return msg.channel
-        .send(await API[method](msg, player, platform, extra))
-        .finally(() => msg.channel.stopTyping())
+      return msg.channel.send({
+        embeds: [await API[method](msg, player, platform, extra)]
+      })
     }
   }
 }

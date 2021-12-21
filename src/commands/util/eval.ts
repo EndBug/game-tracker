@@ -1,5 +1,5 @@
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js-light'
+import { Formatters, Message } from 'discord.js-light'
 import { inspect } from 'util'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -38,7 +38,7 @@ export default class EvalCommand extends Command {
 
       if (typeof evaled !== 'string') evaled = inspect(evaled)
 
-      return msg.channel.send(clean(evaled), { code: 'xl' })
+      return msg.channel.send(Formatters.codeBlock(clean(evaled)))
     } catch (err) {
       return msg.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``)
     }
