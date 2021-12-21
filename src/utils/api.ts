@@ -1,10 +1,8 @@
-import { Database, provider } from './provider'
+import { APITable, Database, provider } from './provider'
 import { readdirSync } from 'fs'
 import { join as path } from 'path'
 import { GuildMember, User, Snowflake } from 'discord.js'
 import { client } from '../core/app'
-
-export type APITable = 'ow' | 'r6'
 
 export class API<T extends APITable> {
   apiKey: T

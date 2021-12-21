@@ -1,7 +1,6 @@
 import path from 'path'
 import * as supabase from '@supabase/supabase-js'
 import { Snowflake } from 'discord.js'
-import { APITable } from './api'
 
 const backupFn = '../../data/settings.json'
 
@@ -23,6 +22,7 @@ export interface Database {
   }[]
 }
 const validTables = ['p', 'ow', 'r6'] as const
+export type APITable = 'ow' | 'r6'
 
 class Provider {
   path: string
