@@ -1,7 +1,7 @@
-import { owner, roles } from '../../core/app'
-import * as backup from '../../core/backup'
-import { Command } from '../../utils/command'
 import { Message } from 'discord.js-light'
+import { owner, roles } from '../../core/app'
+import { Command } from '../../utils/command'
+import { uploadBackup } from '../../automation/backup'
 
 export default class BackupCMD extends Command {
   constructor() {
@@ -15,21 +15,13 @@ export default class BackupCMD extends Command {
   }
 
   async run(msg: Message) {
-    if (!backup.available)
-      return msg.reply('There is no backup token, please check your .env file.')
+    const res = await msg.channel.send('Uploading backup...')
 
-    let res = await msg.channel.send('Uploading backup...')
-    if (res instanceof Array) res = res[0]
-    return backup
-      .upload('Manual')
-      .then(() => {
-        if (res instanceof Array) res = res[0]
-        return res.edit('Backup uploaded :white_check_mark:')
-      })
-      .catch((err) => {
-        if (res instanceof Array) res = res[0]
-        return res.edit(`Error while uploading backup:\n\`\`\`\n${err}\n\`\`\``)
-      })
+    return uploadBackup('Manual')
+      .then(() => res.edit('Backup uploaded :white_check_mark:'))
+      .catch((err) =>
+        res.edit(`Error while uploading backup:\n\`\`\`\n${err}\n\`\`\``)
+      )
   }
 
   hasPermission(msg: Message) {

@@ -10,6 +10,7 @@ import * as stats_poster from '../utils/stats_poster'
 import { loadCommands, handleMessage } from '../utils/dispatcher'
 import { APIUtil } from '../utils/api'
 import { statcord, init as statcordInit } from '../utils/statcord'
+import { uploadBackup } from '../automation/backup'
 
 const { TOKEN } = process.env
 
@@ -63,6 +64,8 @@ function initClient() {
     }
 
     loadModules()
+
+    uploadBackup('Ready')
 
     // Starts the stat poster interval
     if (!deactivatePoster && stats_poster.available)

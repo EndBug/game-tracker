@@ -1,7 +1,7 @@
 import { owner } from '../../core/app'
-import * as backup from '../../core/backup'
 import { Command } from '../../utils/command'
 import { Message } from 'discord.js-light'
+import { uploadBackup } from '../../automation/backup'
 
 export default class OffCMD extends Command {
   constructor() {
@@ -23,26 +23,25 @@ export default class OffCMD extends Command {
   }
 
   async run(msg: Message, [force]: [boolean]) {
-    if (backup.available) {
-      let res = await msg.channel.send('Saving a backup...')
-      const b = await backup.upload('Shutdown').catch(console.error)
+    const res = await msg.channel.send('Saving a backup...')
+    const b = await uploadBackup('Shutdown').catch((e) => {
+      console.error(e)
+      return e instanceof Error ? e : Error(e)
+    })
 
-      if (res instanceof Array) res = res[0]
-
-      if (b instanceof Error) {
-        if (!force)
-          return res.edit(
-            `There has been an error during the backup:\n\`\`\`\n${b}\n\`\`\``
-          )
-        else
-          await res.edit(
-            `There has been an error during the backup:\n\`\`\`\n${b}\n\`\`\`\nForced shutdown will happen in moments.`
-          )
-      } else
-        await res.edit(
-          'Backup successfully saved :white_check_mark:\nThe bot will shut down in moments.'
+    if (b instanceof Error) {
+      if (!force)
+        return res.edit(
+          `There has been an error during the backup:\n\`\`\`\n${b}\n\`\`\``
         )
-    } else await msg.channel.send('The bot will shut down in moments.')
+      else
+        await res.edit(
+          `There has been an error during the backup:\n\`\`\`\n${b}\n\`\`\`\nForced shutdown will happen in moments.`
+        )
+    } else
+      await res.edit(
+        'Backup successfully saved :white_check_mark:\nThe bot will shut down in moments.'
+      )
 
     this.client.destroy()
     process.exit()

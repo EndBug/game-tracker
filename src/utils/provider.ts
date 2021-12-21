@@ -26,7 +26,6 @@ export type APITable = 'ow' | 'r6'
 
 class Provider {
   path: string
-  ready: boolean
   sbClient: supabase.SupabaseClient
 
   constructor() {
@@ -35,7 +34,6 @@ class Provider {
     if (!(SupabaseURL && SupabaseToken))
       throw new Error('Supabase config missing.')
 
-    this.ready = false
     this.sbClient = supabase.createClient(SupabaseURL, SupabaseToken)
     this.path = path.join(__dirname, backupFn)
   }
@@ -78,6 +76,20 @@ class Provider {
         .from(table)
         .select('*', { count: 'exact' })
       res[table] = count
+    }
+
+    return res
+  }
+
+  async getDatabase() {
+    const res = {} as Database
+
+    for (const table of validTables) {
+      const { data, error } = await this.sbClient.from(table).select()
+
+      if (error) throw new Error(`[db] Error during getDatabase:\n${error}`)
+
+      res[table] = data
     }
 
     return res
