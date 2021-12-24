@@ -2,7 +2,7 @@ import { Command } from './command'
 import { readdirSync } from 'fs'
 import { join as path } from 'path'
 import { commandPrefix, client } from '../core/app'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import { provider } from './provider'
 import { isMention, mentionToID, capitalize } from './utils'
 import { postCommand } from './statcord'
@@ -53,7 +53,7 @@ export function loadCommands() {
 
 export async function handleMessage(message: Message) {
   if (message.author.bot) return
-  const { command, rawArgs, ignore } = parseMessage(message)
+  const { command, rawArgs, ignore } = await parseMessage(message)
 
   if (ignore) return
 
@@ -63,13 +63,13 @@ export async function handleMessage(message: Message) {
   }
 }
 
-export function parseMessage(message: Message) {
+export async function parseMessage(message: Message) {
   // Find the command to run with default command handling
   const rawArgs = message.content.split(' '),
-    isDM = message.channel.type == 'dm'
+    isDM = message.channel.type == 'DM'
   const prefix = isDM
     ? ''
-    : provider.get('p', message.guild?.id) || commandPrefix
+    : (await provider.get('p', message.guild?.id))?.prefix || commandPrefix
 
   let fromMention = false
 
@@ -150,14 +150,12 @@ async function runCommand(
   }
 
   if (throttle) throttle.usages++
-  const typingCount = message.channel.typingCount
   try {
     client.emit('debug', `Running command ${command.group}:${command.name}.`)
     if (!statcordIgnoreGroups.includes(command.group))
       postCommand(command.name, message.author.id)
     return command.run(message, args, rawArgs)
   } catch (err) {
-    if (message.channel.typingCount > typingCount) message.channel.stopTyping()
     return command.onError(err, message)
   }
 }

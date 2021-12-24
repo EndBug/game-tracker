@@ -1,7 +1,7 @@
 /* eslint-disable no-redeclare */
 
 import { TSMap as Map } from 'typescript-map'
-import { User, GuildMember, PartialMessage, Message } from 'discord.js'
+import { User, GuildMember, PartialMessage, Message } from 'discord.js-light'
 import {
   homeguild,
   owner,
@@ -12,9 +12,8 @@ import {
 } from '../core/app'
 
 // #region Types
-export type PartialRecord<K extends keyof any, T> = {
-  [P in K]?: T
-}
+export type WithOptional<T, K extends keyof T> = Omit<T, K> &
+  Partial<Pick<T, K>>
 // #endregion
 
 // #region Classes
@@ -71,14 +70,6 @@ export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-/**
- * Enforces a type by returning always `true`; you need to use this with a type guard
- * @example if (!enforceType<YourType>(parameter)) return;
- */
-export function enforceType<T>(_parameter: any): _parameter is T {
-  return true
-}
-
 /** Makes sure that there is only one value; when an array is passed as argument, return only the firts element */
 export function ensureOne<T>(value: T | T[]): T {
   if (value instanceof Array) return value[0]
@@ -90,7 +81,7 @@ export function equals(...items: any[]) {
   for (let i = 0; i < items.length - 1; i++) {
     const a = items[i],
       b = items[i + 1]
-    if (typeof a != typeof b) return false
+    if (typeof a != typeof b || !!a != !!b) return false
     if (a instanceof Array) {
       if (b instanceof Array) {
         if (a.length != b.length) return false
@@ -157,7 +148,7 @@ export async function getSupportInvite(codeOnly = false) {
     const rulesChannel =
       (await homeguild.channels.fetch('570606562880651264').catch(() => {})) ||
       (await homeguild.channels.fetch())?.find((c) => c.name == 'rules')
-    if (!rulesChannel) throw undefined
+    if (!rulesChannel || rulesChannel.type == 'GUILD_CATEGORY') throw undefined
 
     const existingInvite = await client
       .fetchInvite(links.support)

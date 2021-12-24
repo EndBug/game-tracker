@@ -1,68 +1,98 @@
-/* eslint-disable no-dupe-class-members */
-import { readFileSync, writeFileSync } from 'fs'
-import { join as path } from 'path'
-import { Snowflake } from 'discord.js'
-import { APIKey, APIUtil } from './api'
-import { PartialRecord, enforceType } from './utils'
+import path from 'path'
+import * as supabase from '@supabase/supabase-js'
+import { Snowflake } from 'discord.js-light'
 
-const filePath = '../../data/settings.json'
+const backupFn = '../../data/settings.json'
 
-export interface Settings
-  extends Record<SettingsKey, Record<Snowflake, string>>,
-    Record<APIKey, Record<Snowflake, string[]>> {}
+export type ProviderTables = keyof Database
 
-export type ProviderKey = keyof Settings
-export type SettingsKey = 'p'
+export interface Database {
+  p: { id: Snowflake; prefix: string; created_at: string }[]
+  ow: {
+    id: Snowflake
+    username: string
+    platform: 'pc' | 'xbl' | 'psn'
+    created_at: string
+  }[]
+  r6: {
+    id: Snowflake
+    username: string
+    platform: string
+    created_at: string
+  }[]
+}
+const validTables = ['p', 'ow', 'r6'] as const
+export type APITable = 'ow' | 'r6'
 
 class Provider {
   path: string
-  settings: Settings
+  sbClient: supabase.SupabaseClient
 
   constructor() {
-    this.path = path(__dirname, filePath)
-    this.settings = this.readData()
+    const { SupabaseURL, SupabaseToken } = process.env
+
+    if (!(SupabaseURL && SupabaseToken))
+      throw new Error('Supabase config missing.')
+
+    this.sbClient = supabase.createClient(SupabaseURL, SupabaseToken)
+    this.path = path.join(__dirname, backupFn)
   }
 
-  delete<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T]) {
-    delete this.settings[settingsKey][recordKey]
-    this.save()
-  }
-
-  get<T extends ProviderKey>(settingsKey: T, recordKey: keyof Settings[T]) {
-    return this.settings[settingsKey][recordKey]
-  }
-
-  getKey<T extends ProviderKey>(settingsKey: T, value) {
-    for (const recordKey in this.settings[settingsKey]) {
-      if (this.settings[settingsKey][recordKey] == value) return recordKey
-    }
-  }
-
-  set<T extends ProviderKey>(
-    settingsKey: T,
-    recordKey: keyof Settings[T],
-    value: Settings[T][keyof Settings[T]]
+  async delete<T extends ProviderTables>(
+    table: T,
+    id: Database[T][number]['id']
   ) {
-    this.settings[settingsKey][recordKey] = value
-    this.save()
+    const { error } = await this.sbClient.from(table).delete().match({ id })
+
+    if (error) throw new Error(`[db] Error during delete:\n${error}`)
   }
 
-  stats(): Record<APIKey, number> {
-    const res: PartialRecord<APIKey, number> = {}
-    for (const key in APIUtil.APIs) {
-      res[key] = Object.keys(this.settings[key]).length
+  async get<T extends ProviderTables>(
+    table: T,
+    id: Database[T][number]['id']
+  ): Promise<Database[T][number]> {
+    const { data, error } = await this.sbClient
+      .from(table)
+      .select()
+      .match({ id })
+      .maybeSingle()
+
+    if (error) throw new Error(`[db] Error during get:\n${error.message}`)
+
+    return data
+  }
+
+  async set<T extends ProviderTables>(table: T, value: Database[T][number]) {
+    const { error } = await this.sbClient.from(table).upsert(value)
+
+    if (error) throw new Error(`[db] Error during set:\n${error}`)
+  }
+
+  async stats() {
+    const res = {} as Record<APITable, number>
+
+    for (const table of validTables) {
+      const { count } = await this.sbClient
+        .from(table)
+        .select('*', { count: 'exact' })
+      res[table] = count
     }
-    if (enforceType<Record<APIKey, number>>(res)) return res
+
+    return res
   }
 
-  private readData(): Settings {
-    const str = readFileSync(this.path, { encoding: 'utf8' })
-    return JSON.parse(str)
-  }
+  async getDatabase() {
+    const res = {} as Database
 
-  save() {
-    const str = JSON.stringify(this.settings)
-    writeFileSync(this.path, str)
+    for (const table of validTables) {
+      const { data, error } = await this.sbClient.from(table).select()
+
+      if (error) throw new Error(`[db] Error during getDatabase:\n${error}`)
+
+      res[table] = data
+    }
+
+    return res
   }
 }
 

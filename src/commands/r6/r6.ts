@@ -11,7 +11,7 @@ import {
 import { isMention, mentionToID, escapeMentions } from '../../utils/utils'
 import { Command, CommandInfo } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import { postCommand } from '../../utils/statcord'
 
 // @ts-expect-error
@@ -166,7 +166,7 @@ export default class RainbowCMD extends Command {
   }
 
   async run(msg: Message, [method, extra, player, platform]: string[]) {
-    msg.channel.startTyping()
+    msg.channel.sendTyping()
 
     let err: string,
       exit = false
@@ -209,10 +209,10 @@ export default class RainbowCMD extends Command {
     // PLAYER check
     if (!exit && !err) {
       if (player && isMention(player)) {
-        const stored = API.checkDatabase(mentionToID(player))
+        const stored = await API.checkDatabase(mentionToID(player))
         if (stored) {
-          player = stored[0]
-          platform = stored[1]
+          player = stored.username
+          platform = stored.platform
         } else {
           err =
             "This user hasn't linked their R6S account yet, please enter their username and platform manually. For more info, please refer to the command's `help` page."
@@ -232,10 +232,10 @@ export default class RainbowCMD extends Command {
             .join(', ')}.`
         }
       } else if (method != 'link') {
-        const stored = API.checkDatabase(msg.author)
+        const stored = await API.checkDatabase(msg.author)
         if (stored) {
-          player = stored[0]
-          platform = stored[1]
+          player = stored.username
+          platform = stored.platform
         } else {
           err =
             "You didn't link any account, please enter a valid username and platform or link one with `r6 link`. For more info, please refer to the command's `help` page."
@@ -245,17 +245,18 @@ export default class RainbowCMD extends Command {
 
     postCommand(`${this.name} ${method || '???'}`, msg.author.id)
     if (err)
-      return msg
-        .reply(escapeMentions(err), { allowedMentions: { parse: [] } })
-        .finally(() => msg.channel.stopTyping())
+      return msg.reply({
+        content: escapeMentions(err),
+        allowedMentions: { parse: [] }
+      })
     else {
       if (method == 'wp') {
         if (isWeaponName(extra)) extra = getWeaponName(extra)
         else if (isWeaponTypeId(extra)) extra = getWeaponTypeId(extra)
       } else if (method == 'op') extra = getOperatorId(extra)
-      return msg.channel
-        .send(await API[method](msg, player, platform, extra))
-        .finally(() => msg.channel.stopTyping())
+      return msg.channel.send({
+        embeds: [await API[method](msg, player, platform, extra)]
+      })
     }
   }
 }
