@@ -38,7 +38,8 @@ export default class PrefixCommand extends Command {
   async run(msg: Message, [prefix]: string[]) {
     // Just output the prefix
     if (!prefix) {
-      const pref = provider.get('p', msg.guild?.id) || commandPrefix
+      const pref =
+        (await provider.get('p', msg.guild?.id))?.prefix || commandPrefix
       return msg.reply(stripIndents`
 				${
           pref

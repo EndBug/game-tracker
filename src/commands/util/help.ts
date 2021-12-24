@@ -20,12 +20,8 @@ function disambiguation(items: object[], label: string, property = 'name') {
   return `Multiple ${label} found, please be more specific: ${itemList}`
 }
 
-function usage(name: string, guildID?: string, usePref?: boolean) {
-  const pref = !usePref
-    ? ''
-    : guildID
-    ? provider.get('p', guildID) || commandPrefix
-    : `@${client.user.tag} `
+function usage(name: string, prefix?: string) {
+  const pref = prefix || `@${client.user.tag} `
   return '`' + pref + name + '`'
 }
 
@@ -103,12 +99,15 @@ export default class HelpCommand extends Command {
       }
     } else {
       const messages: Message[] = []
+      const prefix =
+        (msg.guild && (await provider.get('p', msg.guild.id)))?.prefix ||
+        commandPrefix
       try {
         const parts = Util.splitMessage(stripIndents`
 					${oneLine`
 						To run a command in ${msg.guild?.name || 'any server'},
-						use ${usage('command', msg.guild?.id, true)}.
-						For example, ${usage('prefix', msg.guild?.id, true)}.
+						use ${usage('command', prefix)}.
+						For example, ${usage('prefix', prefix)}.
 					`}
 					To run a command in this DM, simply use ${usage('command')} with no prefix.
 
