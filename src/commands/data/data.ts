@@ -24,8 +24,8 @@ export default class DataCMD extends Command {
     })
   }
 
-  run(msg: Message, [hide]: [boolean]) {
-    const res = APIUtil.findAll(msg.author)
+  async run(msg: Message, [hide]: [boolean]) {
+    const res = await APIUtil.findAll(msg.author)
     let text: string
     if (Object.keys(res).length > 0) {
       text = 'This is your data:\n```'

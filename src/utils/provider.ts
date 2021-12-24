@@ -55,9 +55,9 @@ class Provider {
       .from(table)
       .select()
       .match({ id })
-      .single()
+      .maybeSingle()
 
-    if (error) throw new Error(`[db] Error during get:\n${error}`)
+    if (error) throw new Error(`[db] Error during get:\n${error.message}`)
 
     return data
   }

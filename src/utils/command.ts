@@ -82,7 +82,7 @@ export class Command {
     args: any[],
     rawArgs: string[]
     /* eslint-enable @typescript-eslint/no-unused-vars */
-  ): Promise<Message | Message[]> {
+  ): Promise<Message | Message[] | void> {
     throw new Error(`${this.constructor.name} doesn't have a \`run()\` method.`)
   }
 

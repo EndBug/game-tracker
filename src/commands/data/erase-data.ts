@@ -1,10 +1,4 @@
-import {
-  DMChannel,
-  TextChannel,
-  MessageReaction,
-  User,
-  Message
-} from 'discord.js-light'
+import { MessageReaction, User, Message } from 'discord.js-light'
 import { Command } from '../../utils/command'
 import { APIUtil } from '../../utils/api'
 import { client } from '../../core/app'
@@ -21,22 +15,25 @@ export default class EraseDataCMD extends Command {
   }
 
   async run(msg: Message) {
-    if (Object.keys(APIUtil.findAll(msg.author)).length == 0)
-      return msg.reply("There's no stored data about you.")
+    if (Object.keys(await APIUtil.findAll(msg.author)).length == 0)
+      if (Object.keys(APIUtil.findAll(msg.author)).length == 0)
+        return msg.reply("There's no stored data about you.")
 
     const { channel } = msg
-    const perm1 = channel instanceof DMChannel
+    const perm1 =
+      channel.type == 'DM' ||
+      (channel.permissionsFor(client.user).has('ADD_REACTIONS') &&
+        channel.permissionsFor(client.user).has('READ_MESSAGE_HISTORY'))
     const perm2 =
-      channel instanceof TextChannel &&
+      channel.type == 'GUILD_TEXT' &&
       channel.permissionsFor(client.user).has('MANAGE_MESSAGES')
 
-    let main = await msg.reply(
+    const confirmMsg = await msg.reply(
       'Are you sure you want to delete all of your stored data? All of your account will be unlinked from this bot.\nReact to confirm (✅) or cancel (❌) the command.\nThis command will expire in 30 seconds.'
     )
-    if (main instanceof Array) main = main[0]
     if (perm1) {
-      await main.react('✅')
-      await main.react('❌')
+      await confirmMsg.react('✅')
+      await confirmMsg.react('❌')
     }
     const filter = (reaction: MessageReaction, user: User) => {
       if (!['✅', '❌'].includes(reaction.emoji.name)) {
@@ -45,19 +42,23 @@ export default class EraseDataCMD extends Command {
       }
       return user.id == msg.author.id
     }
-    const coll = await main.awaitReactions({ max: 1, time: 30000, filter })
-    if (perm2) main.reactions.removeAll()
+    const coll = await confirmMsg.awaitReactions({
+      max: 1,
+      time: 30000,
+      filter
+    })
+    if (perm2) confirmMsg.reactions.removeAll()
     else
-      main.reactions.cache.forEach((r) => {
+      confirmMsg.reactions.cache.forEach((r) => {
         if (r.me) r.users.remove()
       })
-    if (coll.size == 0) return main.edit('Command expired.')
+    if (coll.size == 0) return confirmMsg.edit('Command expired.')
     else {
       const reaction = coll.first().emoji.name
-      if (reaction == '❌') return main.edit('Command canceled.')
+      if (reaction == '❌') return confirmMsg.edit('Command canceled.')
       else if (reaction == '✅') {
-        await main.edit('Command confirmed.')
-        const res = APIUtil.eraseAll(msg.author)
+        await confirmMsg.edit('Command confirmed.')
+        const res = await APIUtil.eraseAll(msg.author)
         if (res.length == 0) return msg.reply('There was no data about you.')
         const str = res.length > 1 ? ' has' : `s (${res.length}) have`
         return msg.reply(`Your account${str} been unlinked from this bot.`)

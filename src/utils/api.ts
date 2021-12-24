@@ -62,12 +62,12 @@ export class APIUtil {
    * @param [realName] Whether to map
    * @returns An object with every result mapped by APIKey
    */
-  static findAll(target: string | GuildMember | User) {
+  static async findAll(target: string | GuildMember | User) {
     if (typeof target != 'string') target = target.id
 
     const result: Partial<Record<APITable, any>> = {}
     for (const key in this.APIs) {
-      const searchResult = this.APIs[key as APITable].get(target)
+      const searchResult = await this.APIs[key as APITable].get(target)
       if (searchResult) result[key] = searchResult
     }
     return result
@@ -78,13 +78,13 @@ export class APIUtil {
    * @param target The user to erase
    * @returns The APIs from which the user has been erased
    */
-  static eraseAll(target: string | GuildMember | User) {
+  static async eraseAll(target: string | GuildMember | User) {
     if (typeof target != 'string') target = target.id
 
     const res: APITable[] = []
-    for (const key in this.findAll(target)) {
+    for (const key in await this.findAll(target)) {
       res.push(key as APITable)
-      this.APIs[key as APITable].delete(target)
+      await this.APIs[key as APITable].delete(target)
     }
     return res
   }

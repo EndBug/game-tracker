@@ -3,7 +3,7 @@ import {
   PresenceData,
   ActivitiesOptions
 } from 'discord.js-light'
-import { client, isDev, isBeta } from '../core/app'
+import { client, isDev } from '../core/app'
 
 const interval = 12500
 
@@ -55,14 +55,13 @@ class Presence {
   }
 }
 
-const status =
-  isDev || isBeta
-    ? [new Presence('BETA', 'PLAYING', 'dnd')]
-    : [
-        new Presence('for your requests!', 'WATCHING'),
-        new Presence('/guildCount/ servers.', 'WATCHING')
-        // new Presence('/userCount/ users.', 'LISTENING') // User count is now disable in favor of the caching improvements
-      ]
+const status = isDev
+  ? [new Presence('development', 'WATCHING', 'dnd')]
+  : [
+      new Presence('for your requests!', 'WATCHING'),
+      new Presence('/guildCount/ servers.', 'WATCHING')
+      // new Presence('/userCount/ users.', 'LISTENING') // User count is now disable in favor of the caching improvements
+    ]
 
 var index = 0
 

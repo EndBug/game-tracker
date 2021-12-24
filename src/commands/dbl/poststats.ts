@@ -13,8 +13,7 @@ export default class PostStatsCMD extends Command {
   }
 
   async run(msg: Message) {
-    var rep = await msg.channel.send('Posting stats...')
-    if (rep instanceof Array) rep = rep[0]
+    const rep = await msg.channel.send('Posting stats...')
 
     try {
       const stats = await poster.post()

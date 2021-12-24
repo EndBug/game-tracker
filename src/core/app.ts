@@ -10,7 +10,6 @@ import * as stats_poster from '../utils/stats_poster'
 import { loadCommands, handleMessage } from '../utils/dispatcher'
 import { APIUtil } from '../utils/api'
 import { statcord, init as statcordInit } from '../utils/statcord'
-import { uploadBackup } from '../automation/backup'
 
 const { TOKEN } = process.env
 
@@ -19,7 +18,6 @@ export const ownerID = '218308478580555777'
 export const supportHardLink = 'https://discord.gg/5YrhW4NHfY'
 export const baseDocsURL = 'https://game-tracker.js.org/#/'
 export const isDev = process.env.NODE_ENV == 'dev'
-export const isBeta = process.env.NODE_ENV == 'beta'
 
 const deactivatePoster = false || isDev
 
@@ -32,8 +30,16 @@ export let roles: Record<string, Role> = {}
 /**
  * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs
  */
-function initClient() {
-  client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+async function initClient() {
+  client = new Client({
+    intents: [
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MESSAGES,
+      Intents.FLAGS.DIRECT_MESSAGES,
+      Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+      Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
+    ]
+  })
 
   client.on('error', console.error)
   client.on('warn', console.warn)
@@ -64,8 +70,6 @@ function initClient() {
     }
 
     loadModules()
-
-    uploadBackup('Ready')
 
     // Starts the stat poster interval
     if (!deactivatePoster && stats_poster.available)
