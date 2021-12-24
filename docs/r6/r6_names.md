@@ -67,6 +67,8 @@
 | Aruni            | `aruni`            |
 | Flores           | `flores`           |
 | Thunderbird      | `thunderbird`      |
+| Osa              | `osa`              |
+| Thorn            | `thorn`            |
 
 ### Weapon categories
 | Category | Aliases    |
