@@ -8,8 +8,7 @@
   "scripts": {
     "start": "ts-node src/core/start.ts",
     "beta": "cross-env NODE_ENV=beta && npm start",
-    "update": "git pull && npm i",
-    "update:force": "git checkout -- package-lock.json && npm run update",
+    "update": "git pull && npm ci",
     "dev": "cross-env NODE_ENV=dev nodemon --watch src/**/*.* --ignore src/utils/reloadme.json --exec npm start",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
@@ -18,7 +17,6 @@
     "docs:dev": "docsify serve ./docs",
     "docs:gen": "ts-node src/scripts/doc.ts",
     "lint:add": "npm run lint && git add ./src",
-    "pkg:reset": "git checkout -- package.json && git checkout -- package-lock.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintIgnore": [
