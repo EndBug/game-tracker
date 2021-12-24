@@ -5,6 +5,7 @@ import {
   OperatorName as OperatorId,
   OperatorName,
   Platform,
+  SeasonId,
   WeaponName,
   WeaponTypeId
 } from 'r6api.js/dist/typings'
@@ -13,7 +14,7 @@ type WeaponTypeName =
   typeof constants.WEAPONTYPES[keyof typeof constants.WEAPONTYPES]['name']
 type PvPMode = Stats['pvp']['modes'][keyof Stats['pvp']['modes']]
 type PvEMode = Stats['pve']['modes'][keyof Stats['pve']['modes']]
-type RankSeason = IGetRanks['seasons'][string]
+type RankSeason = IGetRanks['seasons'][SeasonId]
 type OperatorStats = Stats['pvp' | 'pve']['operators'][OperatorName]
 type PvpQueue = Stats['pvp']['queues']['ranked']
 
