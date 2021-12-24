@@ -25,7 +25,7 @@
     "src/utils/reloadme.json"
   ],
   "dependencies": {
-    "@supabase/supabase-js": "^1.28.5",
+    "@supabase/supabase-js": "^1.29.1",
     "axios": "^0.24.0",
     "common-tags": "^1.8.2",
     "dbots": "^10.0.0",
