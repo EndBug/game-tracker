@@ -376,7 +376,7 @@ class OperatorEmbed extends CustomEmbed {
     const { kills, deaths, wins, losses } = stats
 
     const title = readablePlayType(playType)
-    const other = (stats?.uniqueAbility?.stats || [])
+    const other = (stats.uniqueAbility?.stats || [])
       .map((g) => keyValue(g.name, g.value))
       .join('\n- ')
     const str = `

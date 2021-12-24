@@ -7,7 +7,7 @@ const localBackupFN = path.join(__dirname, '../../data/settings.json')
 
 export async function uploadBackup(reason: string) {
   console.debug('[backup] Uploading backup...')
-  const [id, token] = process.env.BACKUP_WEBHOOK?.split('/').slice(-2)
+  const [id, token] = process.env.BACKUP_WEBHOOK?.split('/')?.slice(-2) || []
 
   const webhook = new WebhookClient({ id, token })
 
