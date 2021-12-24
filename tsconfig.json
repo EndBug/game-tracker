@@ -2,15 +2,11 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "lib": [
-      "es2015",
-      "es2017",
-      "es6",
-      "dom"
-    ],
+    "lib": ["es2015", "es2017", "es6", "dom"],
     "allowJs": true,
     "removeComments": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "preserveSymlinks": true,
     "outDir": "./build/",
@@ -18,9 +14,5 @@
     "rootDir": "./src/",
     "sourceMap": true
   },
-  "exclude": [
-    "build",
-    "**/sample.ts",
-    "start.js"
-  ]
+  "exclude": ["build", "**/sample.ts", "start.js"]
 }

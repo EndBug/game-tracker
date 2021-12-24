@@ -1,5 +1,4 @@
-/* eslint-disable no-dupe-class-members */
-import { User, GuildMember, Message, MessageEmbed } from 'discord.js'
+import { User, GuildMember, Message, MessageEmbed } from 'discord.js-light'
 import * as owapi from 'overwatch-stats-api'
 import { long as getSha } from 'git-rev-sync'
 
@@ -13,15 +12,17 @@ import {
   humanize,
   capitalize,
   equals,
-  enforceType,
-  stringToSeconds
+  stringToSeconds,
+  WithOptional
 } from '../utils/utils'
 import { heroName, SupportedHero, isSupported } from '../utils/ow_hero_names'
 
-type platform = 'pc' | 'xbl' | 'psn'
-function isPlatform(value): value is platform {
-  return ['pc', 'xbl', 'psn'].includes(value)
-}
+type playerEntry = WithOptional<
+  Awaited<ReturnType<typeof OverwatchAPI['prototype']['checkDatabase']>>,
+  'id' | 'created_at'
+>
+type platform = playerEntry['platform']
+
 type embedType =
   | 'quick'
   | 'comp'
@@ -115,16 +116,6 @@ interface StatsEmbedOptions<T> {
   msg: Message
   platform: platform
   stats: StatsType<T>
-}
-
-type playerEntry = [string, platform]
-function isPlayerEntry(value): value is playerEntry {
-  return (
-    value instanceof Array &&
-    value.length == 2 &&
-    typeof value[0] == 'string' &&
-    isPlatform(value[1])
-  )
 }
 
 interface LinkOptions<T> {
@@ -400,50 +391,62 @@ class LinkEmbed extends CustomEmbed {
   mode: 'link' | 'unlink'
 
   constructor(
-    { mode, msg, previous, current }: LinkOptions<'link' | 'unlink'>,
+    {
+      mode,
+      msg,
+      previous: prev,
+      current: curr
+    }: LinkOptions<'link' | 'unlink'>,
     ...args
   ) {
     super(msg, ...args)
     this.mode = mode
-    if (equals(previous, current)) this.same(current)
-    else this[mode](previous, current)
+    if (prev.username == curr.username && prev.platform == curr.platform)
+      this.same(curr)
+    else this[mode](prev, curr)
   }
 
   /** Changes the color, adds title and description to the embed
    * @param prev The previous [battletag, platform]
    * @param curr The current [battletag, platform]
    */
-  link(prev: [string, platform], curr: [string, platform]) {
+  link(prev: playerEntry, curr: playerEntry) {
     return this.setColor([0, 154, 228])
       .setTitle(`Blizzard profile ${prev ? 'updated' : 'linked'}`)
-      .setD(`Your profile is now linked: ${player(curr[0], curr[1])}`, prev)
+      .setD(
+        `Your profile is now linked: ${player(curr.username, curr.platform)}`,
+        prev
+      )
   }
 
   /** Adds title and descirption to the embed
    * @param prev The previous [battletag, platform]
    */
-  unlink(prev: [string, platform]) {
+  unlink(prev: playerEntry) {
     return this.setTitle('Blizzard profile unlinked').setD(undefined, prev)
   }
 
   /** Changes the color, adds title and description to the embed
    * @param curr The current [battletag, platform]
    */
-  same(curr: [string, platform]) {
+  same({ username, platform }: playerEntry) {
     return this.setColor([0, 154, 228])
       .setTitle('Blizzard profile unchanged')
-      .setDescription(`Your linked profile is ${player(curr[0], curr[1])}`)
+      .setDescription(`Your linked profile is ${player(username, platform)}`)
   }
 
   /** Adds a custom description
    * @param desc The first part of the description
    * @param prev The previous [battletag, platform]
    */
-  private setD(desc = '', prev: [string, platform]) {
+  private setD(desc = '', prev: playerEntry) {
     return this.setDescription(
       desc +
         (prev
-          ? `\nYour previous linked profile was ${player(prev[0], prev[1])}.`
+          ? `\nYour previous linked profile was ${player(
+              prev.username,
+              prev.platform
+            )}.`
           : '\nYou had no previous linked profile.')
     )
   }
@@ -473,7 +476,7 @@ class ErrorEmbed extends CustomEmbed {
 
 // #endregion
 
-export class OverwatchAPI extends API {
+export class OverwatchAPI extends API<'ow'> {
   constructor() {
     super('ow', 'Overwatch')
   }
@@ -482,9 +485,9 @@ export class OverwatchAPI extends API {
    * @param id The user, guild member or id of the user
    * @param reverse Whether to return keys (default is false)
    */
-  checkDatabase(id: string | User | GuildMember, reverse = false) {
+  checkDatabase(id: string | User | GuildMember) {
     if (id instanceof User || id instanceof GuildMember) id = id.id
-    return !reverse ? this.get(id) : this.getKey(id.replace('#', '-'))
+    return this.get(id)
   }
 
   private createEmbed<T extends embedType>(
@@ -494,23 +497,22 @@ export class OverwatchAPI extends API {
     const { mode } = options
 
     if (['quick', 'comp'].includes(mode)) {
-      if (!enforceType<EmbedOptions<'quick' | 'comp'>>(options)) return
-      const { battletag, msg, platform, stats } = options
+      const { battletag, msg, platform, stats } = options as EmbedOptions<
+        'quick' | 'comp'
+      >
       embed = new StatsEmbed(msg, battletag, platform, stats)
     } else if (['hero', 'herocomp'].includes(mode)) {
-      if (!enforceType<EmbedOptions<'hero' | 'herocomp'>>(options)) return
-      const { battletag, msg, platform, stats } = options
+      const { battletag, msg, platform, stats } = options as EmbedOptions<
+        'hero' | 'herocomp'
+      >
       embed = new HeroEmbed(msg, battletag, platform, stats)
     } else if (['link', 'unlink'].includes(mode)) {
-      if (!enforceType<EmbedOptions<'link' | 'unlink'>>(options)) return
-      embed = new LinkEmbed(options)
+      embed = new LinkEmbed(options as EmbedOptions<'link' | 'unlink'>)
     } else if (mode == 'warn') {
-      if (!enforceType<EmbedOptions<'warn'>>(options)) return
-      const { error, msg } = options
+      const { error, msg } = options as EmbedOptions<'warn'>
       embed = new WarnEmbed(msg, error)
     } else if (mode == 'error') {
-      if (!enforceType<EmbedOptions<'error'>>(options)) return
-      const { error, msg } = options
+      const { error, msg } = options as EmbedOptions<'error'>
       embed = new ErrorEmbed(msg, error)
     }
 
@@ -585,8 +587,7 @@ export class OverwatchAPI extends API {
     if (typeof rank != 'object') return
     return Object.entries(rank)
       .map(([key, value]) => {
-        if (!enforceType<owapi.RankRole>(value)) return
-        const srOnly = parseInt(value.sr)
+        const srOnly = parseInt((value as owapi.RankRole).sr)
         return [key, srOnly]
       })
       .reduce((accum, [k, v]) => {
@@ -823,29 +824,34 @@ export class OverwatchAPI extends API {
     )
     if (stats instanceof CustomEmbed) return stats
 
-    const prev = this.checkDatabase(msg.author),
-      next: playerEntry = [battletag, platform]
+    const prev = await this.checkDatabase(msg.author),
+      next: playerEntry = { username: battletag, platform }
 
-    if (!isPlayerEntry(prev) || !equals(prev, next))
-      this.set(msg.author.id, next)
+    if (!prev || !equals(prev, next))
+      await this.set({
+        id: msg.author.id,
+        username: next.username,
+        platform: next.platform,
+        created_at: new Date().toISOString()
+      })
 
     return this.createEmbed({
       mode: 'link',
       current: next,
       msg,
-      previous: isPlayerEntry(prev) ? prev : undefined
+      previous: prev
     })
   }
 
   async unlink(_ignore1: any, _ignore2: any, msg: Message) {
-    const prev = this.checkDatabase(msg.author)
+    const prev = await this.checkDatabase(msg.author)
 
     if (prev) this.delete(msg.author.id)
 
     return this.createEmbed({
       mode: 'unlink',
       msg,
-      previous: isPlayerEntry(prev) ? prev : undefined
+      previous: prev
     })
   }
   // #endregion

@@ -1,6 +1,6 @@
 import { links } from '../../core/app'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 
 export default class InviteCMD extends Command {
   constructor() {

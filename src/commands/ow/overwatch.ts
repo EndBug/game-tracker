@@ -3,7 +3,7 @@ import { OverwatchAPI } from '../../apis/overwatch'
 import { heroes } from '../../utils/ow_hero_names'
 import { APIUtil } from '../../utils/api'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 import { postCommand } from '../../utils/statcord'
 
 // @ts-expect-error
@@ -73,7 +73,7 @@ export default class OverwatchCMD extends Command {
   }
 
   async run(msg: Message, [mode, player, platform, hero]: string[]) {
-    msg.channel.startTyping()
+    msg.channel.sendTyping()
 
     let err: string,
       exit = false
@@ -82,10 +82,11 @@ export default class OverwatchCMD extends Command {
 
     if (!exit) {
       if (!mode) {
-        const res = API.checkDatabase(msg.author)
+        const res = await API.checkDatabase(msg.author)
         if (res) {
           mode = 'quick'
-          ;[player, platform] = res
+          player = res.username
+          platform = res.platform
           exit = true
         } else {
           mode = null
@@ -100,9 +101,11 @@ export default class OverwatchCMD extends Command {
 
     if (!exit && !err) {
       if (!player) {
-        const res = API.checkDatabase(msg.author)
-        if (res) [player, platform] = res
-        else {
+        const res = await API.checkDatabase(msg.author)
+        if (res) {
+          player = res.username
+          platform = res.platform
+        } else {
           err = 'Please enter a battletag.'
           if (!linkmodes.includes(mode))
             err +=
@@ -115,10 +118,12 @@ export default class OverwatchCMD extends Command {
           platform = 'pc'
         }
       } else if (heromodes.includes(mode)) {
-        const res = API.checkDatabase(msg.author)
+        const res = await API.checkDatabase(msg.author)
         hero = player
-        if (res) [player, platform] = res
-        else {
+        if (res) {
+          player = res.username
+          platform = res.platform
+        } else {
           err = 'Please enter a battletag.'
           if (!linkmodes.includes(mode))
             err +=
@@ -129,13 +134,14 @@ export default class OverwatchCMD extends Command {
           'Please enter a valid battletag and platform. To see how to write names and platforms, use `help ow`'
       else if (!otherplatforms.includes(platform)) {
         if (isMention(player)) {
-          const res = API.checkDatabase(msg.author)
+          const res = await API.checkDatabase(msg.author)
           if (res) {
             // prettier-ignore
             if (platform) // lgtm [js/trivial-conditional]
               hero = platform // lgtm [js/trivial-conditional]
-            ;
-            ;[player, platform] = res
+
+            player = res.username
+            platform = res.platform
           } else
             err =
               'This user is not registered, please enter its battletag and platform manually.'
@@ -155,12 +161,13 @@ export default class OverwatchCMD extends Command {
 
     postCommand(`${this.name} ${mode || '???'}`, msg.author.id)
     if (err)
-      return msg
-        .reply(escapeMentions(err), { allowedMentions: { parse: [] } })
-        .finally(() => msg.channel.stopTyping(true))
+      return msg.reply({
+        content: escapeMentions(err),
+        allowedMentions: { parse: [] }
+      })
     else
-      return msg.channel
-        .send(await API[mode](player, platform, msg, hero))
-        .finally(() => msg.channel.stopTyping(true))
+      return msg.channel.send({
+        embeds: [await API[mode](player, platform, msg, hero)]
+      })
   }
 }

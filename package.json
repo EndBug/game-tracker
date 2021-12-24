@@ -10,7 +10,7 @@
     "beta": "cross-env NODE_ENV=beta && npm start",
     "update": "git pull && npm i",
     "update:force": "git checkout -- package-lock.json && npm run update",
-    "dev": "cross-env NODE_ENV=dev nodemon --watch src/**/*.* --ignore src/utils/reloadme.json --exec ts-node src/core/start.ts",
+    "dev": "cross-env NODE_ENV=dev nodemon --watch src/**/*.* --ignore src/utils/reloadme.json --exec npm start",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "lint": "eslint \"./src/**/*.ts\" --fix",
@@ -25,12 +25,11 @@
     "src/utils/reloadme.json"
   ],
   "dependencies": {
+    "@supabase/supabase-js": "^1.28.5",
     "axios": "^0.24.0",
     "common-tags": "^1.8.2",
-    "cron": "^1.8.2",
     "dbots": "^9.0.1",
-    "discord.js": "^12.5.3",
-    "discord.js-light": "^3.5.11",
+    "discord.js-light": "^4.3.1",
     "dotenv": "^10.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

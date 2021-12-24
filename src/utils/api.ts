@@ -1,17 +1,14 @@
-import { provider } from './provider'
+import { APITable, Database, provider } from './provider'
 import { readdirSync } from 'fs'
 import { join as path } from 'path'
-import { GuildMember, User, Snowflake } from 'discord.js'
-import { enforceType, PartialRecord } from './utils'
+import { GuildMember, User, Snowflake } from 'discord.js-light'
 import { client } from '../core/app'
 
-export type APIKey = 'ow' | 'r6'
-
-export class API {
-  apiKey: APIKey
+export class API<T extends APITable> {
+  apiKey: T
   gameName: string
 
-  constructor(key: APIKey, game: string) {
+  constructor(key: T, game: string) {
     this.apiKey = key
     this.gameName = game
   }
@@ -20,16 +17,12 @@ export class API {
     return provider.get(this.apiKey, key)
   }
 
-  getKey(value) {
-    return provider.getKey(this.apiKey, value)
-  }
-
   delete(key: Snowflake) {
     return provider.delete(this.apiKey, key)
   }
 
-  set(key: Snowflake, value: string[]) {
-    return provider.set(this.apiKey, key, value)
+  set(value: Database[T][number]) {
+    return provider.set(this.apiKey, value)
   }
 }
 
@@ -37,12 +30,12 @@ type Class = { new (...args: any[]): any }
 
 export class APIUtil {
   /** Where all APIs are stored */
-  static APIs: Record<APIKey, API> = {
+  static APIs: { [T in APITable]: API<T> } = {
     ow: undefined,
     r6: undefined
   }
 
-  static getAPIName(key: APIKey) {
+  static getAPIName(key: APITable) {
     return this.APIs[key].gameName
   }
 
@@ -56,7 +49,7 @@ export class APIUtil {
         '../apis',
         file
       )).ApiLoader
-      const api: API = new ClassFromModule()
+      const api: API<any> = new ClassFromModule()
       this.APIs[api.apiKey] = api
 
       client.emit('debug', `[API] Loaded ${this.getAPIName(api.apiKey)} API`)
@@ -69,14 +62,12 @@ export class APIUtil {
    * @param [realName] Whether to map
    * @returns An object with every result mapped by APIKey
    */
-  static findAll(target: string | GuildMember | User) {
+  static async findAll(target: string | GuildMember | User) {
     if (typeof target != 'string') target = target.id
 
-    const result: PartialRecord<APIKey, any> = {}
+    const result: Partial<Record<APITable, any>> = {}
     for (const key in this.APIs) {
-      if (!enforceType<APIKey>(key)) return
-
-      const searchResult = this.APIs[key].get(target)
+      const searchResult = await this.APIs[key as APITable].get(target)
       if (searchResult) result[key] = searchResult
     }
     return result
@@ -87,15 +78,13 @@ export class APIUtil {
    * @param target The user to erase
    * @returns The APIs from which the user has been erased
    */
-  static eraseAll(target: string | GuildMember | User) {
+  static async eraseAll(target: string | GuildMember | User) {
     if (typeof target != 'string') target = target.id
 
-    const res: APIKey[] = []
-    for (const key in this.findAll(target)) {
-      if (!enforceType<APIKey>(key)) return
-
-      res.push(key)
-      this.APIs[key].delete(target)
+    const res: APITable[] = []
+    for (const key in await this.findAll(target)) {
+      res.push(key as APITable)
+      await this.APIs[key as APITable].delete(target)
     }
     return res
   }

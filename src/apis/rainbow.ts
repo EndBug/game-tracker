@@ -23,13 +23,11 @@ import {
   mergeAndSum,
   readHours,
   readNumber,
-  enforceType,
   camelToReadable,
   capitalize,
-  PartialRecord,
   Cache
 } from '../utils/utils'
-import { Message, MessageEmbed, User, UserResolvable } from 'discord.js'
+import { Message, MessageEmbed, User, UserResolvable } from 'discord.js-light'
 import { API } from '../utils/api'
 import { client } from '../core/app'
 
@@ -108,8 +106,7 @@ class ErrorEmbed extends CustomEmbed {
   constructor(error: string, msg: Message, ...args: any[]) {
     super(msg, ...args)
     this.type = 'error'
-    let sub = error.substr(0, 2048 - 3)
-    sub = sub.substr(0, sub.lastIndexOf(' ')) + '...'
+    const sub = error.length > 2048 ? error.slice(0, 2048 - 3) + '...' : error
     return this.setColor('RED')
       .setTitle('I got an error from the server')
       .setDescription(sub)
@@ -222,7 +219,6 @@ class ModesEmbed extends CustomEmbed {
     let title: string,
       body = ''
     if (playType == 'pvp') {
-      if (!enforceType<PvPMode>(mode)) return
       title = mode.name
     } else title = camelToReadable(key)
 
@@ -243,11 +239,11 @@ class WeaponEmbed extends CustomEmbed {
     if (!title) title = `${capitalize(CATname)} category overall`
     for (const playType in category) {
       if (!playType.includes('name')) {
-        if (!enforceType<strictPlayType>(playType)) return
+        const pt = playType as strictPlayType
         let str = ''
-        for (const key in category[playType].general)
-          str += keyValue(key, category[playType].general[key]) + '\n'
-        this.addField(title + ` (${playType})`, str, true)
+        for (const key in category[pt].general)
+          str += keyValue(key, category[pt].general[key]) + '\n'
+        this.addField(title + ` (${pt})`, str, true)
       }
     }
     return this
@@ -264,9 +260,9 @@ class WeaponEmbed extends CustomEmbed {
     if (!title) title = 'Weapon'
     for (const playType in category) {
       if (!playType.includes('name') && !(only && playType != only)) {
-        if (!enforceType<strictPlayType>(playType)) return
+        const pt = playType as strictPlayType
         let str = ''
-        const wp = Object.values(category[playType].list).find(
+        const wp = Object.values(category[pt].list).find(
           (wp) => wpTrans(wp.name) == wpTrans(wpName)
         )
         if (name) str += `Name: **${wp.name}**\n`
@@ -274,7 +270,7 @@ class WeaponEmbed extends CustomEmbed {
           for (const key in wp) {
             if (key != 'name') str += keyValue(key, wp[key]) + '\n'
           }
-        if (str) this.addField(title + ` (${playType})`, str, true)
+        if (str) this.addField(title + ` (${pt})`, str, true)
       }
     }
     return this
@@ -380,7 +376,7 @@ class OperatorEmbed extends CustomEmbed {
     const { kills, deaths, wins, losses } = stats
 
     const title = readablePlayType(playType)
-    const other = (stats.uniqueAbility.stats || [])
+    const other = (stats.uniqueAbility?.stats || [])
       .map((g) => keyValue(g.name, g.value))
       .join('\n- ')
     const str = `
@@ -738,7 +734,7 @@ interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
 }
 
 interface OperatorEmbedStats
-  extends PartialRecord<strictPlayType, OperatorStats> {}
+  extends Partial<Record<strictPlayType, OperatorStats>> {}
 
 interface LinkData {
   previous?: string
@@ -747,7 +743,7 @@ interface LinkData {
 }
 // #endregion
 
-export class RainbowAPI extends API {
+export class RainbowAPI extends API<'r6'> {
   constructor() {
     super('r6', 'Rainbow 6 Siege')
   }
@@ -775,10 +771,9 @@ export class RainbowAPI extends API {
   }
 
   /** Gets the saved credentials of a user from the database */
-  checkDatabase(discordUser: UserResolvable): [string, Platform] {
-    const id = client.users.resolveID(discordUser)
-    const res = this.get(id)
-    return enforceType<[string, Platform]>(res) && res
+  checkDatabase(discordUser: UserResolvable) {
+    const id = client.users.resolveId(discordUser)
+    return this.get(id)
   }
 
   /** Function that chooses which type of embed to build and returns the chosen one */
@@ -792,38 +787,73 @@ export class RainbowAPI extends API {
     username
   }: EmbedParameters<T>) {
     if (embedType == 'error') {
-      if (!enforceType<StatsType<'error'>>(stats)) return
-      return new ErrorEmbed(stats instanceof Error ? stats.message : stats, msg)
+      const s = stats as StatsType<'error'>
+      return new ErrorEmbed(s instanceof Error ? s.message : s, msg)
     }
 
     let embed: CustomEmbed
 
     // Type guards are necessary, just copy & paste them block-by-block
     if (embedType == 'general') {
-      if (!enforceType<StatsType<'general'>>(stats)) return
-      embed = new GeneralEmbed(msg, username, platform, playType, stats, raw)
+      embed = new GeneralEmbed(
+        msg,
+        username,
+        platform,
+        playType,
+        stats as StatsType<'general'>,
+        raw
+      )
     } else if (embedType == 'modes') {
-      if (!enforceType<StatsType<'modes'>>(stats)) return
       if (playType == 'all') playType = 'pvp'
-      embed = new ModesEmbed(msg, username, platform, playType, stats, raw)
+      embed = new ModesEmbed(
+        msg,
+        username,
+        platform,
+        playType,
+        stats as StatsType<'modes'>,
+        raw
+      )
     } else if (embedType == 'wp-single') {
-      if (!enforceType<StatsType<'wp-single'>>(stats)) return
-      embed = new WeaponSingleEmbed(msg, username, platform, stats, raw)
+      embed = new WeaponSingleEmbed(
+        msg,
+        username,
+        platform,
+        stats as StatsType<'wp-single'>,
+        raw
+      )
     } else if (embedType == 'wp-cat') {
-      if (!enforceType<StatsType<'wp-cat'>>(stats)) return
-      embed = new WeaponCategoryEmbed(msg, username, platform, stats, raw)
+      embed = new WeaponCategoryEmbed(
+        msg,
+        username,
+        platform,
+        stats as StatsType<'wp-cat'>,
+        raw
+      )
     } else if (embedType == 'op') {
-      if (!enforceType<StatsType<'op'>>(stats)) return
-      embed = new OperatorEmbed(msg, username, platform, stats)
+      embed = new OperatorEmbed(
+        msg,
+        username,
+        platform,
+        stats as StatsType<'op'>
+      )
     } else if (embedType == 'types') {
-      if (!enforceType<StatsType<'types'>>(stats)) return
-      embed = new TypesEmbed(msg, username, platform, stats, raw)
+      embed = new TypesEmbed(
+        msg,
+        username,
+        platform,
+        stats as StatsType<'types'>,
+        raw
+      )
     } else if (embedType == 'queue') {
-      if (!enforceType<StatsType<'queue'>>(stats)) return
-      embed = new QueueEmbed(msg, username, platform, stats, raw)
+      embed = new QueueEmbed(
+        msg,
+        username,
+        platform,
+        stats as StatsType<'queue'>,
+        raw
+      )
     } else if (['link', 'unlink'].includes(embedType)) {
-      if (!enforceType<StatsType<'link' | 'unlink'>>(stats)) return
-      embed = new LinkEmbed(msg, stats)
+      embed = new LinkEmbed(msg, stats as StatsType<'link' | 'unlink'>)
     }
 
     return embed
@@ -903,8 +933,7 @@ export class RainbowAPI extends API {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
-    if (check) return check
-    if (!enforceType<Stats>(rawStats)) return
+    if (check || rawStats instanceof Error) return check
 
     const processedStats = {} as GeneralStats
     let finalStats: Stats['pvp']['general'] | Stats['pve']['general']
@@ -968,8 +997,7 @@ export class RainbowAPI extends API {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
-    if (check) return check
-    if (!enforceType<Stats>(rawStats)) return
+    if (check || rawStats instanceof Error) return check
 
     const processedStats = rawStats[playType].modes
 
@@ -993,8 +1021,7 @@ export class RainbowAPI extends API {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
-    if (check) return check
-    if (!enforceType<Stats>(rawStats)) return
+    if (check || rawStats instanceof Error) return check
 
     var processedStats: WeaponEmbedStats
     if (isWeaponName(wpOrCat)) {
@@ -1002,12 +1029,11 @@ export class RainbowAPI extends API {
       var CATname: WeaponTypeId
       for (const cat in rawStats.pvp.weapons) {
         if (
-          enforceType<WeaponTypeId>(cat) &&
-          Object.values(rawStats.pvp.weapons[cat].list).some(
+          Object.values(rawStats.pvp.weapons[cat as WeaponTypeId].list).some(
             (wp) => wpTrans(wp.name) == exactName
           )
         )
-          CATname = cat
+          CATname = cat as WeaponTypeId
       }
       processedStats = {
         WPname: getWeaponName(exactName),
@@ -1049,14 +1075,10 @@ export class RainbowAPI extends API {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
-    if (check) return check
-    if (!enforceType<Stats>(rawStats)) return
+    if (check || rawStats instanceof Error) return check
 
-    if (operator == 'auto') {
-      const str = getMostPlayedOperator(rawStats, 'all').name
-      if (!enforceType<OperatorId>(str)) return
-      operator = str
-    }
+    if (operator == 'auto')
+      operator = getMostPlayedOperator(rawStats, 'all').name as OperatorId
 
     const processedStats: OperatorEmbedStats = {}
     processedStats.pvp = rawStats.pvp.operators[operator] || undefined
@@ -1085,8 +1107,7 @@ export class RainbowAPI extends API {
 
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
-    if (check) return check
-    if (!enforceType<Stats>(rawStats)) return
+    if (check || rawStats instanceof Error) return check
 
     const processedStats = rawStats.pve.queues
 
@@ -1105,8 +1126,7 @@ export class RainbowAPI extends API {
 
     const rawStats = await this.getStats(id, platform)
     const check = this.errorCheck(rawStats, id, platform, msg)
-    if (check) return check
-    if (!enforceType<Stats>(rawStats)) return
+    if (check || rawStats instanceof Error) return check
 
     const processedStats = Object.values(rawStats.pvp.queues).sort(
       (a, b) => b.matches - a.matches
@@ -1126,11 +1146,8 @@ export class RainbowAPI extends API {
   async link(msg: Message, username: string, platform: Platform) {
     let mode: 'same' | 'link', currStr
 
-    const prev = this.checkDatabase(msg)
-    const prevStr =
-      prev instanceof Array && prev[0] && prev[1]
-        ? player(prev[0], prev[1])
-        : undefined
+    const prev = await this.checkDatabase(msg)
+    const prevStr = prev ? player(prev.username, prev.platform) : undefined
 
     if (username) {
       const id = await this.getID(username, platform)
@@ -1147,7 +1164,13 @@ export class RainbowAPI extends API {
       mode = prevStr == currStr ? 'same' : 'link'
     } else mode = 'same'
 
-    if (mode == 'link') this.set(msg.author.id, [username, platform])
+    if (mode == 'link')
+      await this.set({
+        id: msg.author.id,
+        username,
+        platform,
+        created_at: new Date().toISOString()
+      })
     return this.createEmbed({
       embedType: 'link',
       msg,
@@ -1162,8 +1185,8 @@ export class RainbowAPI extends API {
   }
 
   async unlink(msg: Message) {
-    const prev = this.checkDatabase(msg),
-      prevStr = prev instanceof Array ? player(prev[0], prev[1]) : undefined
+    const prev = await this.checkDatabase(msg),
+      prevStr = prev ? player(prev.username, prev.platform) : undefined
 
     if (prevStr) this.delete(msg.author.id)
 

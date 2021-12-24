@@ -1,4 +1,4 @@
-import { Message, Snowflake, Client } from 'discord.js'
+import { Message, Snowflake, Client } from 'discord.js-light'
 import { stripIndents } from 'common-tags'
 import { isOwner, getDocsLink } from './utils'
 import { owner, supportHardLink, client } from '../core/app'
@@ -76,7 +76,13 @@ export class Command {
     return true
   }
 
-  async run(message: Message, args: any[], rawArgs: string[]): Promise<Message | Message[]> { // eslint-disable-line
+  async run(
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    message: Message,
+    args: any[],
+    rawArgs: string[]
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+  ): Promise<Message | Message[] | void> {
     throw new Error(`${this.constructor.name} doesn't have a \`run()\` method.`)
   }
 

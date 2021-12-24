@@ -1,7 +1,7 @@
 import { getSupportInvite } from '../../utils/utils'
 import { links, owner } from '../../core/app'
 import { Command } from '../../utils/command'
-import { Message } from 'discord.js'
+import { Message } from 'discord.js-light'
 
 export default class SupportCMD extends Command {
   constructor() {

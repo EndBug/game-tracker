@@ -3,7 +3,7 @@ require('pretty-error').start()
 
 import { join as path } from 'path'
 import * as fs from 'fs'
-import { Client, Guild, User, Role } from 'discord.js-light'
+import { Client, Guild, User, Role, Intents } from 'discord.js-light'
 
 import { isPartialMessage } from '../utils/utils'
 import * as stats_poster from '../utils/stats_poster'
@@ -18,7 +18,6 @@ export const ownerID = '218308478580555777'
 export const supportHardLink = 'https://discord.gg/5YrhW4NHfY'
 export const baseDocsURL = 'https://game-tracker.js.org/#/'
 export const isDev = process.env.NODE_ENV == 'dev'
-export const isBeta = process.env.NODE_ENV == 'beta'
 
 const deactivatePoster = false || isDev
 
@@ -28,24 +27,28 @@ export let links: Record<string, string> = {}
 export let owner: User
 export let roles: Record<string, Role> = {}
 
-import * as backup from './backup'
-
 /**
  * Creates the client, sets event handlers, registers groups and commands, sets the provider, loads APIs
  */
-function initClient() {
-  client = new Client()
+async function initClient() {
+  client = new Client({
+    intents: [
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MESSAGES,
+      Intents.FLAGS.DIRECT_MESSAGES,
+      Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+      Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
+    ]
+  })
 
   client.on('error', console.error)
   client.on('warn', console.warn)
   client.on('debug', console.log)
 
-  client.on(
-    'message',
-    (msg) =>
-      !isPartialMessage(msg) &&
+  client.on('messageCreate', (msg) => {
+    !isPartialMessage(msg) &&
       handleMessage(msg).catch((err) => client.emit('error', err))
-  )
+  })
 
   client.on('ready', async () => {
     homeguild = await client.guilds.fetch('475792603867119626')
@@ -118,7 +121,5 @@ function loadModules() {
 }
 
 ;(async () => {
-  if (backup.available) await backup.init().catch(console.error)
-  else console.log('No backup token found.')
   initClient()
 })().catch(console.error)
