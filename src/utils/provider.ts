@@ -11,7 +11,7 @@ export interface Database {
   ow: {
     id: Snowflake
     username: string
-    platform: string
+    platform: 'pc' | 'xbl' | 'psn'
     created_at: string
   }[]
   r6: {

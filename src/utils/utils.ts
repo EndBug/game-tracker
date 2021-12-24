@@ -11,6 +11,11 @@ import {
   client
 } from '../core/app'
 
+// #region Types
+export type WithOptional<T, K extends keyof T> = Omit<T, K> &
+  Partial<Pick<T, K>>
+// #endregion
+
 // #region Classes
 /** Temporarily stores data that gets fecthed through OverwatchAPI.getRaw, in order to avoid too many requests */
 export class Cache {
@@ -76,7 +81,7 @@ export function equals(...items: any[]) {
   for (let i = 0; i < items.length - 1; i++) {
     const a = items[i],
       b = items[i + 1]
-    if (typeof a != typeof b) return false
+    if (typeof a != typeof b || !!a != !!b) return false
     if (a instanceof Array) {
       if (b instanceof Array) {
         if (a.length != b.length) return false

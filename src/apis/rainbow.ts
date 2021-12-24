@@ -106,8 +106,7 @@ class ErrorEmbed extends CustomEmbed {
   constructor(error: string, msg: Message, ...args: any[]) {
     super(msg, ...args)
     this.type = 'error'
-    let sub = error.substr(0, 2048 - 3)
-    sub = sub.substr(0, sub.lastIndexOf(' ')) + '...'
+    const sub = error.length > 2048 ? error.slice(0, 2048 - 3) + '...' : error
     return this.setColor('RED')
       .setTitle('I got an error from the server')
       .setDescription(sub)
@@ -377,7 +376,7 @@ class OperatorEmbed extends CustomEmbed {
     const { kills, deaths, wins, losses } = stats
 
     const title = readablePlayType(playType)
-    const other = (stats.uniqueAbility.stats || [])
+    const other = (stats?.uniqueAbility?.stats || [])
       .map((g) => keyValue(g.name, g.value))
       .join('\n- ')
     const str = `
@@ -1148,8 +1147,7 @@ export class RainbowAPI extends API<'r6'> {
     let mode: 'same' | 'link', currStr
 
     const prev = await this.checkDatabase(msg)
-    const prevStr =
-      typeof prev == 'object' ? player(prev.username, prev.platform) : undefined
+    const prevStr = prev ? player(prev.username, prev.platform) : undefined
 
     if (username) {
       const id = await this.getID(username, platform)
@@ -1188,10 +1186,7 @@ export class RainbowAPI extends API<'r6'> {
 
   async unlink(msg: Message) {
     const prev = await this.checkDatabase(msg),
-      prevStr =
-        typeof prev == 'object'
-          ? player(prev.username, prev.platform)
-          : undefined
+      prevStr = prev ? player(prev.username, prev.platform) : undefined
 
     if (prevStr) this.delete(msg.author.id)
 

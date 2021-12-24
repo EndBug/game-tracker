@@ -17,6 +17,7 @@ module.exports = {
     'no-cond-assign': [2, 'except-parens'],
     'no-unused-vars': 0,
     '@typescript-eslint/no-unused-vars': 1,
+    'no-undef': 0,
     'no-empty': [
       'error',
       {
