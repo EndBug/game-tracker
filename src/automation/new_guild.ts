@@ -18,6 +18,6 @@ client.on('guildCreate', async (guild) => {
     If you want to share this bot, please use the \`invite\` command and use that link ;)
     `
 
-    ;(await guild.fetchOwner())?.send(msg)
+    ;(await guild.fetchOwner())?.send(msg).catch(() => {})
   } else await owner.send(`Problem with invite creation: ${invite}`)
 })
