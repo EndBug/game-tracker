@@ -23,7 +23,7 @@ export async function uploadBackup(reason: string) {
         }
       ]
     })
-    .then(() => console.debug('[Backup] Backup successfully uploaded.'))
+    .then(() => console.debug('[backup] Backup successfully uploaded.'))
     .catch((e) => {
       console.error(
         '[backup] There has bene an issue while uploading the backup:'
