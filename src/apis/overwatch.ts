@@ -1,4 +1,5 @@
-import { User, GuildMember, Message, MessageEmbed } from 'discord.js-light'
+/* eslint-disable no-dupe-class-members */
+import { User, GuildMember, MessageEmbed, CommandInteraction } from 'discord.js'
 import * as owapi from 'overwatch-stats-api'
 import { long as getSha } from 'git-rev-sync'
 
@@ -15,13 +16,13 @@ import {
   stringToSeconds,
   WithOptional
 } from '../utils/utils'
-import { heroName, SupportedHero, isSupported } from '../utils/ow_hero_names'
+import { heroName, supportedHero, isSupported } from '../utils/ow_hero_names'
 
 type playerEntry = WithOptional<
   Awaited<ReturnType<typeof OverwatchAPI['prototype']['checkDatabase']>>,
   'id' | 'created_at'
 >
-type platform = playerEntry['platform']
+export type platform = playerEntry['platform']
 
 type embedType =
   | 'quick'
@@ -113,14 +114,14 @@ type EmbedOptions<T> = T extends 'link' | 'unlink'
 interface StatsEmbedOptions<T> {
   battletag: string
   mode: T
-  msg: Message
+  int: CommandInteraction
   platform: platform
   stats: StatsType<T>
 }
 
 interface LinkOptions<T> {
   mode: T
-  msg: Message
+  int: CommandInteraction
   previous: playerEntry
   current?: playerEntry
 }
@@ -128,7 +129,7 @@ interface LinkOptions<T> {
 interface ErrorOptions<T> {
   error: string
   mode: T
-  msg: Message
+  int: CommandInteraction
 }
 
 /** Returns whether the supplied rank object has a valid score */
@@ -177,19 +178,22 @@ type EmbedSwitch<T> = T extends 'quick' | 'comp'
 class CustomEmbed extends MessageEmbed {
   mode: embedType
 
-  constructor(msg: Message, ...args: any[]) {
+  constructor(int: CommandInteraction, ...args: any[]) {
     super(...args)
-    this.setTimestamp(msg.createdAt)
-      .setAuthor('Overwatch Stats', 'https://i.imgur.com/MaJToTw.png')
-      .via(msg.author)
+    this.setTimestamp(int.createdAt)
+      .setAuthor({
+        name: 'Overwatch Stats',
+        iconURL: 'https://i.imgur.com/MaJToTw.png'
+      })
+      .via(int.user)
   }
 
   /** Adds the name of the user that requested the data as in the footer. */
   via(author: User) {
-    return this.setFooter(
-      `Requested by ${getShortName(author)}`,
-      author.displayAvatarURL()
-    )
+    return this.setFooter({
+      text: `Requested by ${getShortName(author)}`,
+      iconURL: author.displayAvatarURL()
+    })
   }
 
   /** Adds the website link of the targeted profile to the embed description */
@@ -226,13 +230,13 @@ class StatsEmbed extends CustomEmbed {
   mode: 'comp' | 'quick'
 
   constructor(
-    msg: Message,
+    int: CommandInteraction,
     battletag: string,
     platform: platform,
     stats: RegularStats,
     ...args
   ) {
-    super(msg, ...args)
+    super(int, ...args)
 
     this.mode = stats.type == 'competitive' ? 'comp' : 'quick'
 
@@ -317,13 +321,13 @@ class HeroEmbed extends CustomEmbed {
   mode: 'herocomp' | 'hero'
 
   constructor(
-    msg: Message,
+    int: CommandInteraction,
     battletag: string,
     platform: platform,
     stats: HeroStats,
     ...args
   ) {
-    super(msg, ...args)
+    super(int, ...args)
 
     this.mode = stats.type == 'competitive' ? 'herocomp' : 'hero'
 
@@ -393,13 +397,13 @@ class LinkEmbed extends CustomEmbed {
   constructor(
     {
       mode,
-      msg,
+      int,
       previous: prev,
       current: curr
     }: LinkOptions<'link' | 'unlink'>,
     ...args
   ) {
-    super(msg, ...args)
+    super(int, ...args)
     this.mode = mode
     if (prev.username == curr.username && prev.platform == curr.platform)
       this.same(curr)
@@ -407,8 +411,8 @@ class LinkEmbed extends CustomEmbed {
   }
 
   /** Changes the color, adds title and description to the embed
-   * @param prev The previous [battletag, platform]
-   * @param curr The current [battletag, platform]
+   * @param prev The previous player entry
+   * @param curr The current player entry
    */
   link(prev: playerEntry, curr: playerEntry) {
     return this.setColor([0, 154, 228])
@@ -420,14 +424,14 @@ class LinkEmbed extends CustomEmbed {
   }
 
   /** Adds title and descirption to the embed
-   * @param prev The previous [battletag, platform]
+   * @param prev The previous player entry
    */
   unlink(prev: playerEntry) {
     return this.setTitle('Blizzard profile unlinked').setD(undefined, prev)
   }
 
   /** Changes the color, adds title and description to the embed
-   * @param curr The current [battletag, platform]
+   * @param curr The current player entry
    */
   same({ username, platform }: playerEntry) {
     return this.setColor([0, 154, 228])
@@ -437,7 +441,7 @@ class LinkEmbed extends CustomEmbed {
 
   /** Adds a custom description
    * @param desc The first part of the description
-   * @param prev The previous [battletag, platform]
+   * @param prev The previous player entry
    */
   private setD(desc = '', prev: playerEntry) {
     return this.setDescription(
@@ -455,8 +459,8 @@ class LinkEmbed extends CustomEmbed {
 class WarnEmbed extends CustomEmbed {
   mode: 'warn'
 
-  constructor(msg: Message, error: string, ...args: any[]) {
-    super(msg, ...args)
+  constructor(int: CommandInteraction, error: string, ...args: any[]) {
+    super(int, ...args)
     this.mode = 'warn'
     return this.setColor('GOLD').setTitle('Sorry...').setDescription(error)
   }
@@ -465,8 +469,8 @@ class WarnEmbed extends CustomEmbed {
 class ErrorEmbed extends CustomEmbed {
   mode: 'error'
 
-  constructor(msg: Message, error: string, ...args: any[]) {
-    super(msg, ...args)
+  constructor(int: CommandInteraction, error: string, ...args: any[]) {
+    super(int, ...args)
     this.mode = 'error'
     return this.setColor('RED')
       .setTitle('I got an error from the server')
@@ -483,7 +487,6 @@ export class OverwatchAPI extends API<'ow'> {
 
   /** Returns the stored data about a user.
    * @param id The user, guild member or id of the user
-   * @param reverse Whether to return keys (default is false)
    */
   checkDatabase(id: string | User | GuildMember) {
     if (id instanceof User || id instanceof GuildMember) id = id.id
@@ -497,23 +500,23 @@ export class OverwatchAPI extends API<'ow'> {
     const { mode } = options
 
     if (['quick', 'comp'].includes(mode)) {
-      const { battletag, msg, platform, stats } = options as EmbedOptions<
+      const { battletag, int, platform, stats } = options as EmbedOptions<
         'quick' | 'comp'
       >
-      embed = new StatsEmbed(msg, battletag, platform, stats)
+      embed = new StatsEmbed(int, battletag, platform, stats)
     } else if (['hero', 'herocomp'].includes(mode)) {
-      const { battletag, msg, platform, stats } = options as EmbedOptions<
+      const { battletag, int, platform, stats } = options as EmbedOptions<
         'hero' | 'herocomp'
       >
-      embed = new HeroEmbed(msg, battletag, platform, stats)
+      embed = new HeroEmbed(int, battletag, platform, stats)
     } else if (['link', 'unlink'].includes(mode)) {
       embed = new LinkEmbed(options as EmbedOptions<'link' | 'unlink'>)
     } else if (mode == 'warn') {
-      const { error, msg } = options as EmbedOptions<'warn'>
-      embed = new WarnEmbed(msg, error)
+      const { error, int } = options as EmbedOptions<'warn'>
+      embed = new WarnEmbed(int, error)
     } else if (mode == 'error') {
-      const { error, msg } = options as EmbedOptions<'error'>
-      embed = new ErrorEmbed(msg, error)
+      const { error, int } = options as EmbedOptions<'error'>
+      embed = new ErrorEmbed(int, error)
     }
 
     // @ts-expect-error
@@ -547,7 +550,7 @@ export class OverwatchAPI extends API<'ow'> {
   /** Converts a getStats rejection into a error/warn embed */
   buildRejection(
     error: Error,
-    msg: Message,
+    int: CommandInteraction,
     action: Exclude<embedType, 'error' | 'warn'>,
     battletag: string,
     platform: platform
@@ -569,7 +572,7 @@ export class OverwatchAPI extends API<'ow'> {
       return this.createEmbed({
         mode: 'warn',
         error: 'This profile is private.',
-        msg
+        int
       })
     return this.createEmbed({
       mode: 'error',
@@ -577,7 +580,7 @@ export class OverwatchAPI extends API<'ow'> {
         (error.message == 'PROFILE_NOT_FOUND'
           ? 'Profile not found.'
           : '```\n' + error.message + '\n```') + errorBase,
-      msg
+      int
     })
   }
 
@@ -587,7 +590,7 @@ export class OverwatchAPI extends API<'ow'> {
     if (typeof rank != 'object') return
     return Object.entries(rank)
       .map(([key, value]) => {
-        const srOnly = parseInt((value as owapi.RankRole).sr)
+        const srOnly = parseInt(value.sr)
         return [key, srOnly]
       })
       .reduce((accum, [k, v]) => {
@@ -608,9 +611,9 @@ export class OverwatchAPI extends API<'ow'> {
     return account
   }
 
-  async quick(battletag: string, platform: platform, msg: Message) {
+  async quick(battletag: string, platform: platform, int: CommandInteraction) {
     const stats = await this.getStats(battletag, platform).catch((e) =>
-      this.buildRejection(e, msg, 'quick', battletag, platform)
+      this.buildRejection(e, int, 'quick', battletag, platform)
     )
     if (stats instanceof CustomEmbed) return stats
 
@@ -647,15 +650,15 @@ export class OverwatchAPI extends API<'ow'> {
     return this.createEmbed({
       mode: 'quick',
       battletag,
-      msg,
+      int,
       platform,
       stats: res
     })
   }
 
-  async comp(battletag: string, platform: platform, msg: Message) {
+  async comp(battletag: string, platform: platform, int: CommandInteraction) {
     const stats = await this.getStats(battletag, platform).catch((e) =>
-      this.buildRejection(e, msg, 'comp', battletag, platform)
+      this.buildRejection(e, int, 'comp', battletag, platform)
     )
     if (stats instanceof CustomEmbed) return stats
 
@@ -692,7 +695,7 @@ export class OverwatchAPI extends API<'ow'> {
     return this.createEmbed({
       mode: 'comp',
       battletag,
-      msg,
+      int,
       platform,
       stats: res
     })
@@ -701,11 +704,11 @@ export class OverwatchAPI extends API<'ow'> {
   async hero(
     battletag: string,
     platform: platform,
-    msg: Message,
-    hero: SupportedHero | 'auto'
+    int: CommandInteraction,
+    hero: supportedHero | 'auto'
   ) {
     const stats = await this.getStats(battletag, platform).catch((e) =>
-      this.buildRejection(e, msg, 'hero', battletag, platform)
+      this.buildRejection(e, int, 'hero', battletag, platform)
     )
     if (stats instanceof CustomEmbed) return stats
 
@@ -722,7 +725,7 @@ export class OverwatchAPI extends API<'ow'> {
       return this.createEmbed({
         mode: 'warn',
         error: "You haven't played any hero yet :confused:",
-        msg
+        int
       })
 
     const heroNode = stats.heroStats.quickplay[hero]
@@ -752,7 +755,7 @@ export class OverwatchAPI extends API<'ow'> {
     return this.createEmbed({
       mode: 'hero',
       battletag,
-      msg,
+      int,
       platform,
       stats: res
     })
@@ -761,11 +764,11 @@ export class OverwatchAPI extends API<'ow'> {
   async herocomp(
     battletag: string,
     platform: platform,
-    msg: Message,
-    hero: SupportedHero | 'auto'
+    int: CommandInteraction,
+    hero: supportedHero | 'auto'
   ) {
     const stats = await this.getStats(battletag, platform).catch((e) =>
-      this.buildRejection(e, msg, 'herocomp', battletag, platform)
+      this.buildRejection(e, int, 'herocomp', battletag, platform)
     )
     if (stats instanceof CustomEmbed) return stats
 
@@ -782,7 +785,7 @@ export class OverwatchAPI extends API<'ow'> {
       return this.createEmbed({
         mode: 'warn',
         error: "You haven't played any hero yet :confused:",
-        msg
+        int
       })
 
     const heroNode = stats.heroStats.competitive[hero]
@@ -812,24 +815,24 @@ export class OverwatchAPI extends API<'ow'> {
     return this.createEmbed({
       mode: 'herocomp',
       battletag,
-      msg,
+      int,
       platform,
       stats: res
     })
   }
 
-  async link(battletag: string, platform: platform, msg: Message) {
+  async link(battletag: string, platform: platform, int: CommandInteraction) {
     const stats = await this.getStats(battletag, platform).catch((e) =>
-      this.buildRejection(e, msg, 'link', battletag, platform)
+      this.buildRejection(e, int, 'link', battletag, platform)
     )
     if (stats instanceof CustomEmbed) return stats
 
-    const prev = await this.checkDatabase(msg.author),
+    const prev = await this.checkDatabase(int.user),
       next: playerEntry = { username: battletag, platform }
 
     if (!prev || !equals(prev, next))
       await this.set({
-        id: msg.author.id,
+        id: int.user.id,
         username: next.username,
         platform: next.platform,
         created_at: new Date().toISOString()
@@ -838,19 +841,19 @@ export class OverwatchAPI extends API<'ow'> {
     return this.createEmbed({
       mode: 'link',
       current: next,
-      msg,
+      int,
       previous: prev
     })
   }
 
-  async unlink(_ignore1: any, _ignore2: any, msg: Message) {
-    const prev = await this.checkDatabase(msg.author)
+  async unlink(_ignore1: any, _ignore2: any, int: CommandInteraction) {
+    const prev = await this.checkDatabase(int.user)
 
-    if (prev) this.delete(msg.author.id)
+    if (prev) this.delete(int.user.id)
 
     return this.createEmbed({
       mode: 'unlink',
-      msg,
+      int,
       previous: prev
     })
   }

@@ -1,6 +1,7 @@
 import {
   ApplicationCommand,
   ApplicationCommandPermissionData,
+  AutocompleteInteraction,
   Client,
   Collection,
   CommandInteraction,
@@ -30,6 +31,7 @@ export interface CommandOptions {
   guildID?: Snowflake
   permissions?: ApplicationCommandPermissionData[]
   run: (interaction: CommandInteraction) => Awaited<void>
+  onAutocomplete?: (interaction: AutocompleteInteraction) => Awaited<void>
 }
 
 /** Class that handles interactions with slash commands */
@@ -53,7 +55,7 @@ export class CommandHandler {
     this.client = client
     this.commands = new Collection()
 
-    client.on('interactionCreate', (int) => {
+    this.client.on('interactionCreate', (int) => {
       if (!int.isCommand()) return
 
       const command = this.commands.get(int.id)
@@ -68,6 +70,19 @@ export class CommandHandler {
       postCommand(statName, int.user.id)
 
       command.run(int)
+    })
+
+    this.client.on('interactionCreate', (int) => {
+      if (!int.isAutocomplete()) return
+
+      const command = this.commands.get(int.commandId)
+
+      if (!command)
+        throw new Error(
+          '[Cmd handler] The bot has received an unknown command interaction.'
+        )
+
+      if (command.onAutocomplete) command.onAutocomplete(int)
     })
 
     this.rest = new REST({ version: '9' })
