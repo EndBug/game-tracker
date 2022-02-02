@@ -11,12 +11,12 @@ import { statcord, init as statcordInit } from '../utils/statcord'
 import { CommandHandler } from '../utils/commands'
 
 const { TOKEN } = process.env
+export const isDev = process.env.NODE_ENV == 'dev'
 
 export const ownerID = '218308478580555777'
 export const homeguildID = '475792603867119626'
 export const supportHardLink = 'https://discord.gg/5YrhW4NHfY'
-export const baseDocsURL = 'https://game-tracker.js.org/#/'
-export const isDev = process.env.NODE_ENV == 'dev'
+export const docsURL = 'https://game-tracker.js.org/#/'
 
 const deactivatePoster = false || isDev
 
