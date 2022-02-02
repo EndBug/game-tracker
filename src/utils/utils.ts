@@ -11,6 +11,8 @@ import {
   client
 } from '../core/app'
 
+export { v4 as uuid } from 'uuid'
+
 // #region Types
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>
