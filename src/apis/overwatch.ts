@@ -18,7 +18,7 @@ import {
 } from '../utils/utils'
 import { heroName, supportedHero, isSupported } from '../utils/ow_hero_names'
 
-type playerEntry = WithOptional<
+export type playerEntry = WithOptional<
   Awaited<ReturnType<typeof OverwatchAPI['prototype']['checkDatabase']>>,
   'id' | 'created_at'
 >

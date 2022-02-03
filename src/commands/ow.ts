@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 import { CommandInteraction, User } from 'discord.js'
 import { matchSorter } from 'match-sorter'
-import { OverwatchAPI, platform } from '../apis/overwatch'
+import { OverwatchAPI, platform, playerEntry } from '../apis/overwatch'
 import { APIUtil } from '../utils/api'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
 import { heroes, isSupported, supportedHero } from '../utils/ow_hero_names'
@@ -136,9 +136,9 @@ export const command: CommandOptions = {
     await int.deferReply()
 
     if (['quick', 'comp', 'hero'].includes(command)) {
-      let res
+      let res: playerEntry
       try {
-        res = parseTarget({ username, platform, user, int })
+        res = await parseTarget({ username, platform, user, int })
       } catch (error) {
         return await int.reply({ content: error, ephemeral: true })
       }
@@ -192,10 +192,12 @@ interface TargetInfo {
   user: User
   int: CommandInteraction
 }
-function parseTarget({ username, platform, user, int }: TargetInfo): {
-  username: string
-  platform: platform
-} {
+async function parseTarget({
+  username,
+  platform,
+  user,
+  int
+}: TargetInfo): Promise<playerEntry> {
   if (username) {
     if (['xbl', 'psn'].includes(platform)) return { username, platform }
     else {
@@ -206,15 +208,15 @@ function parseTarget({ username, platform, user, int }: TargetInfo): {
   }
 
   if (!username && !user) {
-    const res = API.checkDatabase(int.user)
-    if (res) return { username: res[0], platform: res[1] }
+    const res = await API.checkDatabase(int.user)
+    if (res) return res
     else
       throw "Please enter a username (and platform, if not on PC). If you don't want to enter your username every time, use `ow link` to link it to your Discord profile."
   }
 
   if (!username && user) {
-    const res = API.checkDatabase(user)
-    if (res) return { username: res[0], platform: res[1] }
+    const res = await API.checkDatabase(user)
+    if (res) return res
     else
       throw "The user you mentioned didn't link their Overwatch account. You can still search them by using the `username` and `platform` options."
   }
