@@ -9,7 +9,16 @@ import { matchSorter } from 'match-sorter'
 import { CHOICES_MAX } from '../utils/utils'
 
 type platform = 'uplay' | 'xbl' | 'psn'
-const modes = ['general', 'modes', 'wp', 'op', 'queue', 'link', 'unlink']
+const modes = [
+  'general',
+  'modes',
+  'wp',
+  'wp-cat',
+  'op',
+  'queue',
+  'link',
+  'unlink'
+]
 
 // @ts-expect-error
 const API: RainbowAPI = APIUtil.APIs['r6']
@@ -64,7 +73,9 @@ export const command: CommandOptions = {
           .addStringOption((o) =>
             o
               .setName('weapon')
-              .setDescription('The weapon you want to see stats of.')
+              .setDescription(
+                'The weapon you want to see stats of. (use the autocomplete menu)'
+              )
               .setAutocomplete(true)
               .setRequired(true)
           )
@@ -87,6 +98,7 @@ export const command: CommandOptions = {
                   e.id
                 ])
               )
+              .setRequired(true)
           )
       )
     )
@@ -98,7 +110,9 @@ export const command: CommandOptions = {
           .addStringOption((o) =>
             o
               .setName('operator')
-              .setDescription('The operator you want to see stats of.')
+              .setDescription(
+                'The operator you want to see stats of. (use the autocomplete menu)'
+              )
               .setAutocomplete(true)
               .setRequired(true)
           )
@@ -166,7 +180,7 @@ export const command: CommandOptions = {
 
     const command = opt.getSubcommand(true),
       user = opt.getUser('user'),
-      playType = opt.getString('playtype'),
+      playType = opt.getString('playtype') || 'all',
       wpCat = opt.getString('category')
 
     let username = opt.getString('username'),
@@ -174,8 +188,6 @@ export const command: CommandOptions = {
 
     if (!modes.includes(command))
       throw new Error(`Unexpected ow subcommand: ${command}`)
-
-    int.deferReply()
 
     if (['general', 'modes', 'wp', 'wp-cat', 'op', 'queue'].includes(command)) {
       let res: playerEntry
@@ -225,11 +237,13 @@ export const command: CommandOptions = {
     postCommand(`r6 ${legacyMode}`, int.user.id)
 
     const sendEmbed = async (extra: string | undefined) => {
+      await int.deferReply({
+        ephemeral: ['link', 'unlink'].includes(command)
+      })
       // @ts-expect-error
       const embed = await API[legacyMode](int, username, platform, extra)
-      return int.reply({
-        embeds: [embed],
-        ephemeral: ['link', 'unlink'].includes(command) || embed.type == 'error'
+      return int.editReply({
+        embeds: [embed]
       })
     }
 
@@ -251,9 +265,8 @@ export const command: CommandOptions = {
           ephemeral: true
         })
       return sendEmbed(operator)
-    } else {
-      return sendEmbed(wpCat)
-    }
+    } else if (command == 'wp-cat') return sendEmbed(wpCat)
+    else return sendEmbed(playType)
   }
 }
 

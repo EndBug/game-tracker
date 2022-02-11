@@ -114,7 +114,7 @@ class ErrorEmbed extends CustomEmbed {
     super(int, ...args)
     this.type = 'error'
     let sub = error.slice(0, 2048 - 3)
-    sub = sub.slice(0, sub.lastIndexOf(' ')) + '...'
+    if (sub.length >= 2048 - 3) sub = sub.slice(0, sub.lastIndexOf(' ')) + '...'
     return this.setColor('RED')
       .setTitle('I got an error from the server')
       .setDescription(sub)
@@ -248,8 +248,11 @@ class WeaponEmbed extends CustomEmbed {
     for (const playType in category) {
       if (!playType.includes('name')) {
         let str = ''
+        const name = category[playType].general.name
+        if (name) str += `Name: **${name}**\n`
         for (const key in category[playType].general)
-          str += keyValue(key, category[playType].general[key]) + '\n'
+          if (key != 'name')
+            str += keyValue(key, category[playType].general[key]) + '\n'
         this.addField(title + ` (${playType})`, str, true)
       }
     }
@@ -284,7 +287,10 @@ class WeaponEmbed extends CustomEmbed {
 
   /** Gets the most chosen weapon from the provided array */
   mostChosenWeapon(list: WeaponEmbedStats['pve']['list']) {
-    return Object.values(list).sort((a, b) => a.timesChosen - b.timesChosen)[0]
+    const values = Object.values(list)
+    return values.length > 0
+      ? values.sort((a, b) => a.timesChosen - b.timesChosen)[0]
+      : undefined
   }
 }
 
@@ -343,9 +349,9 @@ class WeaponCategoryEmbed extends WeaponEmbed {
       .addOpImage(raw, 'all')
       .addCategory(category, 'Category overall')
 
-    if (wpPvP.timesChosen > 0)
+    if (wpPvP?.timesChosen > 0)
       this.addWeapon(category, wpPvP.name, 'Most chosen weapon', 'pvp', true)
-    if (wpPvE.timesChosen > 0)
+    if (wpPvE?.timesChosen > 0)
       this.addWeapon(category, wpPvE.name, 'Most chosen weapon', 'pve', true)
   }
 }
@@ -382,7 +388,7 @@ class OperatorEmbed extends CustomEmbed {
     const { kills, deaths, wins, losses } = stats
 
     const title = readablePlayType(playType)
-    const other = (stats.uniqueAbility.stats || [])
+    const other = (stats.uniqueAbility?.stats || [])
       .map((g) => keyValue(g.name, g.value))
       .join('\n- ')
     const str = `
@@ -737,7 +743,7 @@ export class RainbowAPI extends API<'r6'> {
     if (stats === undefined || stats instanceof Error) {
       let err: Error
       if (stats instanceof Error) err = stats
-      else err = new Error("Can't get stats.")
+      else err = new Error(`Can't get stats for the requested user.`)
       return this.createEmbed({
         embedType: 'error',
         int,
@@ -915,7 +921,7 @@ export class RainbowAPI extends API<'r6'> {
   ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
-    const check = this.errorCheck(rawStats, id, platform, int)
+    const check = await this.errorCheck(rawStats, id, platform, int)
     if (check || rawStats instanceof Error) return check
 
     const processedStats = {} as GeneralStats
@@ -979,7 +985,7 @@ export class RainbowAPI extends API<'r6'> {
   ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
-    const check = this.errorCheck(rawStats, id, platform, int)
+    const check = await this.errorCheck(rawStats, id, platform, int)
     if (check || rawStats instanceof Error) return check
 
     const processedStats = rawStats[playType].modes
@@ -1003,7 +1009,7 @@ export class RainbowAPI extends API<'r6'> {
   ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
-    const check = this.errorCheck(rawStats, id, platform, int)
+    const check = await this.errorCheck(rawStats, id, platform, int)
     if (check || rawStats instanceof Error) return check
 
     var processedStats: WeaponEmbedStats
@@ -1058,7 +1064,7 @@ export class RainbowAPI extends API<'r6'> {
   ) {
     const id = await this.getID(username, platform)
     const rawStats = await this.getStats(id, platform)
-    const check = this.errorCheck(rawStats, id, platform, int)
+    const check = await this.errorCheck(rawStats, id, platform, int)
     if (check || rawStats instanceof Error) return check
 
     if (operator == 'auto') {
@@ -1092,7 +1098,7 @@ export class RainbowAPI extends API<'r6'> {
     const id = await this.getID(username, platform)
 
     const rawStats = await this.getStats(id, platform)
-    const check = this.errorCheck(rawStats, id, platform, int)
+    const check = await this.errorCheck(rawStats, id, platform, int)
     if (check || rawStats instanceof Error) return check
 
     const processedStats = rawStats.pve.queues
@@ -1111,7 +1117,7 @@ export class RainbowAPI extends API<'r6'> {
     const id = await this.getID(username, platform)
 
     const rawStats = await this.getStats(id, platform)
-    const check = this.errorCheck(rawStats, id, platform, int)
+    const check = await this.errorCheck(rawStats, id, platform, int)
     if (check || rawStats instanceof Error) return check
 
     const processedStats = Object.values(rawStats.pvp.queues).sort(
@@ -1147,7 +1153,7 @@ export class RainbowAPI extends API<'r6'> {
         })
 
       mode =
-        prev.username == next.username && prev.platform == next.platform
+        prev?.username == next?.username && prev?.platform == next?.platform
           ? 'same'
           : 'link'
     } else mode = 'same'
