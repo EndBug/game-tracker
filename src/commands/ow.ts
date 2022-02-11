@@ -210,19 +210,19 @@ async function parseTarget({
       else
         throw 'If your platform is PC, please use a battletag in the user#1234 format. If your platform is not PC, please make sure to specify it in the proper option.'
     }
-  }
-
-  if (!username && !user) {
-    const res = await API.checkDatabase(int.user)
-    if (res) return res
-    else
-      throw "Please enter a username (and platform, if not on PC). If you don't want to enter your username every time, use `ow link` to link it to your Discord profile."
-  }
-
-  if (!username && user) {
-    const res = await API.checkDatabase(user)
-    if (res) return res
-    else
-      throw "The user you mentioned didn't link their Overwatch account. You can still search them by using the `username` and `platform` options."
+  } else {
+    if (!user) {
+      // !username && !user
+      const res = await API.checkDatabase(int.user)
+      if (res) return res
+      else
+        throw "Please enter a username (and platform, if not on PC). If you don't want to enter your username every time, use `ow link` to link it to your Discord profile."
+    } else {
+      // !username && user
+      const res = await API.checkDatabase(user)
+      if (res) return res
+      else
+        throw "The user you mentioned didn't link their Overwatch account. You can still search them by using the `username` and `platform` options."
+    }
   }
 }

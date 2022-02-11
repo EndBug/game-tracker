@@ -1153,7 +1153,7 @@ export class RainbowAPI extends API<'r6'> {
         })
 
       mode =
-        prev?.username == next?.username && prev?.platform == next?.platform
+        prev?.username == next.username && prev?.platform == next.platform
           ? 'same'
           : 'link'
     } else mode = 'same'

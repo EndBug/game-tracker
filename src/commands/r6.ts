@@ -317,18 +317,19 @@ async function parseTarget({
   int
 }: TargetInfo): Promise<playerEntry> {
   if (username) return { username, platform: platform || 'uplay' }
-
-  if (!username && !user) {
-    const res = await API.checkDatabase(int.user)
-    if (res) return res
-    else
-      throw "Please enter a username (and platform, if not on PC). If you don't want to enter your username every time, use `r6 link` to link it to your Discord profile."
-  }
-
-  if (!username && user) {
-    const res = await API.checkDatabase(user)
-    if (res) return res
-    else
-      throw "The user you mentioned didn't link their Rainbow 6 Siege account. You can still search them by using the `username` and `platform` options."
+  else {
+    if (!user) {
+      // !username && !user
+      const res = await API.checkDatabase(int.user)
+      if (res) return res
+      else
+        throw "Please enter a username (and platform, if not on PC). If you don't want to enter your username every time, use `r6 link` to link it to your Discord profile."
+    } else {
+      // !username && user
+      const res = await API.checkDatabase(user)
+      if (res) return res
+      else
+        throw "The user you mentioned didn't link their Rainbow 6 Siege account. You can still search them by using the `username` and `platform` options."
+    }
   }
 }
