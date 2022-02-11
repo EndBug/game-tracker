@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs'
-import { WebhookClient } from 'discord.js-light'
+import { WebhookClient } from 'discord.js'
 import { provider } from '../utils/provider'
 
 const localBackupFN = path.join(__dirname, '../../data/settings.json')

@@ -1,6 +1,6 @@
 import path from 'path'
 import * as supabase from '@supabase/supabase-js'
-import { Snowflake } from 'discord.js-light'
+import { Snowflake } from 'discord.js'
 
 const backupFn = '../../data/settings.json'
 

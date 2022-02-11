@@ -1,15 +1,15 @@
 /* eslint-disable no-redeclare */
 
 import { TSMap as Map } from 'typescript-map'
-import { User, GuildMember, PartialMessage, Message } from 'discord.js-light'
-import {
-  homeguild,
-  owner,
-  ownerID,
-  baseDocsURL,
-  links,
-  client
-} from '../core/app'
+import { User, GuildMember, PartialMessage, Message } from 'discord.js'
+import { homeguild, owner, ownerID, docsURL, links, client } from '../core/app'
+
+export { v4 as uuid } from 'uuid'
+
+// #region Constants
+/** The API limit when sending option choices. */
+export const CHOICES_MAX = 25
+// #endregion
 
 // #region Types
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
@@ -124,8 +124,8 @@ export function escapeMentions(
  * getDocsLink('rainbow?id=r6-general') => 'https://game-tracker.js.org/#/r6/rainbow?id=r6-general'
  */
 export function getDocsLink(path?: string, id?: string) {
-  if (!path) return baseDocsURL.replace('/#/', '')
-  else return baseDocsURL + path + (id ? `?id=${id}` : '')
+  if (!path) return docsURL.replace('/#/', '')
+  else return docsURL + path + (id ? `?id=${id}` : '')
 }
 
 /** Returns a plain full name for a given user */

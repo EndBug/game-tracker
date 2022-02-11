@@ -20,14 +20,15 @@ udpateREADME()
 // #region Overwatch
 import { heroes, heroName } from '../utils/ow_hero_names'
 
-for (const hero in heroes) heroes[hero].unshift(hero)
+const parsed = {} as Record<string, string[]>
+for (const hero in heroes) parsed[hero] = [heroes[hero]]
 
 writeTable({
   getReadable: heroName,
   relPath: 'ow/ow_heroes.md',
   title: 'Overwatch heroes cheatsheet',
   type: 'Hero',
-  values: heroes
+  values: parsed
 })
 // #endregion
 

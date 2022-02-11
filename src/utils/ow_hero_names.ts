@@ -1,67 +1,49 @@
-// Don't import this from utils because it will trigger the whole bot when just calling the function
-function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
+import { hero } from 'overwatch-stats-api/typings/autogen'
 
-export const heroes = {
-  ana: [],
-  ashe: ['Ashe', 'BOB', 'B.O.B.'],
-  baptiste: ['Jean-Baptiste'],
-  bastion: [],
-  brigitte: ['brig'],
-  doomfist: ['doom'],
-  dva: ['D.Va'],
-  echo: [],
-  genji: ['gengu'],
-  hanzo: ['handsoap'],
-  junkrat: ['junk', 'Chacal', 'Hunkrat'],
-  lucio: ['Lúcio'],
-  mccree: ['mc'],
-  mei: ['satan'],
-  mercy: ['ange', 'angela'],
-  moira: [],
-  orisa: ['Oriisa'],
-  pharah: ['phara', 'fara'],
-  reaper: ['faucheur'],
-  reinhardt: ['rein'],
-  roadhog: ['road', 'Chopper'],
-  sigma: ['sig'],
-  'soldier-76': ['76', 'soldier_76', 'soldier76', 'soldier'],
-  sombra: [],
-  symmetra: ['symm'],
-  torbjorn: ['torb'],
-  tracer: [],
-  widowmaker: ['widow', 'Fatale'],
-  winston: ['monkey', 'harambe', 'scientist'],
-  'wrecking-ball': [
-    'wrecking_ball',
-    'wreckingball',
-    'wrecking ball',
-    'hammond'
-  ],
-  zarya: [],
-  zenyatta: ['zen', 'Zeniyatta']
+export const heroes: Record<hero, string> = {
+  ana: 'Ana',
+  ashe: 'Ashe',
+  baptiste: 'Baptiste',
+  bastion: 'Bastion',
+  brigitte: 'Brigitte',
+  doomfist: 'Doomfist',
+  dva: 'D.Va',
+  echo: 'Echo',
+  genji: 'Genji',
+  hammond: 'Wrecking Ball',
+  hanzo: 'Hanzo',
+  junkrat: 'Junkrat',
+  lucio: 'Lúcio',
+  mccree: 'McCree',
+  mei: 'Mei',
+  mercy: 'Mercy',
+  moira: 'Moira',
+  orisa: 'Orisa',
+  pharah: 'Pharah',
+  reaper: 'Reaper',
+  reinhardt: 'Reinhardt',
+  roadhog: 'Roadhog',
+  sigma: 'Sigma',
+  soldier: 'Soldier: 76',
+  sombra: 'Sombra',
+  symmetra: 'Symmetra',
+  torbjorn: 'Torbjörn',
+  tracer: 'Tracer',
+  widowmaker: 'Widowmaker',
+  winston: 'Winston',
+  zarya: 'Zarya',
+  zenyatta: 'Zenyatta'
 }
-
-export type SupportedHero = keyof typeof heroes
+export type supportedHero = hero
 
 /** Converts hero keys into readable names
  * @param str The hero key to convert
  */
 export function heroName(str: string): string {
-  const custom = {
-    dva: 'D.Va',
-    lucio: 'Lúcio',
-    mccree: 'McCree',
-    soldier76: 'Soldier 76'
-  }
-  if (custom[str]) return custom[str]
-  const arr = str.split('_')
-  for (let i = 0; i < arr.length; i++) arr[i] = capitalize(arr[i])
-  return arr.join(' ')
+  return heroes[str]
 }
 
 /** Returns whether the supplied string is a SupportedHero */
-export function isSupported(hero: string): hero is SupportedHero {
+export function isSupported(hero: string): hero is supportedHero {
   return Object.keys(heroes).includes(hero)
 }

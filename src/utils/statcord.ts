@@ -1,5 +1,5 @@
 import { Client as StatClient } from 'statcord.js'
-import { Client as DiscordClient } from 'discord.js-light'
+import { Client as DiscordClient } from 'discord.js'
 
 export let statcord: StatClient
 
