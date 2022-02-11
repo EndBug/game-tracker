@@ -17,7 +17,7 @@ import { Routes } from 'discord-api-types/v9'
 import requireAll from 'require-all'
 import path from 'path'
 import { postCommand } from './statcord'
-import { homeguildID, isDev } from '../core/app'
+import { commandTestGuildID, isDev } from '../core/app'
 
 export { SlashCommandBuilder } from '@discordjs/builders'
 
@@ -58,7 +58,7 @@ export class CommandHandler {
     this.client.on('interactionCreate', (int) => {
       if (!int.isCommand()) return
 
-      const command = this.commands.get(int.id)
+      const command = this.commands.get(int.commandId)
 
       if (!command)
         throw new Error(
@@ -109,7 +109,7 @@ export class CommandHandler {
       if (!command || typeof command != 'object')
         throw new Error(`${file} doesn't have a command property.`)
 
-      const guildID = command.guildID || 'global'
+      const guildID = isDev ? commandTestGuildID : command.guildID || 'global'
 
       if (commandsByGuild[guildID]) {
         if (
@@ -129,7 +129,7 @@ export class CommandHandler {
       let added: Collection<Snowflake, ApplicationCommand>
       const form = guildCommands.map((c) => c.data.toJSON())
 
-      const registerTo = isDev ? homeguildID : guildID
+      const registerTo = guildID // which has already been manipulated in the loop above
 
       if (registerTo == 'global') {
         await this.rest.put(
@@ -167,7 +167,7 @@ export class CommandHandler {
     for (const [id, command] of commandsById
       .filter((c) => !!c.permissions)
       .entries()) {
-      if (command.guildID) {
+      if (command.guildID && !isDev) {
         const guild = await this.client.guilds.fetch(command.guildID)
         if (!guild)
           throw new Error(
@@ -192,8 +192,8 @@ export class CommandHandler {
   getStatCommandName(int: CommandInteraction) {
     return [
       int.commandName,
-      int.options.getSubcommandGroup(),
-      int.options.getSubcommand()
+      int.options.getSubcommandGroup(false),
+      int.options.getSubcommand(false)
     ]
       .filter((e) => !!e)
       .join(' ')

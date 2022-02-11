@@ -23,7 +23,7 @@ export const command: CommandOptions = {
   async run(int) {
     switch (int.options.getSubcommand(true)) {
       case 'show': {
-        const res = APIUtil.findAll(int.user)
+        const res = await APIUtil.findAll(int.user)
         let text: string
 
         if (Object.keys(res).length > 0) {
@@ -40,7 +40,7 @@ export const command: CommandOptions = {
       }
 
       case 'erase': {
-        if (Object.keys(APIUtil.findAll(int.user)).length == 0)
+        if (Object.keys(await APIUtil.findAll(int.user)).length == 0)
           return int.reply({
             content: "There's no stored data about you.",
             ephemeral: true
@@ -80,7 +80,7 @@ export const command: CommandOptions = {
 
         collector.on('collect', async (i) => {
           if (i.customId == buttons.cancel.customId) {
-            await i.editReply('Command canceled.')
+            await i.reply({ content: 'Command canceled.', ephemeral: true })
             return collector.stop()
           }
 
@@ -88,14 +88,18 @@ export const command: CommandOptions = {
             const erased = await APIUtil.eraseAll(int.user)
 
             if (erased.length == 0) {
-              await i.editReply('✅ There was no data about you.')
+              await i.reply({
+                content: '✅ There was no data about you.',
+                ephemeral: true
+              })
               return collector.stop()
             }
 
             const str = erased.length > 1 ? ' has' : `s (${erased.length}) have`
-            await int.editReply(
-              `✅ Your account${str} been unlinked from this bot.`
-            )
+            await i.reply({
+              content: `✅ Your account${str} been unlinked from this bot.`,
+              ephemeral: true
+            })
             return collector.stop()
           }
         })

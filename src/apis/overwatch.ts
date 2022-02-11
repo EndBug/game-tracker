@@ -405,7 +405,7 @@ class LinkEmbed extends CustomEmbed {
   ) {
     super(int, ...args)
     this.mode = mode
-    if (prev.username == curr.username && prev.platform == curr.platform)
+    if (prev?.username == curr?.username && prev?.platform == curr?.platform)
       this.same(curr)
     else this[mode](prev, curr)
   }

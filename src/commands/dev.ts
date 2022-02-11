@@ -1,7 +1,6 @@
 import { client, homeguildID, owner, ownerID } from '../core/app'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
-import { APITable, provider } from '../utils/provider'
-import { APIUtil } from '../utils/api'
+import { provider } from '../utils/provider'
 import fs from 'fs'
 import path from 'path'
 import { poster } from '../utils/stats_poster'
@@ -13,9 +12,6 @@ export const command: CommandOptions = {
       'A collection of commands for the developers, not available to the public.'
     )
     .setDefaultPermission(false)
-    .addSubcommand((s) =>
-      s.setName('backup').setDescription('Upload a new backup.')
-    )
     .addSubcommand((s) =>
       s
         .setName('stats')
@@ -97,9 +93,7 @@ export const command: CommandOptions = {
 
             let str = 'Here is the current database:\n'
             for (const key in stats) {
-              str += `- ${APIUtil.getAPIName(key as APITable)} (${
-                stats[key]
-              }):\n`
+              str += `- ${key} (${stats[key]}):\n`
             }
 
             await int.reply(str)
@@ -121,7 +115,7 @@ export const command: CommandOptions = {
           }
 
           case 'reload': {
-            const dateStr = require('../../utils/reloadme.json')?.date,
+            const dateStr = require('../utils/reloadme.json')?.date,
               result = dateStr ? new Date(dateStr).toString() : '???'
             await int.reply(`Last reload: ${result}`)
             break

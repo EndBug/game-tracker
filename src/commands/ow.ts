@@ -97,6 +97,13 @@ export const command: CommandOptions = {
               .setDescription('The hero you want to see stats of.')
               .setAutocomplete(true)
           )
+          .addStringOption((o) =>
+            o
+              .setName('mode')
+              .setDescription('The mode you want to see hero stats for.')
+              .addChoice('Quickplay', 'quick')
+              .addChoice('Competitive', 'comp')
+          )
       )
     )
     .addSubcommand((s) =>
@@ -124,7 +131,7 @@ export const command: CommandOptions = {
 
     const command = opt.getSubcommand(true),
       user = opt.getUser('user'),
-      mode = opt.getString('mode') as 'quick' | 'comp',
+      mode = (opt.getString('mode') || 'quick') as 'quick' | 'comp',
       hero = opt.getString('hero')
 
     let username = opt.getString('username'),
@@ -132,8 +139,6 @@ export const command: CommandOptions = {
 
     if (!modes.includes(command))
       throw new Error(`Unexpected ow subcommand: ${command}`)
-
-    await int.deferReply()
 
     if (['quick', 'comp', 'hero'].includes(command)) {
       let res: playerEntry
@@ -160,9 +165,11 @@ export const command: CommandOptions = {
           username = res.username
           platform = res.platform
         } else
-          return await int.reply(
-            'Please enter a valid username (and platform, if not on PC).'
-          )
+          return await int.reply({
+            content:
+              'Please enter a valid username (and platform, if not on PC).',
+            ephemeral: true
+          })
       }
     }
     // unlink doesn't need any parsing
@@ -174,14 +181,12 @@ export const command: CommandOptions = {
 
     const sendEmbed = async (hero: supportedHero | 'auto' = 'auto') => {
       const embed = await API[legacyMode](username, platform, int, hero)
-      return int.reply({
-        embeds: [embed],
-        ephemeral:
-          ['link', 'unlink'].includes(command) ||
-          ['error', 'warn'].includes(embed.mode)
+      return int.editReply({
+        embeds: [embed]
       })
     }
 
+    await int.deferReply({ ephemeral: ['link', 'unlink'].includes(command) })
     return sendEmbed(hero as supportedHero | undefined)
   }
 }

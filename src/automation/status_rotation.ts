@@ -1,8 +1,4 @@
-import {
-  PresenceStatusData,
-  PresenceData,
-  ActivitiesOptions
-} from 'discord.js-light'
+import { PresenceStatusData, PresenceData, ActivitiesOptions } from 'discord.js'
 import { client, isDev } from '../core/app'
 
 const interval = 12500
