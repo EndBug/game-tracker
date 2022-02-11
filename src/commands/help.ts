@@ -3,7 +3,8 @@ import { docsURL } from '../core/app'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
 
 const msg = `
-If you need any help with the bot commands, you can check out the online docs at the link below.
+Each slash command has its own description and arguments, which should contain all the relevant info.
+If you need any help with the bot commands, you can check out the online docs at the link below, or ask in the support guild (use \`/support\` to get the invite).
 `
 
 export const command: CommandOptions = {

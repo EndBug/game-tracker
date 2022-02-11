@@ -33,13 +33,7 @@ export let roles: Record<string, Role> = {}
  */
 async function initClient() {
   client = new Client({
-    intents: [
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.GUILD_MESSAGES,
-      Intents.FLAGS.DIRECT_MESSAGES,
-      Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-      Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
-    ]
+    intents: [Intents.FLAGS.GUILDS]
   })
 
   client.on('error', console.error)
@@ -49,13 +43,13 @@ async function initClient() {
   commandHandler = new CommandHandler(client)
 
   client.on('ready', async () => {
-    homeguild = await client.guilds.fetch('475792603867119626')
+    homeguild = await client.guilds.fetch(homeguildID)
     owner = (await homeguild.members.fetch(ownerID)).user
     roles = {
       dev: await homeguild.roles.fetch('498225931299848193')
     }
     links = {
-      invite: `<https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=93248>`,
+      invite: `<https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=16384&scope=bot%20applications.commands>`,
       support: supportHardLink
     }
 
