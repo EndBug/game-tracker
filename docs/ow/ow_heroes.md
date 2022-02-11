@@ -1,35 +1,35 @@
 # Overwatch heroes cheatsheet
-| Hero              | Aliases                                                                      |
-| ----------------- | ---------------------------------------------------------------------------- |
-| Ana               | `ana`                                                                        |
-| Ashe              | `ashe`, `Ashe`, `BOB`, `B.O.B.`                                              |
-| Baptiste          | `baptiste`, `Jean-Baptiste`                                                  |
-| Bastion           | `bastion`                                                                    |
-| Brigitte          | `brigitte`, `brig`                                                           |
-| D<span></span>.Va | `dva`, `D.Va`                                                                |
-| Doomfist          | `doomfist`, `doom`                                                           |
-| Echo              | `echo`                                                                       |
-| Genji             | `genji`, `gengu`                                                             |
-| Hanzo             | `hanzo`, `handsoap`                                                          |
-| Junkrat           | `junkrat`, `junk`, `Chacal`, `Hunkrat`                                       |
-| Lúcio             | `lucio`, `Lúcio`                                                             |
-| McCree            | `mccree`, `mc`                                                               |
-| Mei               | `mei`, `satan`                                                               |
-| Mercy             | `mercy`, `ange`, `angela`                                                    |
-| Moira             | `moira`                                                                      |
-| Orisa             | `orisa`, `Oriisa`                                                            |
-| Pharah            | `pharah`, `phara`, `fara`                                                    |
-| Reaper            | `reaper`, `faucheur`                                                         |
-| Reinhardt         | `reinhardt`, `rein`                                                          |
-| Roadhog           | `roadhog`, `road`, `Chopper`                                                 |
-| Sigma             | `sigma`, `sig`                                                               |
-| Soldier-76        | `soldier-76`, `76`, `soldier_76`, `soldier76`, `soldier`                     |
-| Sombra            | `sombra`                                                                     |
-| Symmetra          | `symmetra`, `symm`                                                           |
-| Torbjorn          | `torbjorn`, `torb`                                                           |
-| Tracer            | `tracer`                                                                     |
-| Widowmaker        | `widowmaker`, `widow`, `Fatale`                                              |
-| Winston           | `winston`, `monkey`, `harambe`, `scientist`                                  |
-| Wrecking-ball     | `wrecking-ball`, `wrecking_ball`, `wreckingball`, `wrecking ball`, `hammond` |
-| Zarya             | `zarya`                                                                      |
-| Zenyatta          | `zenyatta`, `zen`, `Zeniyatta`                                               |
+| Hero              | Aliases         |
+| ----------------- | --------------- |
+| Ana               | `Ana`           |
+| Ashe              | `Ashe`          |
+| Baptiste          | `Baptiste`      |
+| Bastion           | `Bastion`       |
+| Brigitte          | `Brigitte`      |
+| D<span></span>.Va | `D.Va`          |
+| Doomfist          | `Doomfist`      |
+| Echo              | `Echo`          |
+| Genji             | `Genji`         |
+| Hanzo             | `Hanzo`         |
+| Junkrat           | `Junkrat`       |
+| Lúcio             | `Lúcio`         |
+| McCree            | `McCree`        |
+| Mei               | `Mei`           |
+| Mercy             | `Mercy`         |
+| Moira             | `Moira`         |
+| Orisa             | `Orisa`         |
+| Pharah            | `Pharah`        |
+| Reaper            | `Reaper`        |
+| Reinhardt         | `Reinhardt`     |
+| Roadhog           | `Roadhog`       |
+| Sigma             | `Sigma`         |
+| Soldier: 76       | `Soldier: 76`   |
+| Sombra            | `Sombra`        |
+| Symmetra          | `Symmetra`      |
+| Torbjörn          | `Torbjörn`      |
+| Tracer            | `Tracer`        |
+| Widowmaker        | `Widowmaker`    |
+| Winston           | `Winston`       |
+| Wrecking Ball     | `Wrecking Ball` |
+| Zarya             | `Zarya`         |
+| Zenyatta          | `Zenyatta`      |
