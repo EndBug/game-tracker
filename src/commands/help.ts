@@ -17,7 +17,6 @@ export const command: CommandOptions = {
       components: [
         new MessageActionRow().addComponents(
           new MessageButton()
-            .setCustomId('help-link')
             .setStyle('LINK')
             .setLabel('Online docs')
             .setURL(docsURL)
