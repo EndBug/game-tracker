@@ -58,24 +58,27 @@ export class CommandHandler {
     this.client.on('interactionCreate', (int) => {
       if (!int.isCommand()) return
 
-      const command = this.commands.get(int.commandId)
+      const command = this.commands.get(int.commandName)
 
-      if (!command)
-        throw new Error(
-          '[Cmd handler] The bot has received an unknown command interaction.'
+      if (command) {
+        const statName = this.getStatCommandName(int)
+        client.emit('debug', `> ${statName}`)
+        postCommand(statName, int.user.id)
+
+        command.run(int)
+      } else
+        client.emit(
+          'error',
+          new Error(
+            '[Cmd handler] The bot has received an unknown command interaction.)'
+          )
         )
-
-      const statName = this.getStatCommandName(int)
-      client.emit('debug', `> ${statName}`)
-      postCommand(statName, int.user.id)
-
-      command.run(int)
     })
 
     this.client.on('interactionCreate', (int) => {
       if (!int.isAutocomplete()) return
 
-      const command = this.commands.get(int.commandId)
+      const command = this.commands.get(int.commandName)
 
       if (!command)
         throw new Error(
@@ -182,7 +185,10 @@ export class CommandHandler {
       }
     }
 
-    this.commands = commandsById
+    const commandsByName = new Collection<string, CommandOptions>()
+    commandsById.forEach((c) => commandsByName.set(c.data.name, c))
+
+    this.commands = commandsByName
   }
 
   /**
