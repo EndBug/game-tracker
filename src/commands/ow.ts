@@ -117,13 +117,13 @@ export const command: CommandOptions = {
         .setDescription("Deletes your username from the bot's database.")
     ),
 
-  onAutocomplete(int) {
+  async onAutocomplete(int) {
     if (int.options.getSubcommand() != 'hero') return
 
     const currentInput = int.options.getFocused().toString(),
       matched = matchHeroesToString(currentInput)
 
-    int.respond(matched)
+    return int.respond(matched)
   },
 
   async run(int) {

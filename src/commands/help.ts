@@ -12,8 +12,8 @@ export const command: CommandOptions = {
     .setName('help')
     .setDescription('Show some resources to help you use the bot.'),
 
-  run(int) {
-    int.reply({
+  async run(int) {
+    return int.reply({
       content: msg.trim(),
       components: [
         new MessageActionRow().addComponents(

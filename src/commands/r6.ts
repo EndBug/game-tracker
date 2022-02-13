@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
-import { constants as r6constants } from 'r6api.js'
+import { constants as r6constants, utils as r6utils } from 'r6api.js'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
-import { playerEntry, RainbowAPI } from '../apis/rainbow'
+import { isWeaponName, playerEntry, RainbowAPI } from '../apis/rainbow'
 import { CommandInteraction, InteractionReplyOptions, User } from 'discord.js'
 import { APIUtil } from '../utils/api'
 import { postCommand } from '../utils/statcord'
@@ -149,7 +149,7 @@ export const command: CommandOptions = {
         .setDescription("Deletes your username from the bot's database.")
     ),
 
-  onAutocomplete(int) {
+  async onAutocomplete(int) {
     const command = int.options.getSubcommand()
     if (!['wp', 'op'].includes(command)) return
 
@@ -172,16 +172,16 @@ export const command: CommandOptions = {
       keys: ['name', 'value']
     }).slice(0, CHOICES_MAX)
 
-    int.respond(matched)
+    return int.respond(matched)
   },
 
   async run(int) {
     const opt = int.options
 
     await int.deferReply({ ephemeral: false })
-    const sendReply = (options: InteractionReplyOptions) => {
+    const sendReply = async (options: InteractionReplyOptions) => {
       if (options.ephemeral) {
-        int.deleteReply()
+        await int.deleteReply()
         return int.followUp(options)
       } else {
         return int.editReply(options)
@@ -269,19 +269,21 @@ export const command: CommandOptions = {
 
     if (command == 'wp') {
       const weapon = opt.getString('weapon')
-      if (!weapon)
+      if (!isWeaponName(weapon))
         return sendReply({
           content:
-            'You must enter a valid weapon name, you can use the autocomplete menu to pick one.',
+            'You must enter a valid weapon name, you can use the autocomplete menu to pick one.' +
+            (weapon ? ` You entered \`${weapon}\`.` : ''),
           ephemeral: true
         })
       return sendEmbed(weapon)
     } else if (command == 'op') {
       const operator = opt.getString('operator')
-      if (!operator)
+      if (!r6utils.isOperatorName(operator))
         return sendReply({
           content:
-            'You must enter a valid operator name, you can use the autocomplete menu to pick one.',
+            'You must enter a valid operator name, you can use the autocomplete menu to pick one.' +
+            (operator ? ` You entered \`${operator}\`.` : ''),
           ephemeral: true
         })
       return sendEmbed(operator)

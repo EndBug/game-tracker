@@ -342,7 +342,7 @@ export function twoDigits(number: number) {
 export function sendErrorToOwner(err: any, note?: string) {
   const actualErr = err instanceof Error ? err : new Error(err + '')
   const customPE = new PrettyError()
-  console.error(customPE.render(actualErr))
+  console.error(actualErr)
   return owner.send(
     (note ? note + '\n' : '') +
       '```\n' +

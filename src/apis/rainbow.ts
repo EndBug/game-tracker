@@ -1,4 +1,4 @@
-import R6API, { constants } from 'r6api.js'
+import R6API, { constants, utils } from 'r6api.js'
 import { IGetStats as Stats } from 'r6api.js/dist/methods/getStats'
 import { IGetRanks } from 'r6api.js/dist/methods/getRanks'
 import {
@@ -37,6 +37,10 @@ import {
 } from 'discord.js'
 import { API } from '../utils/api'
 import { client } from '../core/app'
+
+// TODO: replace isweaponname with fixed version in r6api.js
+export const isWeaponName = (value: string): value is WeaponName =>
+  Object.keys(constants.WEAPONS).includes(value)
 
 const { UbisoftEmail, UbisoftPassword } = process.env
 const r6api = new R6API({
@@ -584,24 +588,6 @@ interface EmbedParameters<T> {
   username: string
 }
 
-/** Checks whether the argument is a weapon key */
-function isWeaponName(str: string): str is keyof typeof constants.WEAPONS {
-  return typeof str == 'string' && Object.keys(constants.WEAPONS).includes(str)
-}
-
-/** Checks whether the argument is a weapon category
- * @example isWeaponTypeIdLike('assault') // true
- * @example isWeaponTypeIdLike('Assault Rifle') // false
- */
-function isWeaponTypeId(str: string): str is WeaponTypeId {
-  return (
-    typeof str == 'string' &&
-    Object.values(constants.WEAPONTYPES)
-      .map((weaponTypeObject) => weaponTypeObject.id as string)
-      .includes(str)
-  )
-}
-
 /** Returns the readable weapon type from a weapon type id
  * @example getWeaponTypeName('assault') // 'Assault Rifle'
  */
@@ -1014,7 +1000,7 @@ export class RainbowAPI extends API<'r6'> {
         raw: rawStats,
         username
       })
-    } else if (isWeaponTypeId(wpOrCat)) {
+    } else if (utils.isWeaponTypeId(wpOrCat)) {
       processedStats = {
         CATname: getWeaponTypeName(wpOrCat),
         pve: rawStats.pve.weapons[wpOrCat],

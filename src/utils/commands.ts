@@ -31,8 +31,8 @@ export interface CommandOptions {
 
   guildID?: Snowflake
   permissions?: ApplicationCommandPermissionData[]
-  run: (interaction: CommandInteraction) => Awaited<void>
-  onAutocomplete?: (interaction: AutocompleteInteraction) => Awaited<void>
+  run: (interaction: CommandInteraction) => Promise<any>
+  onAutocomplete?: (interaction: AutocompleteInteraction) => Promise<any>
 }
 
 /** Class that handles interactions with slash commands */
@@ -56,7 +56,7 @@ export class CommandHandler {
     this.client = client
     this.commands = new Collection()
 
-    this.client.on('interactionCreate', (int) => {
+    this.client.on('interactionCreate', async (int) => {
       if (!int.isCommand()) return
 
       const command = this.commands.get(int.commandName)
@@ -66,14 +66,12 @@ export class CommandHandler {
         client.emit('debug', `> ${statName}`)
         postCommand(statName, int.user.id)
 
-        try {
-          command.run(int)
-        } catch (e: any) {
+        command.run(int).catch((e) => {
           sendErrorToOwner(
             e,
             `An error happened while running the \`${statName}\` command`
           )
-        }
+        })
       } else
         client.emit(
           'error',

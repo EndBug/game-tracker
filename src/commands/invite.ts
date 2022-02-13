@@ -12,7 +12,7 @@ export const command: CommandOptions = {
     .setName('invite')
     .setDescription('Gives you the link to add the bot to your guild.'),
 
-  run(int) {
-    int.reply(message)
+  async run(int) {
+    return int.reply(message)
   }
 }
