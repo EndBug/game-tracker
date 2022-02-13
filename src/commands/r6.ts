@@ -6,7 +6,7 @@ import { CommandInteraction, InteractionReplyOptions, User } from 'discord.js'
 import { APIUtil } from '../utils/api'
 import { postCommand } from '../utils/statcord'
 import { matchSorter } from 'match-sorter'
-import { CHOICES_MAX, sendErrorToOwner } from '../utils/utils'
+import { CHOICES_MAX } from '../utils/utils'
 
 type platform = 'uplay' | 'xbl' | 'psn'
 const modes = [
@@ -252,21 +252,18 @@ export const command: CommandOptions = {
         const embed = await API[legacyMode](int, username, platform, extra)
 
         const shouldBeEphemeral =
-          ['link', 'unlink'].includes(command) || embed.type == 'error'
+          ['link', 'unlink'].includes(command) || embed?.type == 'error'
 
         return sendReply({
           embeds: [embed],
           ephemeral: shouldBeEphemeral
         })
       } catch (error) {
-        sendErrorToOwner(
-          error,
-          'An error has happened while calling the R&S API.'
-        )
-        return sendReply({
+        await sendReply({
           content:
             "Sorry, we're having an issue with this API, please try again later"
         })
+        throw error
       }
     }
 

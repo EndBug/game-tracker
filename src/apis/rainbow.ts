@@ -114,7 +114,7 @@ class ErrorEmbed extends CustomEmbed {
     super(int, ...args)
     this.type = 'error'
     let sub = error.slice(0, 2048 - 3)
-    if (sub.length >= 2048 - 3) sub = sub.slice(0, sub.lastIndexOf(' ')) + '...'
+    if (sub.length >= 2048 - 3) sub += '...'
     return this.setColor('RED')
       .setTitle('I got an error from the server')
       .setDescription(sub)
@@ -245,8 +245,8 @@ class WeaponEmbed extends CustomEmbed {
   addCategory(category: WeaponEmbedStats, title?: string) {
     const { CATname } = category
     if (!title) title = `${capitalize(CATname)} category overall`
-    for (const playType in category) {
-      if (!playType.includes('name')) {
+    for (const playType of ['pvp', 'pve']) {
+      if (category[playType]) {
         let str = ''
         const name = category[playType].general.name
         if (name) str += `Name: **${name}**\n`
@@ -262,7 +262,7 @@ class WeaponEmbed extends CustomEmbed {
   /** Adds a weapon to the embed */
   addWeapon(
     category: WeaponEmbedStats,
-    wpName: string,
+    wpKey: string,
     title?: string,
     only?: strictPlayType,
     name?: boolean
@@ -271,9 +271,7 @@ class WeaponEmbed extends CustomEmbed {
     for (const playType in category) {
       if (!playType.includes('name') && !(only && playType != only)) {
         let str = ''
-        const wp = Object.values(
-          category[playType as strictPlayType].list
-        ).find((wp) => wpTrans(wp.name) == wpTrans(wpName))
+        const wp = (category[playType as strictPlayType].list || {})[wpKey]
         if (name) str += `Name: **${wp.name}**\n`
         if (wp)
           for (const key in wp) {
@@ -309,14 +307,10 @@ class WeaponSingleEmbed extends WeaponEmbed {
   ) {
     super(int, ...args)
     this.type = 'wp-single'
-    const weapon = category.WPname
+    const weapon = category.WPkey
 
     return this.setHeader(
-      `${
-        Object.values(category['pvp'].list).find(
-          (wp) => wpTrans(wp.name) == wpTrans(weapon)
-        ).name
-      } weapon`,
+      `${category['pvp'].list[weapon].name} weapon`,
       username,
       platform
     )
@@ -590,25 +584,9 @@ interface EmbedParameters<T> {
   username: string
 }
 
-/** Checks whether the argument is a weapon */
-function isWeaponName(str: string) {
-  return (
-    typeof str == 'string' &&
-    Object.values(constants.WEAPONS)
-      .map((wp) => wpTrans(wp.name))
-      .includes(wpTrans(str))
-  )
-}
-
-/** Returns the exact weapon name from an argument-form name */
-function getWeaponName(str: string): WeaponName {
-  return Object.values(constants.WEAPONS)
-    .map((wp) => wpTrans(wp.name))
-    .find((name) => wpTrans(name) == wpTrans(str)) as WeaponName
-}
-
-function wpTrans(str: string) {
-  return str.toLowerCase().split(' ').join('-')
+/** Checks whether the argument is a weapon key */
+function isWeaponName(str: string): str is keyof typeof constants.WEAPONS {
+  return typeof str == 'string' && Object.keys(constants.WEAPONS).includes(str)
 }
 
 /** Checks whether the argument is a weapon category
@@ -715,7 +693,7 @@ interface GeneralStats {
 }
 
 interface WeaponEmbedStats extends Record<strictPlayType, WeaponCategory> {
-  WPname?: WeaponName
+  WPkey?: WeaponName
   CATname: WeaponTypeName
 }
 
@@ -1016,19 +994,14 @@ export class RainbowAPI extends API<'r6'> {
 
     var processedStats: WeaponEmbedStats
     if (isWeaponName(wpOrCat)) {
-      const exactName = getWeaponName(wpOrCat)
       var CATname: WeaponTypeId
       let cat: WeaponTypeId
       for (cat in rawStats.pvp.weapons) {
-        if (
-          Object.values(rawStats.pvp.weapons[cat].list).some(
-            (wp) => wpTrans(wp.name) == exactName
-          )
-        )
+        if (Object.keys(rawStats.pvp.weapons[cat].list).includes(wpOrCat))
           CATname = cat
       }
       processedStats = {
-        WPname: getWeaponName(exactName),
+        WPkey: wpOrCat,
         CATname: getWeaponTypeName(CATname),
         pve: rawStats.pve.weapons[CATname],
         pvp: rawStats.pvp.weapons[CATname]
@@ -1055,7 +1028,7 @@ export class RainbowAPI extends API<'r6'> {
         raw: rawStats,
         username
       })
-    } else console.log(wpOrCat)
+    }
   }
 
   async op(
