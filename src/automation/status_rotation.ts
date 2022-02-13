@@ -54,9 +54,9 @@ class Presence {
 const status = isDev
   ? [new Presence('development', 'WATCHING', 'dnd')]
   : [
-      new Presence('with the new slash commands!', 'PLAYING'),
-      new Presence('for your requests!', 'WATCHING'),
-      new Presence('/guildCount/ servers.', 'WATCHING')
+      new Presence('with the new slash commands!', 'PLAYING')
+      // new Presence('for your requests!', 'WATCHING'),
+      // new Presence('/guildCount/ servers.', 'WATCHING')
     ]
 
 var index = 0

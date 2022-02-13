@@ -19,7 +19,7 @@ export const commandTestGuildID = '406797621563490315'
 export const supportHardLink = 'https://discord.gg/5YrhW4NHfY'
 export const docsURL = 'https://game-tracker.js.org/#/'
 
-const deactivatePoster = false || isDev
+const deactivatePoster = true || isDev
 
 export let client: Client
 export let commandHandler: CommandHandler
