@@ -3,7 +3,6 @@
 [![Support Guild](https://discordapp.com/api/guilds/475792603867119626/embed.png)](https://discord.gg/5YrhW4NHfY)
 [![Top.gg](https://discordbots.org/api/widget/status/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![Top.gg](https://discordbots.org/api/widget/servers/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![LGTM code quality](https://img.shields.io/lgtm/grade/javascript/github/EndBug/game-tracker?label=Code%20quality)](https://lgtm.com/projects/g/EndBug/game-tracker/context:javascript)
 [![All Contributors](https://img.shields.io/github/all-contributors/EndBug/game-tracker)](#contributors-)
 
 ### What is Game Tracker?
@@ -14,15 +13,15 @@ Game Tracker is an open-source Discord bot that is able to fetch stats from your
 
 It's very simple:
 
-1.  Go to [this link](https://discordapp.com/oauth2/authorize?client_id=475421235950518292&scope=bot&permissions=93248)
+1.  Go to [this link](https://discord.com/api/oauth2/authorize?client_id=475421235950518292&permissions=16384&scope=bot%20applications.commands)
 2.  Select the server you want to add the bot to (you must be owner/admin of the server)
 3.  Confirm (the permissions asked are necessary, without them the bot could not work properly)
 
-When added, the bot will message the server owner to inform them about the bot.
-
 ### What are the available commands?
 
-You can get a complete list of the commands by using the `help` command.
+The bot works with slash commands, so to see what commands are available you can simply start typing `/` in your message bar.
+The slash commands menu already has basic info about the commands, but there's more available on the [official website](https://game-tracker.js.org)
+
 The currently supported games are:
 
 - [Overwatch](https://game-tracker.js.org/#/ow/overwatch)
@@ -35,11 +34,6 @@ More games are yet to come ;)
 
 You can get an invite for the support server through the `support` command.  
 For a more developer-friendly report, please use the Issues section of this repository: [link](https://github.com/EndBug/game-tracker/issues)
-
-### How can I contribute to the bot?
-
-The first thing you can do to contribute is reporting the bugs you find.  
-If you're a developer, you can also try fixing them/enhancing the bot by yourself: for that, please see the ["How to contribute"](.github/CONTRIBUTING.md) section.
 
 ## Contributors
 
