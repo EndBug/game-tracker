@@ -35,7 +35,11 @@ type embedType =
   | 'error'
 
 const cache = new Cache('Overwatch')
-const githubRef: string = getSha() || 'main'
+
+let githubRef: string
+try {
+  githubRef = getSha() || 'main'
+} catch {}
 
 // #region Embeds
 type StatsType<T> = T extends 'quick' | 'comp'
