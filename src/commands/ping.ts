@@ -21,7 +21,7 @@ export const command: CommandOptions = {
         client.ws.ping
       )} ms\nEffective: ${Math.round(
         reply.createdTimestamp - int.createdTimestamp
-      )}`
+      )} ms`
     })
   }
 }

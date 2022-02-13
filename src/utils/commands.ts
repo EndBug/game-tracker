@@ -78,7 +78,7 @@ export class CommandHandler {
         client.emit(
           'error',
           new Error(
-            '[Cmd handler] The bot has received an unknown command interaction.'
+            '[Commands] The bot has received an unknown command interaction.'
           )
         )
     })
@@ -90,7 +90,7 @@ export class CommandHandler {
 
       if (!command)
         throw new Error(
-          '[Cmd handler] The bot has received an unknown command interaction.'
+          '[Commands] The bot has received an unknown command interaction.'
         )
 
       if (command.onAutocomplete) command.onAutocomplete(int)

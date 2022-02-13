@@ -55,16 +55,17 @@ async function initClient() {
 
     client.emit(
       'debug',
-      Object.entries({ homeguild, owner, roles })
-        .map(([key, value]) => `${key}: ${value ? 'ok' : 'MISSING'}`)
-        .join('\n')
+      '[Constants]' +
+        Object.entries({ homeguild, owner, roles })
+          .map(([key, value]) => `\n    ${key}: ${value ? 'ok' : 'MISSING'}`)
+          .join('')
     )
 
-    client.emit('debug', 'Registering slash commands...')
+    client.emit('debug', '[Commands] Registering slash commands...')
     await commandHandler.registerCommands()
     client.emit(
       'debug',
-      `Registered ${commandHandler.commands.size} slash commands.`
+      `[Commands] Registered ${commandHandler.commands.size} slash commands.`
     )
 
     try {
