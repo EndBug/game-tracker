@@ -277,7 +277,8 @@ class WeaponEmbed extends CustomEmbed {
         if (name) str += `Name: **${wp.name}**\n`
         if (wp)
           for (const key in wp) {
-            if (key != 'name') str += keyValue(key, wp[key]) + '\n'
+            if (!['name', 'icon'].includes(key))
+              str += keyValue(key, wp[key]) + '\n'
           }
         if (str) this.addField(title + ` (${playType})`, str, true)
       }
@@ -309,6 +310,7 @@ class WeaponSingleEmbed extends WeaponEmbed {
     super(int, ...args)
     this.type = 'wp-single'
     const weapon = category.WPname
+
     return this.setHeader(
       `${
         Object.values(category['pvp'].list).find(
