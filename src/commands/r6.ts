@@ -2,11 +2,11 @@ import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 import { constants as r6constants } from 'r6api.js'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
 import { playerEntry, RainbowAPI } from '../apis/rainbow'
-import { CommandInteraction, User } from 'discord.js'
+import { CommandInteraction, InteractionReplyOptions, User } from 'discord.js'
 import { APIUtil } from '../utils/api'
 import { postCommand } from '../utils/statcord'
 import { matchSorter } from 'match-sorter'
-import { CHOICES_MAX } from '../utils/utils'
+import { CHOICES_MAX, sendErrorToOwner } from '../utils/utils'
 
 type platform = 'uplay' | 'xbl' | 'psn'
 const modes = [
@@ -178,6 +178,16 @@ export const command: CommandOptions = {
   async run(int) {
     const opt = int.options
 
+    await int.deferReply({ ephemeral: false })
+    const sendReply = (options: InteractionReplyOptions) => {
+      if (options.ephemeral) {
+        int.deleteReply()
+        return int.followUp(options)
+      } else {
+        return int.editReply(options)
+      }
+    }
+
     const command = opt.getSubcommand(true),
       user = opt.getUser('user'),
       playType = opt.getString('playtype') || 'all',
@@ -194,7 +204,7 @@ export const command: CommandOptions = {
       try {
         res = await parseTarget({ username, platform, user, int })
       } catch (error) {
-        return await int.reply({ content: error, ephemeral: true })
+        return await sendReply({ content: error, ephemeral: true })
       }
 
       if (res) {
@@ -209,7 +219,7 @@ export const command: CommandOptions = {
           username = res.username
           platform = res.platform as platform
         } else
-          return await int.reply({
+          return await sendReply({
             content:
               'Please enter a valid username (and platform, if not on PC).',
             ephemeral: true
@@ -237,20 +247,33 @@ export const command: CommandOptions = {
     postCommand(`r6 ${legacyMode}`, int.user.id)
 
     const sendEmbed = async (extra: string | undefined) => {
-      await int.deferReply({
-        ephemeral: ['link', 'unlink'].includes(command)
-      })
-      // @ts-expect-error
-      const embed = await API[legacyMode](int, username, platform, extra)
-      return int.editReply({
-        embeds: [embed]
-      })
+      try {
+        // @ts-expect-error
+        const embed = await API[legacyMode](int, username, platform, extra)
+
+        const shouldBeEphemeral =
+          ['link', 'unlink'].includes(command) || embed.type == 'error'
+
+        return sendReply({
+          embeds: [embed],
+          ephemeral: shouldBeEphemeral
+        })
+      } catch (error) {
+        sendErrorToOwner(
+          error,
+          'An error has happened while calling the R&S API.'
+        )
+        return sendReply({
+          content:
+            "Sorry, we're having an issue with this API, please try again later"
+        })
+      }
     }
 
     if (command == 'wp') {
       const weapon = opt.getString('weapon')
       if (!weapon)
-        return int.reply({
+        return sendReply({
           content:
             'You must enter a valid weapon name, you can use the autocomplete menu to pick one.',
           ephemeral: true
@@ -259,7 +282,7 @@ export const command: CommandOptions = {
     } else if (command == 'op') {
       const operator = opt.getString('operator')
       if (!operator)
-        return int.reply({
+        return sendReply({
           content:
             'You must enter a valid operator name, you can use the autocomplete menu to pick one.',
           ephemeral: true

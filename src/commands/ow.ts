@@ -1,5 +1,5 @@
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
-import { CommandInteraction, User } from 'discord.js'
+import { CommandInteraction, InteractionReplyOptions, User } from 'discord.js'
 import { matchSorter } from 'match-sorter'
 import { OverwatchAPI, platform, playerEntry } from '../apis/overwatch'
 import { APIUtil } from '../utils/api'
@@ -129,6 +129,16 @@ export const command: CommandOptions = {
   async run(int) {
     const opt = int.options
 
+    await int.deferReply({ ephemeral: false })
+    const sendReply = (options: InteractionReplyOptions) => {
+      if (options.ephemeral) {
+        int.deleteReply()
+        return int.followUp(options)
+      } else {
+        return int.editReply(options)
+      }
+    }
+
     const command = opt.getSubcommand(true),
       user = opt.getUser('user'),
       mode = (opt.getString('mode') || 'quick') as 'quick' | 'comp',
@@ -145,14 +155,14 @@ export const command: CommandOptions = {
       try {
         res = await parseTarget({ username, platform, user, int })
       } catch (error) {
-        return await int.reply({ content: error, ephemeral: true })
+        return await sendReply({ content: error, ephemeral: true })
       }
 
       ;({ username, platform } = res)
 
       if (command == 'hero') {
         if (hero && !isSupported(hero))
-          return await int.reply({
+          return await sendReply({
             content: `'${hero}' is not a supported hero key. Use the autocomplete menu to enter the hero, so that you can use the correct hero code.`,
             ephemeral: true
           })
@@ -165,7 +175,7 @@ export const command: CommandOptions = {
           username = res.username
           platform = res.platform
         } else
-          return await int.reply({
+          return await sendReply({
             content:
               'Please enter a valid username (and platform, if not on PC).',
             ephemeral: true
@@ -181,12 +191,17 @@ export const command: CommandOptions = {
 
     const sendEmbed = async (hero: supportedHero | 'auto' = 'auto') => {
       const embed = await API[legacyMode](username, platform, int, hero)
-      return int.editReply({
-        embeds: [embed]
+
+      const shouldBeEphemeral =
+        ['link', 'unlink'].includes(command) ||
+        ['error', 'warn'].includes(embed.mode)
+
+      return sendReply({
+        embeds: [embed],
+        ephemeral: shouldBeEphemeral
       })
     }
 
-    await int.deferReply({ ephemeral: ['link', 'unlink'].includes(command) })
     return sendEmbed(hero as supportedHero | undefined)
   }
 }

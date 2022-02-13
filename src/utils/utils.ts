@@ -3,6 +3,7 @@
 import { TSMap as Map } from 'typescript-map'
 import { User, GuildMember, PartialMessage, Message } from 'discord.js'
 import { homeguild, owner, ownerID, docsURL, links, client } from '../core/app'
+import PrettyError from 'pretty-error'
 
 export { v4 as uuid } from 'uuid'
 
@@ -331,6 +332,23 @@ export function readNumber(number: number, decimals = 2) {
  */
 export function twoDigits(number: number) {
   return `0${number}`.slice(-2)
+}
+
+/**
+ * Logs an error to the console using pretty-error and sends it to the owner via DM
+ * @param err The error to log
+ * @param note An additional note to send to the owner
+ */
+export function sendErrorToOwner(err: any, note?: string) {
+  const actualErr = err instanceof Error ? err : new Error(err + '')
+  const customPE = new PrettyError()
+  console.error(customPE.render(actualErr))
+  return owner.send(
+    (note ? note + '\n' : '') +
+      '```\n' +
+      customPE.withoutColors().render(actualErr) +
+      '\n```'
+  )
 }
 
 /** Converts a HH:MM:SS string into the number of seconds (MM:SS strings are also supported) */

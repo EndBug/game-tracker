@@ -18,6 +18,7 @@ import requireAll from 'require-all'
 import path from 'path'
 import { postCommand } from './statcord'
 import { commandTestGuildID, isDev } from '../core/app'
+import { sendErrorToOwner } from './utils'
 
 export { SlashCommandBuilder } from '@discordjs/builders'
 
@@ -65,12 +66,19 @@ export class CommandHandler {
         client.emit('debug', `> ${statName}`)
         postCommand(statName, int.user.id)
 
-        command.run(int)
+        try {
+          command.run(int)
+        } catch (e: any) {
+          sendErrorToOwner(
+            e,
+            `An error happened while running the \`${statName}\` command`
+          )
+        }
       } else
         client.emit(
           'error',
           new Error(
-            '[Cmd handler] The bot has received an unknown command interaction.)'
+            '[Cmd handler] The bot has received an unknown command interaction.'
           )
         )
     })
