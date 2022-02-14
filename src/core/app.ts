@@ -1,5 +1,5 @@
 require('dotenv').config()
-require('pretty-error').start().withoutColors()
+require('pretty-error').start()
 
 import { join as path } from 'path'
 import * as fs from 'fs'
