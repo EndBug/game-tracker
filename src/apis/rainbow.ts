@@ -38,10 +38,6 @@ import {
 import { API } from '../utils/api'
 import { client } from '../core/app'
 
-// TODO: replace isweaponname with fixed version in r6api.js
-export const isWeaponName = (value: string): value is WeaponName =>
-  Object.keys(constants.WEAPONS).includes(value)
-
 const { UbisoftEmail, UbisoftPassword } = process.env
 const r6api = new R6API({
   email: UbisoftEmail,
@@ -979,7 +975,7 @@ export class RainbowAPI extends API<'r6'> {
     if (check || rawStats instanceof Error) return check
 
     var processedStats: WeaponEmbedStats
-    if (isWeaponName(wpOrCat)) {
+    if (utils.isWeaponName(wpOrCat)) {
       var CATname: WeaponTypeId
       let cat: WeaponTypeId
       for (cat in rawStats.pvp.weapons) {

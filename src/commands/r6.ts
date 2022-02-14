@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder } from '@discordjs/builders'
 import { constants as r6constants, utils as r6utils } from 'r6api.js'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
-import { isWeaponName, playerEntry, RainbowAPI } from '../apis/rainbow'
+import { playerEntry, RainbowAPI } from '../apis/rainbow'
 import { CommandInteraction, InteractionReplyOptions, User } from 'discord.js'
 import { APIUtil } from '../utils/api'
 import { postCommand } from '../utils/statcord'
@@ -269,7 +269,7 @@ export const command: CommandOptions = {
 
     if (command == 'wp') {
       const weapon = opt.getString('weapon')
-      if (!isWeaponName(weapon))
+      if (!r6utils.isWeaponName(weapon))
         return sendReply({
           content:
             'You must enter a valid weapon name, you can use the autocomplete menu to pick one.' +
