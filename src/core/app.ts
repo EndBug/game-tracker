@@ -68,15 +68,29 @@ async function initClient() {
       `[Commands] Registered ${commandHandler.commands.size} slash commands.`
     )
 
+    loadModules()
+
     try {
+      console.log('[statcord] Loading Statcord...')
       statcordInit(client)
-      statcord.autopost()
+
+      statcord.on('autopost-start', () => {
+        console.log('[statcord] Auto-posting started.')
+      })
+
+      statcord.on('post', (status) => {
+        if (status) {
+          console.error('[statcord] Unsuccessful stat post:')
+          console.error(status)
+        } else console.log('[statcord] Stats posted successfully.')
+      })
+
+      await statcord.autopost()
       console.log('[statcord] Statcord is running.')
     } catch (e) {
-      console.error('There has been an issue with StatCord:\n', e)
+      console.error('[statcord] There has been an issue with Statcord:')
+      console.error(e)
     }
-
-    loadModules()
 
     // Starts the stat poster interval
     if (!deactivatePoster && stats_poster.available)
