@@ -19,7 +19,7 @@ export const commandTestGuildID = '406797621563490315'
 export const supportHardLink = 'https://discord.gg/5YrhW4NHfY'
 export const docsURL = 'https://game-tracker.js.org/#/'
 
-const deactivatePoster = true || isDev
+const deactivatePoster = false || isDev
 
 export let client: Client
 export let commandHandler: CommandHandler
@@ -95,7 +95,7 @@ async function initClient() {
     // Starts the stat poster interval
     if (!deactivatePoster && stats_poster.available)
       try {
-        client.emit('debug', '[dbots] Starting dbots...')
+        client.emit('debug', '[blapi] Starting BLAPI...')
         await stats_poster.start()
       } catch (e) {
         console.error(e)

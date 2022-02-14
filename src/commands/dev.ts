@@ -3,7 +3,7 @@ import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
 import { provider } from '../utils/provider'
 import fs from 'fs'
 import path from 'path'
-import { poster } from '../utils/stats_poster'
+import { manualPost } from '../utils/stats_poster'
 
 export const command: CommandOptions = {
   data: new SlashCommandBuilder()
@@ -151,14 +151,8 @@ export const command: CommandOptions = {
         await int.reply('Posting stats...')
 
         try {
-          const stats = await poster.post()
-          await int.editReply(
-            `Stats successfully posted to ${
-              stats instanceof Array
-                ? `\`${stats.length}\` service${stats.length == 1 ? '' : 's'}`
-                : '`1` service'
-            } :white_check_mark:`
-          )
+          await manualPost()
+          await int.editReply(`Stats posted successfully :white_check_mark:`)
         } catch (e) {
           await int.editReply("Couldn't post stats:\n```\n" + e + '\n```')
         }
