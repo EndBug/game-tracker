@@ -104,8 +104,8 @@ async function initClient() {
       client.emit(
         'debug',
         deactivatePoster
-          ? '[dbots] dbots not loaded.'
-          : '[dbots] No optional DBL token found.'
+          ? '[blapi] blapi not loaded.'
+          : '[blapi] No optional DBL token found.'
       )
   })
 
