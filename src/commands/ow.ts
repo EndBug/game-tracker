@@ -130,9 +130,9 @@ export const command: CommandOptions = {
     const opt = int.options
 
     await int.deferReply({ ephemeral: false })
-    const sendReply = (options: InteractionReplyOptions) => {
+    const sendReply = async (options: InteractionReplyOptions) => {
       if (options.ephemeral) {
-        int.deleteReply()
+        await int.deleteReply()
         return int.followUp(options)
       } else {
         return int.editReply(options)
@@ -189,8 +189,13 @@ export const command: CommandOptions = {
     ) as 'quick' | 'comp' | 'hero' | 'herocomp' | 'link' | 'unlink'
     postCommand(`ow ${legacyMode}`, int.user.id)
 
-    const sendEmbed = async (hero: supportedHero | 'auto' = 'auto') => {
-      const embed = await API[legacyMode](username, platform, int, hero)
+    const sendEmbed = async (hero: supportedHero | 'auto') => {
+      const embed = await API[legacyMode](
+        username,
+        platform,
+        int,
+        hero || 'auto'
+      )
 
       const shouldBeEphemeral =
         ['link', 'unlink'].includes(command) ||
