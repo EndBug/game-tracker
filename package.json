@@ -32,7 +32,7 @@
     "cron": "^1.8.2",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
-    "eslint-config-prettier": "^8.4.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "git-rev-sync": "^3.0.1",
     "match-sorter": "^6.3.1",
