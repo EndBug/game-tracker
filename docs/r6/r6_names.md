@@ -69,6 +69,7 @@
 | Thunderbird      | `thunderbird`      |
 | Osa              | `osa`              |
 | Thorn            | `thorn`            |
+| Azami            | `azami`            |
 
 ### Weapon categories
 | Category | Aliases    |
