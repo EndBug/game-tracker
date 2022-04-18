@@ -42,7 +42,7 @@
     "pretty-error": "^4.0.0",
     "r6api.js": "^4.1.0",
     "require-all": "^3.0.0",
-    "statcord.js": "^3.4.1",
+    "statcord.js": "^3.4.2",
     "ts-node": "10.7.0",
     "typescript-map": "0.1.0",
     "uuid": "^8.3.2"
