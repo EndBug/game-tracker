@@ -26,7 +26,7 @@
     "@discordjs/builders": "^0.13.0",
     "@discordjs/rest": "^0.4.1",
     "@supabase/supabase-js": "^1.34.1",
-    "axios": "^0.26.1",
+    "axios": "^0.27.0",
     "blapi": "^2.2.2",
     "common-tags": "^1.8.2",
     "cron": "^1.8.2",
