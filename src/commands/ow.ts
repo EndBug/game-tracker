@@ -35,11 +35,20 @@ function addUserOptions(
         .setDescription(
           "The platform of the user you're looking up, if you're searching by username. Default value: PC."
         )
-        .addChoices([
-          ['PC', 'pc'],
-          ['Xbox Live', 'xbl'],
-          ['PlayStation Network', 'psn']
-        ])
+        .addChoices(
+          {
+            name: 'PC',
+            value: 'pc'
+          },
+          {
+            name: 'Xbox Live',
+            value: 'xbl'
+          },
+          {
+            name: 'PlayStation Network',
+            value: 'psn'
+          }
+        )
     )
 
   return user
@@ -101,8 +110,16 @@ export const command: CommandOptions = {
             o
               .setName('mode')
               .setDescription('The mode you want to see hero stats for.')
-              .addChoice('Quickplay', 'quick')
-              .addChoice('Competitive', 'comp')
+              .addChoices(
+                {
+                  name: 'Quickplay',
+                  value: 'quick'
+                },
+                {
+                  name: 'Competitive',
+                  value: 'comp'
+                }
+              )
           )
       )
     )

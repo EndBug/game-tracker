@@ -21,11 +21,20 @@ export const command: CommandOptions = {
             .setName('type')
             .setDescription('The type of stat to show.')
             .setRequired(true)
-            .addChoices([
-              ['Database', 'database'],
-              ['Guilds', 'guilds'],
-              ['Last reload date', 'reload']
-            ])
+            .addChoices(
+              {
+                name: 'Database',
+                value: 'database'
+              },
+              {
+                name: 'Guilds',
+                value: 'guilds'
+              },
+              {
+                name: 'Last reload date',
+                value: 'reload'
+              }
+            )
         )
     )
     .addSubcommand((s) =>

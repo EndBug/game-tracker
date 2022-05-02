@@ -38,11 +38,20 @@ export const command: CommandOptions = {
               .setDescription(
                 'Select whether you want to see stats for PvP, PvE, or both.'
               )
-              .addChoices([
-                ['PvP', 'pvp'],
-                ['PvE', 'pve'],
-                ['Both', 'all']
-              ])
+              .addChoices(
+                {
+                  name: 'PvP',
+                  value: 'pvp'
+                },
+                {
+                  name: 'PvE',
+                  value: 'pve'
+                },
+                {
+                  name: 'Both',
+                  value: 'all'
+                }
+              )
           )
       )
     )
@@ -57,10 +66,16 @@ export const command: CommandOptions = {
               .setDescription(
                 'Select whether you want to see stats for PvP or PvE.'
               )
-              .addChoices([
-                ['PvP', 'pvp'],
-                ['PvE', 'pve']
-              ])
+              .addChoices(
+                {
+                  name: 'PvP',
+                  value: 'pvp'
+                },
+                {
+                  name: 'PvE',
+                  value: 'pve'
+                }
+              )
               .setRequired(true)
           )
       )
@@ -93,10 +108,10 @@ export const command: CommandOptions = {
               .setName('category')
               .setDescription('The category you want to see stats of. ')
               .addChoices(
-                Object.values(r6constants.WEAPONTYPES).map((e) => [
-                  e.name,
-                  e.id
-                ])
+                ...Object.values(r6constants.WEAPONTYPES).map((e) => ({
+                  name: e.name,
+                  value: e.id
+                }))
               )
               .setRequired(true)
           )
@@ -130,10 +145,10 @@ export const command: CommandOptions = {
               .setDescription(
                 'Select whether you want to see stats for PvP or PvE.'
               )
-              .addChoices([
-                ['PvP', 'pvp'],
-                ['PvE', 'pve']
-              ])
+              .addChoices(
+                { name: 'PvP', value: 'pvp' },
+                { name: 'PvE', value: 'pve' }
+              )
               .setRequired(true)
           )
       )
@@ -310,11 +325,14 @@ function addUserOptions(
         .setDescription(
           "The platform of the user you're looking up, if you're searching by username. Default: UPlay."
         )
-        .addChoices([
-          ['UPlay', 'uplay'],
-          ['Xbox Live', 'xbl'],
-          ['PlayStation Network', 'psn']
-        ])
+        .addChoices(
+          {
+            name: 'UPlay',
+            value: 'uplay'
+          },
+          { name: 'Xbox Live', value: 'xbl' },
+          { name: 'PlayStation Network', value: 'psn' }
+        )
     )
 
   return user
