@@ -1,6 +1,5 @@
 import {
   ApplicationCommand,
-  ApplicationCommandPermissionData,
   AutocompleteInteraction,
   Client,
   Collection,
@@ -30,7 +29,7 @@ export interface CommandOptions {
     | SlashCommandSubcommandGroupBuilder
 
   guildID?: Snowflake
-  permissions?: ApplicationCommandPermissionData[]
+  hasPermission?: (interaction: CommandInteraction) => boolean
   run: (interaction: CommandInteraction) => Promise<any>
   onAutocomplete?: (interaction: AutocompleteInteraction) => Promise<any>
 }
@@ -62,16 +61,23 @@ export class CommandHandler {
       const command = this.commands.get(int.commandName)
 
       if (command) {
-        const statName = this.getStatCommandName(int)
-        client.emit('debug', `> ${statName}`)
-        postCommand(statName, int.user.id)
+        if (command.hasPermission ? command.hasPermission(int) : true) {
+          const statName = this.getStatCommandName(int)
+          client.emit('debug', `> ${statName}`)
+          postCommand(statName, int.user.id)
 
-        command.run(int).catch((e) => {
-          sendErrorToOwner(
-            e,
-            `An error happened while running the \`${statName}\` command`
-          )
-        })
+          command.run(int).catch((e) => {
+            sendErrorToOwner(
+              e,
+              `An error happened while running the \`${statName}\` command`
+            )
+          })
+        } else
+          return int.reply({
+            content:
+              "You don't have access to this command. If you believe it's an error, contact the bot owner.",
+            ephemeral: true
+          })
       } else
         client.emit(
           'error',
@@ -170,25 +176,6 @@ export class CommandHandler {
         )
         commandsById.set(command.id, cmdOptions)
       })
-    }
-
-    // Set command permissions
-    for (const [id, command] of commandsById
-      .filter((c) => !!c.permissions)
-      .entries()) {
-      if (command.guildID && !isDev) {
-        const guild = await this.client.guilds.fetch(command.guildID)
-        if (!guild)
-          throw new Error(
-            `Couldn't fetch guild ${command.guildID} for ${command.data.name}.`
-          )
-
-        const fetched = await guild.commands.fetch(id)
-        if (!fetched)
-          throw new Error(`Couldn't fetch command ${command.data.name}`)
-
-        await fetched.permissions.set({ permissions: command.permissions })
-      }
     }
 
     const commandsByName = new Collection<string, CommandOptions>()

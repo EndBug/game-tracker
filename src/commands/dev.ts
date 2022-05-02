@@ -68,13 +68,7 @@ export const command: CommandOptions = {
     ),
 
   guildID: homeguildID,
-  permissions: [
-    {
-      type: 'USER',
-      id: ownerID,
-      permission: true
-    }
-  ],
+  hasPermission: (int) => int.user.id == ownerID,
 
   async run(int) {
     // Runtime check to verify that the user actually has permission to run one of these commands
