@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.1",
-    "@types/cron": "^1.7.3",
+    "@types/cron": "^2.0.0",
     "@types/markdown-table": "^2.0.0",
     "@types/node": "^12.12.62",
     "@types/nodemon": "^1.19.1",
