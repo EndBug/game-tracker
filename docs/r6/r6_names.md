@@ -70,6 +70,7 @@
 | Osa              | `osa`              |
 | Thorn            | `thorn`            |
 | Azami            | `azami`            |
+| Sens             | `sens`             |
 
 ### Weapon categories
 | Category | Aliases    |
