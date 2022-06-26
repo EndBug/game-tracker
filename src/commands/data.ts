@@ -10,7 +10,7 @@ export const command: CommandOptions = {
     .addSubcommand((s) =>
       s
         .setName('show')
-        .setDescription('Shows you all the data the the bot stored about you.')
+        .setDescription('Shows you all the data the bot stored about you.')
     )
     .addSubcommand((s) =>
       s

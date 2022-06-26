@@ -6,7 +6,7 @@ export const command: CommandOptions = {
   data: new SlashCommandBuilder()
     .setName('support')
     .setDescription(
-      'Gives you the invite to join in the official Game Tracker support server.'
+      'Gives you the invite to join the official Game Tracker support server.'
     ),
 
   async run(int) {
