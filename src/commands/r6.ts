@@ -294,10 +294,7 @@ export const command: CommandOptions = {
       return sendEmbed(weapon)
     } else if (command == 'op') {
       const operator = opt.getString('operator')
-      /* There's an issue with this utility function, see https://github.com/EndBug/game-tracker/issues/406
       if (!r6utils.isOperatorName(operator))
-      */
-      if (!Object.keys(r6constants.OPERATORS).includes(operator))
         return sendReply({
           content:
             'You must enter a valid operator name, you can use the autocomplete menu to pick one.' +
