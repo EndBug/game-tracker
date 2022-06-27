@@ -12,8 +12,8 @@
     "dev": "cross-env NODE_ENV=dev nodemon --watch src/**/*.* --ignore src/utils/reloadme.json --exec npm start",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
-    "lint": "eslint \"./src/**/*.ts\" --fix",
-    "lint:add": "npm run lint && git add ./src",
+    "lint": "eslint \"./src/**/*.ts\"",
+    "lint:fix": "npm run lint -- --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintIgnore": [

@@ -1,0 +1,17 @@
+name: Test
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Run linters
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
