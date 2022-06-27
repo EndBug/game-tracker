@@ -1,0 +1,8 @@
+node_modules
+project.bat
+*.ini
+src/utils/reloadme.json
+.env
+listTokens.json
+settings.json
+docs/README.md
