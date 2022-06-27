@@ -8,33 +8,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  docs:
-    name: Update documentation
-    runs-on: ubuntu-latest
+  # docs:
+  #   name: Update documentation
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 12.x
 
-      - name: Install dependencies
-        run: npm install
+  #     - name: Install dependencies
+  #       run: npm install
 
-      - name: Update documentation
-        run: npm run docs:gen
+  #     - name: Update documentation
+  #       run: npm run docs:gen
 
-      - name: Commit documentation changes
-        uses: EndBug/add-and-commit@v4
-        with:
-          add: docs
-          message: '[auto] docs: update docs'
-          force: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Commit documentation changes
+  #       uses: EndBug/add-and-commit@v4
+  #       with:
+  #         add: docs
+  #         message: '[auto] docs: update docs'
+  #         force: true
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   lint:
     name: Lint source code

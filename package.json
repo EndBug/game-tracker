@@ -13,9 +13,6 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "lint": "eslint \"./src/**/*.ts\" --fix",
-    "docs:add": "npm run docs:gen && git add ./docs",
-    "docs:dev": "docsify serve ./docs",
-    "docs:gen": "ts-node src/scripts/doc.ts",
     "lint:add": "npm run lint && git add ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -50,7 +47,6 @@
   "devDependencies": {
     "@types/common-tags": "^1.8.1",
     "@types/cron": "^2.0.0",
-    "@types/markdown-table": "^2.0.0",
     "@types/node": "^12.12.62",
     "@types/nodemon": "^1.19.1",
     "@types/uuid": "^8.3.4",
@@ -58,9 +54,7 @@
     "@typescript-eslint/parser": "^4.33.0",
     "all-contributors-cli": "^6.20.0",
     "cross-env": "^7.0.3",
-    "docsify-cli": "^4.4.4",
     "eslint": "^7.32.0",
-    "markdown-table": "^2.0.0",
     "typescript": "^4.7.4"
   },
   "repository": {
