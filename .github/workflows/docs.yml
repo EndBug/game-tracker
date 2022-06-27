@@ -9,7 +9,7 @@ on:
 
 jobs:
   dispatch:
-    name: Send workflow dispatch
+    name: Send repository dispatch
     runs-on: ubuntu-22.04
     steps:
       - uses: peter-evans/repository-dispatch@v2
