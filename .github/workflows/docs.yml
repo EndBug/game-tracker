@@ -17,3 +17,4 @@ jobs:
           token: ${{ secrets.REPO_DISPATCH_PAT }}
           repository: EndBug/game-tracker-docs
           event-type: docs-update
+          client-payload: '{"actor": "${{ github.actor }}"}'
