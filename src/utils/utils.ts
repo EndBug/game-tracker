@@ -2,7 +2,7 @@
 
 import { TSMap as Map } from 'typescript-map'
 import { User, GuildMember, PartialMessage, Message } from 'discord.js'
-import { homeguild, owner, ownerID, docsURL, links, client } from '../core/app'
+import { homeguild, owner, ownerID, links, client } from '../core/app'
 import PrettyError from 'pretty-error'
 
 export { v4 as uuid } from 'uuid'
@@ -115,18 +115,6 @@ export function escapeMentions(
   if (toEscape.includes('users')) str = str.replace(/<@!?(\d+)>/g, f)
 
   return str
-}
-
-/**
- * Returns a link to the online docs
- * @param path the relative path to the section
- * @example
- * getDocksLink() => 'https://game-tracker.js.org'
- * getDocsLink('rainbow?id=r6-general') => 'https://game-tracker.js.org/#/r6/rainbow?id=r6-general'
- */
-export function getDocsLink(path?: string, id?: string) {
-  if (!path) return docsURL.replace('/#/', '')
-  else return docsURL + path + (id ? `?id=${id}` : '')
 }
 
 /** Returns a plain full name for a given user */

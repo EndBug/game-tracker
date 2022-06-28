@@ -16,15 +16,17 @@ export const isDev = process.env.NODE_ENV == 'dev'
 export const ownerID = '218308478580555777'
 export const homeguildID = '475792603867119626'
 export const commandTestGuildID = '406797621563490315'
-export const supportHardLink = 'https://discord.gg/5YrhW4NHfY'
-export const docsURL = 'https://game-tracker.js.org/#/'
+export const docsURL = 'https://game-tracker.js.org/'
+export const links = {
+  invite: 'https://game-tracker.js.org/invite',
+  support: 'https://game-tracker.js.org/support'
+}
 
 const deactivatePoster = false || isDev
 
 export let client: Client
 export let commandHandler: CommandHandler
 export let homeguild: Guild
-export let links: Record<string, string> = {}
 export let owner: User
 export let roles: Record<string, Role> = {}
 
@@ -47,10 +49,6 @@ async function initClient() {
     owner = (await homeguild.members.fetch(ownerID)).user
     roles = {
       dev: await homeguild.roles.fetch('498225931299848193')
-    }
-    links = {
-      invite: `<https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=16384&scope=bot%20applications.commands>`,
-      support: supportHardLink
     }
 
     client.emit(
