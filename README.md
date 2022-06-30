@@ -27,7 +27,7 @@ The currently supported games are:
 - [Overwatch](https://game-tracker.js.org/docs/Commands/overwatch)
 - [Rainbow Six Siege](https://game-tracker.js.org/docs/Commands/rainbow)
 
-You can see the preview of each game's commands by looking either at the docs (click the name of the game in the above list) or at the dedicated channel in the "examples" category of the [support server](#what-if-i-have-a-problem).  
+You can see the preview of each game's commands by looking either at the docs (click the name of the game in the above list) or at the dedicated channel in the "examples" category of the [support server](https://game-tracker.js.org/support).  
 More games are yet to come ;)
 
 ### What if I have a problem?
