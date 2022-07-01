@@ -22,6 +22,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.15.0",
     "@discordjs/rest": "^0.5.0",
+    "@endbug/overwatch-stats-api": "^3.0.0",
     "@supabase/supabase-js": "^1.35.4",
     "blapi": "^2.2.2",
     "cron": "^2.0.0",
@@ -32,7 +33,6 @@
     "git-rev-sync": "^3.0.1",
     "match-sorter": "^6.3.1",
     "nodemon": "^2.0.4",
-    "overwatch-stats-api": "^2.1.0",
     "prettier": "^2.7.1",
     "pretty-error": "^4.0.0",
     "r6api.js": "^4.2.1",
