@@ -38,7 +38,7 @@
     "r6api.js": "^4.3.0",
     "require-all": "^3.0.0",
     "statcord.js": "^3.4.2",
-    "ts-node": "10.8.2",
+    "ts-node": "10.9.1",
     "typescript-map": "0.1.0",
     "uuid": "^8.3.2"
   },
