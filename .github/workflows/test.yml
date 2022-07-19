@@ -5,9 +5,8 @@ on:
 
 jobs:
   lint:
-    name: Run linters
+    name: Lint
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -15,3 +14,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: npm
+      - run: npm ci
+      - run: npm run build

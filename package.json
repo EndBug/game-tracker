@@ -14,7 +14,8 @@
     "contributors:generate": "all-contributors generate",
     "lint": "eslint \"./src/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "npm run build && npm run lint"
   },
   "eslintIgnore": [
     "src/utils/reloadme.json"
@@ -43,7 +44,7 @@
   },
   "devDependencies": {
     "@types/cron": "^2.0.0",
-    "@types/node": "^12.12.62",
+    "@types/node": "^18.0.6",
     "@types/nodemon": "^1.19.1",
     "@types/require-all": "^3.0.3",
     "@types/uuid": "^8.3.4",
