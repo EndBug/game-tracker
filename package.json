@@ -20,13 +20,12 @@
     "src/utils/reloadme.json"
   ],
   "dependencies": {
-    "@discordjs/builders": "^1.0.0",
     "@discordjs/rest": "^1.0.0",
     "@endbug/overwatch-stats-api": "^3.0.0",
     "@supabase/supabase-js": "^1.35.4",
     "blapi": "^2.2.2",
     "cron": "^2.1.0",
-    "discord.js": "^13.6.0",
+    "discord.js": "^14.0.2",
     "dotenv": "^16.0.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",

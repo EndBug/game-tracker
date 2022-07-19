@@ -1,9 +1,10 @@
 import {
   ApplicationCommand,
   AutocompleteInteraction,
+  ChatInputCommandInteraction,
   Client,
   Collection,
-  CommandInteraction,
+  InteractionType,
   Snowflake
 } from 'discord.js'
 import {
@@ -29,8 +30,8 @@ export interface CommandOptions {
     | SlashCommandSubcommandGroupBuilder
 
   guildID?: Snowflake
-  hasPermission?: (interaction: CommandInteraction) => boolean
-  run: (interaction: CommandInteraction) => Promise<any>
+  hasPermission?: (interaction: ChatInputCommandInteraction) => boolean
+  run: (interaction: ChatInputCommandInteraction) => Promise<any>
   onAutocomplete?: (interaction: AutocompleteInteraction) => Promise<any>
 }
 
@@ -56,7 +57,7 @@ export class CommandHandler {
     this.commands = new Collection()
 
     this.client.on('interactionCreate', async (int) => {
-      if (!int.isCommand()) return
+      if (!int.isChatInputCommand()) return
 
       const command = this.commands.get(int.commandName)
 
@@ -72,12 +73,14 @@ export class CommandHandler {
               `An error happened while running the \`${statName}\` command`
             )
           })
-        } else
-          return int.reply({
+        } else {
+          await int.reply({
             content:
               "You don't have access to this command. If you believe it's an error, contact the bot owner.",
             ephemeral: true
           })
+          return
+        }
       } else
         client.emit(
           'error',
@@ -88,7 +91,7 @@ export class CommandHandler {
     })
 
     this.client.on('interactionCreate', (int) => {
-      if (!int.isAutocomplete()) return
+      if (int.type != InteractionType.ApplicationCommandAutocomplete) return
 
       const command = this.commands.get(int.commandName)
 
@@ -188,7 +191,7 @@ export class CommandHandler {
    * Gets the "full name" of a command by adding the subcommand group and the subcommand (if they have been used)
    * @param int The command interaction
    */
-  getStatCommandName(int: CommandInteraction) {
+  getStatCommandName(int: ChatInputCommandInteraction) {
     return [
       int.commandName,
       int.options.getSubcommandGroup(false),

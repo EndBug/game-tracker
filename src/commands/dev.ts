@@ -11,7 +11,7 @@ export const command: CommandOptions = {
     .setDescription(
       'A collection of commands for the developers, not available to the public.'
     )
-    .setDefaultPermission(false)
+    .setDefaultMemberPermissions('0')
     .addSubcommand((s) =>
       s
         .setName('stats')

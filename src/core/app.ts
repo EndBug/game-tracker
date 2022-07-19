@@ -3,7 +3,7 @@ require('pretty-error').start()
 
 import { join as path } from 'path'
 import * as fs from 'fs'
-import { Client, Guild, User, Role, Intents } from 'discord.js'
+import { Client, Guild, User, Role, GatewayIntentBits } from 'discord.js'
 
 import * as stats_poster from '../utils/stats_poster'
 import { APIUtil } from '../utils/api'
@@ -35,7 +35,7 @@ export let roles: Record<string, Role> = {}
  */
 async function initClient() {
   client = new Client({
-    intents: [Intents.FLAGS.GUILDS]
+    intents: [GatewayIntentBits.Guilds]
   })
 
   client.on('error', console.error)

@@ -30,8 +30,9 @@ import {
   WithOptional
 } from '../utils/utils'
 import {
+  Colors,
   CommandInteraction,
-  MessageEmbed,
+  EmbedBuilder,
   User,
   UserResolvable
 } from 'discord.js'
@@ -67,7 +68,7 @@ type embedType_Type =
   | 'unlink'
 
 /** Custom embed class that acts as base for other embeds */
-class CustomEmbed extends MessageEmbed {
+class CustomEmbed extends EmbedBuilder {
   type: embedType_Type
 
   constructor(int: CommandInteraction, ...args) {
@@ -77,7 +78,7 @@ class CustomEmbed extends MessageEmbed {
         name: 'Rainbow 6 Siege Stats',
         iconURL: 'https://i.imgur.com/RgoDkpy.png'
       })
-      .setColor('WHITE')
+      .setColor(Colors.White)
       .via(int.user)
   }
 
@@ -115,7 +116,7 @@ class ErrorEmbed extends CustomEmbed {
     this.type = 'error'
     let sub = error.slice(0, 2048 - 3)
     if (sub.length >= 2048 - 3) sub += '...'
-    return this.setColor('RED')
+    return this.setColor(Colors.Red)
       .setTitle('I got an error from the server')
       .setDescription(sub)
   }
@@ -160,7 +161,7 @@ class GeneralEmbed extends CustomEmbed {
       account.maxRank.tier == 'Unranked' ? '----' : account.maxRank.mmr
     } (${account.maxRank.tier})**`
 
-    return this.addField('Account stats', str, false)
+    return this.addFields({ name: 'Account stats', value: str, inline: false })
   }
 
   /** Adds matches stats to the embed */
@@ -174,7 +175,7 @@ class GeneralEmbed extends CustomEmbed {
     Win rate: ${statFormat((wins / total) * 100, { append: '%', decimals: 2 })}
     `.trim()
 
-    return this.addField('Matches', str, true)
+    return this.addFields({ name: 'Matches', value: str, inline: true })
   }
 
   /** Adds performance stats to the embed */
@@ -188,7 +189,7 @@ class GeneralEmbed extends CustomEmbed {
     DBNOs: ${statFormat(performance.dbnos)}
     Revives: ${statFormat(performance.revives)}`
 
-    return this.addField('Performance', str, true)
+    return this.addFields({ name: 'Performance', value: str, inline: true })
   }
 }
 
@@ -235,7 +236,7 @@ class ModesEmbed extends CustomEmbed {
       if (statKey != 'name') body += keyValue(statKey, mode[statKey]) + '\n'
     }
 
-    return this.addField(title, body.trim(), true)
+    return this.addFields({ name: title, value: body.trim(), inline: true })
   }
 }
 
@@ -253,7 +254,11 @@ class WeaponEmbed extends CustomEmbed {
         for (const key in category[playType].general)
           if (key != 'name')
             str += keyValue(key, category[playType].general[key]) + '\n'
-        this.addField(title + ` (${playType})`, str, true)
+        this.addFields({
+          name: title + ` (${playType})`,
+          value: str,
+          inline: true
+        })
       }
     }
     return this
@@ -278,7 +283,12 @@ class WeaponEmbed extends CustomEmbed {
             if (!['name', 'icon'].includes(key))
               str += keyValue(key, wp[key]) + '\n'
           }
-        if (str) this.addField(title + ` (${playType})`, str, true)
+        if (str)
+          this.addFields({
+            name: title + ` (${playType})`,
+            value: str,
+            inline: true
+          })
       }
     }
     return this
@@ -407,7 +417,7 @@ class OperatorEmbed extends CustomEmbed {
     ${other ? `Other:\n- ${other}` : ''}
     `.trim()
 
-    return this.addField(title, str, true)
+    return this.addFields({ name: title, value: str, inline: true })
   }
 }
 
@@ -438,7 +448,11 @@ class TypesEmbed extends CustomEmbed {
     const str = Object.values(value)
       .map((type) => keyValue(type.name, type.bestScore))
       .join('\n')
-    return this.addField(camelToReadable(name), str.trim(), true)
+    return this.addFields({
+      name: camelToReadable(name),
+      value: str.trim(),
+      inline: true
+    })
   }
 }
 
@@ -481,7 +495,7 @@ class QueueEmbed extends CustomEmbed {
     Playtime: **${readHours(queue.playtime / 60 / 60)}**
     `.trim()
 
-    return this.addField(queue.name, str, true)
+    return this.addFields({ name: queue.name, value: str, inline: true })
   }
 }
 

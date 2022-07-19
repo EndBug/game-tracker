@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageButton } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 import { APIUtil } from '../utils/api'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
 import { uuid } from '../utils/utils'
@@ -46,14 +46,18 @@ export const command: CommandOptions = {
             ephemeral: true
           })
 
+        const ids = {
+          confirm: uuid(),
+          cancel: uuid()
+        }
         const buttons = {
-          confirm: new MessageButton()
-            .setCustomId(uuid())
-            .setStyle('SUCCESS')
+          confirm: new ButtonBuilder()
+            .setCustomId(ids.confirm)
+            .setStyle(ButtonStyle.Success)
             .setLabel('Confirm'),
-          cancel: new MessageButton()
-            .setCustomId(uuid())
-            .setStyle('DANGER')
+          cancel: new ButtonBuilder()
+            .setCustomId(ids.cancel)
+            .setStyle(ButtonStyle.Danger)
             .setLabel('Cancel')
         }
 
@@ -62,7 +66,7 @@ export const command: CommandOptions = {
             'Are you sure you want to delete all of your stored data? All of your account will be unlinked from this bot.\nConfirm within 30 seconds to erase your data.',
           ephemeral: true,
           components: [
-            new MessageActionRow().addComponents(
+            new ActionRowBuilder<ButtonBuilder>().addComponents(
               buttons.confirm,
               buttons.cancel
             )
@@ -73,18 +77,16 @@ export const command: CommandOptions = {
           time: 30000,
           filter: (i) =>
             i.user.id == int.user.id &&
-            [buttons.confirm.customId, buttons.cancel.customId].includes(
-              i.customId
-            )
+            [ids.confirm, ids.cancel].includes(i.customId)
         })
 
         collector.on('collect', async (i) => {
-          if (i.customId == buttons.cancel.customId) {
+          if (i.customId == ids.cancel) {
             await i.reply({ content: 'Command canceled.', ephemeral: true })
             return collector.stop()
           }
 
-          if (i.customId == buttons.confirm.customId) {
+          if (i.customId == ids.confirm) {
             const erased = await APIUtil.eraseAll(int.user)
 
             if (erased.length == 0) {
@@ -107,7 +109,7 @@ export const command: CommandOptions = {
         collector.on('end', () => {
           int.editReply({
             components: [
-              new MessageActionRow().addComponents(
+              new ActionRowBuilder<ButtonBuilder>().addComponents(
                 buttons.confirm.setDisabled(true),
                 buttons.cancel.setDisabled(true)
               )

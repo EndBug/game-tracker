@@ -1,4 +1,9 @@
-import { PresenceStatusData, PresenceData, ActivitiesOptions } from 'discord.js'
+import {
+  PresenceStatusData,
+  PresenceData,
+  ActivitiesOptions,
+  ActivityType
+} from 'discord.js'
 import { client, isDev } from '../core/app'
 
 const interval = 12500
@@ -19,7 +24,7 @@ class Presence {
     this.afk = false
     this.activity = {
       name,
-      type: type || 'PLAYING',
+      type: type || ActivityType.Playing,
       url: stream
     }
   }
@@ -52,9 +57,9 @@ class Presence {
 }
 
 const status = isDev
-  ? [new Presence('development', 'WATCHING', 'dnd')]
+  ? [new Presence('development', ActivityType.Watching, 'dnd')]
   : [
-      new Presence('with the new slash commands!', 'PLAYING')
+      new Presence('with the new slash commands!', ActivityType.Playing)
       // new Presence('for your requests!', 'WATCHING'),
       // new Presence('/guildCount/ servers.', 'WATCHING')
     ]
@@ -62,7 +67,6 @@ const status = isDev
 var index = 0
 
 /** Reads a custom `Presence` instance and sets it to the client user
- * @param pres The `Presence` to read
  */
 function setPresence(indexOverride?: number) {
   const pres = status[indexOverride || index]

@@ -1,5 +1,11 @@
 /* eslint-disable no-dupe-class-members */
-import { User, GuildMember, MessageEmbed, CommandInteraction } from 'discord.js'
+import {
+  User,
+  GuildMember,
+  EmbedBuilder,
+  CommandInteraction,
+  Colors
+} from 'discord.js'
 import * as owapi from '@endbug/overwatch-stats-api'
 import { Rank } from '@endbug/overwatch-stats-api/build/basicinfo'
 import { long as getSha } from 'git-rev-sync'
@@ -180,7 +186,7 @@ type EmbedSwitch<T> = T extends 'quick' | 'comp'
   ? WarnEmbed
   : CustomEmbed
 
-class CustomEmbed extends MessageEmbed {
+class CustomEmbed extends EmbedBuilder {
   mode: embedType
 
   constructor(int: CommandInteraction, ...args: any[]) {
@@ -213,8 +219,10 @@ class CustomEmbed extends MessageEmbed {
 
   /** Adds a warning for non-currently-ranked players */
   notRanked() {
-    this.description +=
-      '\n:warning: This account is not currently ranked: this data comes exclusively from off-season & placement matches.'
+    this.setDescription(
+      this.data.description +
+        '\n:warning: This account is not currently ranked: this data comes exclusively from off-season & placement matches.'
+    )
     return this
   }
 
@@ -246,7 +254,7 @@ class StatsEmbed extends CustomEmbed {
     this.mode = stats.type == 'competitive' ? 'comp' : 'quick'
 
     this.setHeader(stats.type, battletag, platform)
-      .setColor('GREEN')
+      .setColor(Colors.Green)
       .addAccount(stats)
       .addMostPlayed(stats)
       .addGeneral(stats)
@@ -270,13 +278,13 @@ class StatsEmbed extends CustomEmbed {
       rankStr = `Rank: ${arr.map((i) => `**${i || '----'}**`).join(' | ')}`
     } else rankStr = 'Rank: **----**'
 
-    this.addField(
-      'Account stats',
-      `Level: **${account.level}**
+    this.addFields({
+      name: 'Account stats',
+      value: `Level: **${account.level}**
     Endorsement: **${account.endorsement}**
     ${rankStr}`,
-      true
-    ).setThumbnail(account.avatar)
+      inline: true
+    }).setThumbnail(account.avatar)
     return this
   }
 
@@ -285,7 +293,11 @@ class StatsEmbed extends CustomEmbed {
     let text = ''
     for (const { name, hrsPlayed } of mostPlayed)
       text += `\n${name}: **${readHours(hrsPlayed)}**`
-    this.addField('Most played heroes', text.trim(), true)
+    this.addFields({
+      name: 'Most played heroes',
+      value: text.trim(),
+      inline: true
+    })
     return this
   }
 
@@ -296,28 +308,28 @@ class StatsEmbed extends CustomEmbed {
 
     if (!losses) win = `Games won: **${wins}**`
     else win = `Win rate: **${noDec(wins / losses)}%** (${wins}/${losses})`
-    this.addField(
-      'General',
-      `
+    this.addFields({
+      name: 'General',
+      value: `
     Kills/deaths: **${readNumber(general.kdr)}**
     ${win}
     Longest on fire: **${readMinutes(general.minOnFire)}**`,
-      true
-    )
+      inline: true
+    })
 
     return this
   }
 
   /** Adds record stats to the embed */
   addBestPerformance({ bestPerformance }: RegularStats) {
-    this.addField(
-      'Performance',
-      `
+    this.addFields({
+      name: 'Performance',
+      value: `
     Highest damage: **${noDec(bestPerformance.damage) || '----'}**
     Highest healing: **${noDec(bestPerformance.healing) || '----'}**
     Best kill streak: **${noDec(bestPerformance.killStreak) || '----'}**`,
-      true
-    )
+      inline: true
+    })
     return this
   }
 }
@@ -337,13 +349,13 @@ class HeroEmbed extends CustomEmbed {
     this.mode = stats.type == 'competitive' ? 'herocomp' : 'hero'
 
     this.setHeader(stats.type + ' ' + heroName(stats.hero), battletag, platform)
-      .setColor('GREEN')
+      .setColor(Colors.Green)
       .addImage(stats)
 
     !stats.played
       ? this.setDescription(
           "You haven't played this hero in this mode yet :confused:"
-        ).setColor('GOLD')
+        ).setColor(Colors.Gold)
       : this.addHeroData(stats).addGeneric(stats).addMedals(stats)
 
     if (stats.type == 'competitive' && !stats.currentlyRanked) this.notRanked()
@@ -362,37 +374,37 @@ class HeroEmbed extends CustomEmbed {
       str += `${humanize(key).replace('avg per 10 min', '(avg 10m)')}: **${
         specific[key]
       }**\n`
-    return str ? this.addField('Hero statistics', str) : this
+    return str ? this.addFields({ name: 'Hero statistics', value: str }) : this
   }
 
   /** Adds a field with generic stats */
   addGeneric({ generic }: HeroStats) {
     const { kills, deaths } = generic
 
-    return this.addField(
-      'General stats',
-      `
+    return this.addFields({
+      name: 'General stats',
+      value: `
     Time played: **${readHours(generic.hrsPlayed)}**
     Kills/deaths: **${readNumber(kills / deaths)}** (**${[kills, deaths]
         .map(noDec)
         .join('**/**')}**)
     Games won: **${noDec(generic.wins)}**`,
-      true
-    )
+      inline: true
+    })
   }
 
   /** Adds a field with medal stats */
   addMedals({ medals }: HeroStats) {
     const { bronze, silver, gold } = medals
 
-    return this.addField(
-      'Medals',
-      `
+    return this.addFields({
+      name: 'Medals',
+      value: `
     Gold: **${gold}**
     Silver: **${silver}**
     Bronze: **${bronze}**`,
-      true
-    )
+      inline: true
+    })
   }
 }
 
@@ -467,7 +479,7 @@ class WarnEmbed extends CustomEmbed {
   constructor(int: CommandInteraction, error: string, ...args: any[]) {
     super(int, ...args)
     this.mode = 'warn'
-    return this.setColor('GOLD').setTitle('Sorry...').setDescription(error)
+    return this.setColor(Colors.Gold).setTitle('Sorry...').setDescription(error)
   }
 }
 
@@ -477,7 +489,7 @@ class ErrorEmbed extends CustomEmbed {
   constructor(int: CommandInteraction, error: string, ...args: any[]) {
     super(int, ...args)
     this.mode = 'error'
-    return this.setColor('RED')
+    return this.setColor(Colors.Red)
       .setTitle('I got an error from the server')
       .setDescription(error)
   }

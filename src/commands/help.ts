@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageButton } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
 import { docsURL } from '../core/app'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
 
@@ -16,9 +16,9 @@ export const command: CommandOptions = {
     return int.reply({
       content: msg.trim(),
       components: [
-        new MessageActionRow().addComponents(
-          new MessageButton()
-            .setStyle('LINK')
+        new ActionRowBuilder<ButtonBuilder>().addComponents(
+          new ButtonBuilder()
+            .setStyle(ButtonStyle.Link)
             .setLabel('Online docs')
             .setURL(docsURL)
         )

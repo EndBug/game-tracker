@@ -1,7 +1,13 @@
 /* eslint-disable no-redeclare */
 
 import { TSMap as Map } from 'typescript-map'
-import { User, GuildMember, PartialMessage, Message } from 'discord.js'
+import {
+  User,
+  GuildMember,
+  PartialMessage,
+  Message,
+  ChannelType
+} from 'discord.js'
 import { homeguild, owner, ownerID, links, client } from '../core/app'
 import PrettyError from 'pretty-error'
 
@@ -137,7 +143,8 @@ export async function getSupportInvite(codeOnly = false) {
     const rulesChannel =
       (await homeguild.channels.fetch('570606562880651264').catch(() => {})) ||
       (await homeguild.channels.fetch())?.find((c) => c.name == 'rules')
-    if (!rulesChannel || rulesChannel.type == 'GUILD_CATEGORY') throw undefined
+    if (!rulesChannel || rulesChannel.type == ChannelType.GuildCategory)
+      throw undefined
 
     const existingInvite = await client
       .fetchInvite(links.support)
