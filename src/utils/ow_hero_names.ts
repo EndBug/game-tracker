@@ -1,20 +1,19 @@
-import { hero } from 'overwatch-stats-api/typings/autogen'
+import { Hero } from '@endbug/overwatch-stats-api'
 
-export const heroes: Record<hero, string> = {
+export const heroes: Record<Hero, string> = {
   ana: 'Ana',
   ashe: 'Ashe',
   baptiste: 'Baptiste',
   bastion: 'Bastion',
   brigitte: 'Brigitte',
+  cassidy: 'Cassidy',
   doomfist: 'Doomfist',
   dva: 'D.Va',
   echo: 'Echo',
   genji: 'Genji',
-  hammond: 'Wrecking Ball',
   hanzo: 'Hanzo',
   junkrat: 'Junkrat',
   lucio: 'Lúcio',
-  mccree: 'McCree',
   mei: 'Mei',
   mercy: 'Mercy',
   moira: 'Moira',
@@ -24,17 +23,18 @@ export const heroes: Record<hero, string> = {
   reinhardt: 'Reinhardt',
   roadhog: 'Roadhog',
   sigma: 'Sigma',
-  soldier: 'Soldier: 76',
+  soldier_76: 'Soldier: 76',
   sombra: 'Sombra',
   symmetra: 'Symmetra',
   torbjorn: 'Torbjörn',
   tracer: 'Tracer',
   widowmaker: 'Widowmaker',
   winston: 'Winston',
+  wrecking_ball: 'Wrecking Ball',
   zarya: 'Zarya',
   zenyatta: 'Zenyatta'
 }
-export type supportedHero = hero
+export type supportedHero = Hero
 
 /** Converts hero keys into readable names
  * @param str The hero key to convert

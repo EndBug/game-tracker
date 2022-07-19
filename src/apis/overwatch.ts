@@ -1,6 +1,7 @@
 /* eslint-disable no-dupe-class-members */
 import { User, GuildMember, MessageEmbed, CommandInteraction } from 'discord.js'
-import * as owapi from 'overwatch-stats-api'
+import * as owapi from '@endbug/overwatch-stats-api'
+import { Rank } from '@endbug/overwatch-stats-api/build/basicinfo'
 import { long as getSha } from 'git-rev-sync'
 
 import { API } from '../utils/api'
@@ -590,7 +591,7 @@ export class OverwatchAPI extends API<'ow'> {
 
   // #region Command methods
 
-  private formatRank(rank: owapi.Rank): RegularStats['account']['rank'] {
+  private formatRank(rank: Rank): RegularStats['account']['rank'] {
     if (typeof rank != 'object') return
     return Object.entries(rank)
       .map(([key, value]) => {
