@@ -1,6 +1,5 @@
 import { links, owner } from '../core/app'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
-import { getSupportInvite } from '../utils/utils'
 
 export const command: CommandOptions = {
   data: new SlashCommandBuilder()
@@ -10,19 +9,17 @@ export const command: CommandOptions = {
     ),
 
   async run(int) {
-    let invite = await getSupportInvite()
+    const invite = links.support
+
     if (!invite) {
-      owner.send(
-        `Problem with invite creation: getSupportInvite() == ${invite}`
-      )
-      invite = links.support
-      if (!invite)
-        return int.reply({
-          content:
-            'Sorry, this command is temporarily unavailable, please retry later.\nIronic, huh?',
-          ephemeral: true
-        })
+      owner.send('Support invite link is missing, fix ASAP!')
+      return int.reply({
+        content:
+          'Sorry, this command is temporarily unavailable, please retry later.\nIronic, huh?',
+        ephemeral: true
+      })
     }
+
     return int.reply(
       `Thank you for choosing Game Tracker!\nYou can enter in the support guild using this invite: ${invite}`
     )

@@ -1,14 +1,8 @@
 /* eslint-disable no-redeclare */
 
 import { TSMap as Map } from 'typescript-map'
-import {
-  User,
-  GuildMember,
-  PartialMessage,
-  Message,
-  ChannelType
-} from 'discord.js'
-import { homeguild, owner, ownerID, links, client } from '../core/app'
+import { User, GuildMember, PartialMessage, Message } from 'discord.js'
+import { owner, ownerID } from '../core/app'
 import PrettyError from 'pretty-error'
 
 export { v4 as uuid } from 'uuid'
@@ -133,32 +127,6 @@ export function getFullName(user: User | GuildMember) {
 export function getShortName(user: User | GuildMember) {
   if (user instanceof GuildMember) user = user.user
   return `${user.username}#${user.discriminator}`
-}
-
-/** Gets an invite to the support guild
- * @param codeOnly Whether to return only the code of the invite instead of the URL (default is `false`)
- */
-export async function getSupportInvite(codeOnly = false) {
-  try {
-    const rulesChannel =
-      (await homeguild.channels.fetch('570606562880651264').catch(() => {})) ||
-      (await homeguild.channels.fetch())?.find((c) => c.name == 'rules')
-    if (!rulesChannel || rulesChannel.type == ChannelType.GuildCategory)
-      throw undefined
-
-    const existingInvite = await client
-      .fetchInvite(links.support)
-      .catch(() => {})
-    if (!existingInvite) owner.send('Hardcoded support invite is outdated!')
-
-    const invite =
-      existingInvite || (await rulesChannel.createInvite({ maxAge: 0 }))
-
-    return codeOnly ? invite.code : `https://discord.gg/${invite.code}`
-  } catch {
-    owner.send("Can't find 'rules' channel, please check the ID.")
-    return links.support
-  }
 }
 
 /** Makes a string readable */
