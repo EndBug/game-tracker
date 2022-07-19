@@ -1,8 +1,8 @@
 /* eslint-disable no-redeclare */
 
 import { TSMap as Map } from 'typescript-map'
-import { User, GuildMember, PartialMessage, Message } from 'discord.js'
-import { owner, ownerID } from '../core/app'
+import { User, GuildMember } from 'discord.js'
+import { owner } from '../core/app'
 import PrettyError from 'pretty-error'
 
 export { v4 as uuid } from 'uuid'
@@ -96,33 +96,6 @@ export function equals(...items: any[]) {
   return true
 }
 
-/** Escapes mentions from a string
- * @param str The string to escape mentions from
- * @param toEscape The type of mentions you want to escape. Default is all of them
- */
-export function escapeMentions(
-  str: string,
-  toEscape?: ('@here' | '@everyone' | 'roles' | 'users')[]
-) {
-  if (!toEscape) toEscape = ['@here', '@everyone', 'roles', 'users']
-
-  const f = (match: string) => '\\' + match
-
-  if (toEscape.includes('@everyone'))
-    str = str.replace(/(?<!\\)@(everyone)/g, f)
-  if (toEscape.includes('@here')) str = str.replace(/(?<!\\)@(here)/g, f)
-  if (toEscape.includes('roles')) str = str.replace(/<@&!?(\d+)>/g, f)
-  if (toEscape.includes('users')) str = str.replace(/<@!?(\d+)>/g, f)
-
-  return str
-}
-
-/** Returns a plain full name for a given user */
-export function getFullName(user: User | GuildMember) {
-  if (user instanceof GuildMember) user = user.user
-  return `${user.username}#${user.discriminator} (${user.id})`
-}
-
 /** Retunes a plain short name for a given user or member */
 export function getShortName(user: User | GuildMember) {
   if (user instanceof GuildMember) user = user.user
@@ -136,45 +109,6 @@ export function humanize(str: string) {
     .trim()
     .replace(/\b[A-Z][a-z]+\b/g, (word) => word.toLowerCase())
     .replace(/^[a-z]/g, (first) => first.toUpperCase())
-}
-
-/** Returns whether the user is the bot owner */
-export function isOwner(user: User | GuildMember | string) {
-  return (typeof user == 'string' ? user : user.id) == ownerID
-}
-
-/**
- * Checks whether a string is a Discord user mention
- * @param str The string you want to check
- * @param userOnly Whether to only check for user mentions (instead of roles, channels, here and everyone too); default is `true`
- * */
-export function isMention(str: string, userOnly = true) {
-  str = str.trim()
-  return (
-    (typeof str == 'string' &&
-      (str.startsWith('<@') || (!userOnly ? str.startsWith('<#') : false)) &&
-      str.endsWith('>')) ||
-    (!userOnly ? str == '@here' || str == '@everyone' : false)
-  )
-}
-
-export function isPartialMessage(
-  msg: Message | PartialMessage
-): msg is PartialMessage {
-  return msg.partial
-}
-
-/** Converts a map into an object */
-export function mapToObj(map: Map<any, any>) {
-  return [...map.entries()].reduce(
-    (obj, [key, value]) => ((obj[key] = value), obj),
-    {}
-  )
-}
-
-/** Converts a Discord mention into a string */
-export function mentionToID(str: string) {
-  return str.replace(/[\\<>@#&!]/g, '')
 }
 
 /**
