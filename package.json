@@ -23,7 +23,7 @@
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
     "@endbug/overwatch-stats-api": "^3.0.1",
-    "@supabase/supabase-js": "^1.35.4",
+    "@supabase/supabase-js": "^1.35.6",
     "blapi": "^2.2.2",
     "cron": "^2.1.0",
     "discord.js": "^14.0.2",
