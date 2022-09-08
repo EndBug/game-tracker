@@ -40,7 +40,7 @@
     "statcord.js": "^3.4.3",
     "ts-node": "10.9.1",
     "typescript-map": "0.1.0",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/cron": "^2.0.0",
