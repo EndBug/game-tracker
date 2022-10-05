@@ -24,7 +24,7 @@
     "@discordjs/rest": "^1.2.0",
     "@endbug/overwatch-stats-api": "^3.0.1",
     "@supabase/supabase-js": "^1.35.7",
-    "blapi": "^2.2.4",
+    "blapi": "^3.0.0",
     "cron": "^2.1.0",
     "discord.js": "^14.0.2",
     "dotenv": "^16.0.3",
