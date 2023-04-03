@@ -43,7 +43,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/cron": "^2.0.0",
+    "@types/cron": "^2.0.1",
     "@types/node": "^16.18.3",
     "@types/nodemon": "^1.19.2",
     "@types/require-all": "^3.0.3",
