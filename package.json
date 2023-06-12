@@ -47,7 +47,7 @@
     "@types/node": "^16.18.3",
     "@types/nodemon": "^1.19.2",
     "@types/require-all": "^3.0.3",
-    "@types/uuid": "^9.0.1",
+    "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "all-contributors-cli": "^6.26.0",
