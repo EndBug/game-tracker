@@ -25,7 +25,7 @@
     "@endbug/overwatch-stats-api": "^3.0.1",
     "@supabase/supabase-js": "^2.26.0",
     "blapi": "^3.1.2",
-    "cron": "^2.3.1",
+    "cron": "^2.4.3",
     "discord.js": "^14.0.2",
     "dotenv": "^16.3.1",
     "eslint-config-prettier": "^8.9.0",
@@ -43,7 +43,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/cron": "^2.0.1",
+    "@types/cron": "^2.4.0",
     "@types/node": "^16.18.3",
     "@types/nodemon": "^1.19.2",
     "@types/require-all": "^3.0.3",
