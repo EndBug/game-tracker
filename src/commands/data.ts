@@ -1,4 +1,10 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+  ComponentType
+} from 'discord.js'
 import { APIUtil } from '../utils/api'
 import { CommandOptions, SlashCommandBuilder } from '../utils/commands'
 import { uuid } from '../utils/utils'
@@ -40,6 +46,8 @@ export const command: CommandOptions = {
       }
 
       case 'erase': {
+        if (int.channel.type != ChannelType.GuildText) return
+
         if (Object.keys(await APIUtil.findAll(int.user)).length == 0)
           return int.reply({
             content: "There's no stored data about you.",
@@ -73,12 +81,13 @@ export const command: CommandOptions = {
           ]
         })
 
-        const collector = int.channel.createMessageComponentCollector({
-          time: 30000,
-          filter: (i) =>
-            i.user.id == int.user.id &&
-            [ids.confirm, ids.cancel].includes(i.customId)
-        })
+        const collector =
+          int.channel.createMessageComponentCollector<ComponentType.Button>({
+            time: 30000,
+            filter: (i) =>
+              i.user.id == int.user.id &&
+              [ids.confirm, ids.cancel].includes(i.customId)
+          })
 
         collector.on('collect', async (i) => {
           if (i.customId == ids.cancel) {
