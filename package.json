@@ -32,7 +32,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "git-rev-sync": "^3.0.1",
     "match-sorter": "^6.3.1",
-    "nodemon": "^2.0.4",
+    "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "pretty-error": "^4.0.0",
     "r6api.js": "^4.4.1",
