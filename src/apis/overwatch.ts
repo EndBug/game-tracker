@@ -26,7 +26,7 @@ import {
 import { heroName, supportedHero, isSupported } from '../utils/ow_hero_names'
 
 export type playerEntry = WithOptional<
-  Awaited<ReturnType<typeof OverwatchAPI['prototype']['checkDatabase']>>,
+  Awaited<ReturnType<(typeof OverwatchAPI)['prototype']['checkDatabase']>>,
   'id' | 'created_at'
 >
 export type platform = playerEntry['platform']
@@ -386,8 +386,8 @@ class HeroEmbed extends CustomEmbed {
       value: `
     Time played: **${readHours(generic.hrsPlayed)}**
     Kills/deaths: **${readNumber(kills / deaths)}** (**${[kills, deaths]
-        .map(noDec)
-        .join('**/**')}**)
+      .map(noDec)
+      .join('**/**')}**)
     Games won: **${noDec(generic.wins)}**`,
       inline: true
     })

@@ -11,7 +11,7 @@ import {
 } from 'r6api.js/dist/typings'
 type WeaponCategory = Stats['pvp']['weapons']['assault']
 type WeaponTypeName =
-  typeof constants.WEAPONTYPES[keyof typeof constants.WEAPONTYPES]['name']
+  (typeof constants.WEAPONTYPES)[keyof typeof constants.WEAPONTYPES]['name']
 type PvPMode = Stats['pvp']['modes'][keyof Stats['pvp']['modes']]
 type PvEMode = Stats['pve']['modes'][keyof Stats['pve']['modes']]
 type RankSeason = IGetRanks['seasons'][SeasonId]
@@ -48,7 +48,7 @@ const r6api = new R6API({
 var cache = new Cache('Rainbow 6 Siege')
 
 export type playerEntry = WithOptional<
-  Awaited<ReturnType<typeof RainbowAPI['prototype']['checkDatabase']>>,
+  Awaited<ReturnType<(typeof RainbowAPI)['prototype']['checkDatabase']>>,
   'id' | 'created_at'
 >
 export type platform = playerEntry['platform']
