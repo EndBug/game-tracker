@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2020",
     "module": "commonjs",
-    "lib": ["es2015", "es2017", "es6", "dom"],
+    "lib": [
+      "es2015",
+      "es2017",
+      "es6",
+      "dom"
+    ],
     "allowJs": true,
     "removeComments": true,
     "moduleResolution": "node",
@@ -14,5 +19,9 @@
     "rootDir": "./src/",
     "sourceMap": true
   },
-  "exclude": ["build", "**/sample.ts", "start.js"]
+  "exclude": [
+    "build",
+    "**/sample.ts",
+    "start.js"
+  ]
 }
