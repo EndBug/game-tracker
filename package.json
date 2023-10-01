@@ -45,7 +45,7 @@
   "devDependencies": {
     "@types/cron": "^2.4.0",
     "@types/node": "^16.18.3",
-    "@types/nodemon": "^1.19.2",
+    "@types/nodemon": "^1.19.3",
     "@types/require-all": "^3.0.3",
     "@types/uuid": "^9.0.3",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
