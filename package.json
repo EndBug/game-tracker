@@ -46,7 +46,7 @@
     "@types/cron": "^2.4.0",
     "@types/node": "^16.18.3",
     "@types/nodemon": "^1.19.4",
-    "@types/require-all": "^3.0.3",
+    "@types/require-all": "^3.0.6",
     "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.13.1",
