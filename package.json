@@ -53,7 +53,7 @@
     "all-contributors-cli": "^6.26.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.48.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=16.0.0"
