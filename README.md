@@ -1,21 +1,10 @@
 # Game Tracker
 
-[![Support Guild](https://discordapp.com/api/guilds/475792603867119626/embed.png)](https://discord.gg/5YrhW4NHfY)
-[![Top.gg](https://discordbots.org/api/widget/status/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
-[![Top.gg](https://discordbots.org/api/widget/servers/475421235950518292.svg)](https://discordbots.org/bot/475421235950518292)
 [![All Contributors](https://img.shields.io/github/all-contributors/EndBug/game-tracker)](#contributors-)
 
 ### What is Game Tracker?
 
 Game Tracker is an open-source Discord bot that is able to fetch stats from your favorite games. It's also able to remember your account, so that you don't need to remember it every time.
-
-### How can I add Game Tracker to my server?
-
-It's very simple:
-
-1.  Go to [this link](https://game-tracker.js.org/invite)
-2.  Select the server you want to add the bot to (you must be owner/admin of the server)
-3.  Confirm (the permissions asked are necessary, without them the bot could not work properly)
 
 ### What are the available commands?
 
@@ -26,14 +15,6 @@ The currently supported games are:
 
 - [Overwatch](https://game-tracker.js.org/docs/Commands/overwatch)
 - [Rainbow Six Siege](https://game-tracker.js.org/docs/Commands/rainbow)
-
-You can see the preview of each game's commands by looking either at the docs (click the name of the game in the above list) or at the dedicated channel in the "examples" category of the [support server](https://game-tracker.js.org/support).  
-More games are yet to come ;)
-
-### What if I have a problem?
-
-To join the official support server, click [here](https://game-tracker.js.org/support).  
-For a more developer-friendly report, please use the Issues section of this repository: [link](https://github.com/EndBug/game-tracker/issues)
 
 ## Contributors
 
